@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import classes from './Main.module.scss';
-import CreateRoomModal from '../room/CreateRoomModal';
+import CreateRoomModal from './CreateRoomModal';
 import { useState } from 'react';
-import JoinRoomModal from '../room/JoinRoomModal';
+import JoinRoomModal from './JoinRoomModal';
 
 const Main = () => {
   const [createModalShown, setCreateModalShown] = useState(false);
