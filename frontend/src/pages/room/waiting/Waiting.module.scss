@@ -1,0 +1,161 @@
+.waitingRoom{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3vh;
+    padding: 2rem;
+    flex: 1;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin: 0;
+
+  .waiting2{
+    animation: wait2 1s step-end infinite;
+  }
+
+  .waiting3{
+    animation: wait3 1s step-end infinite;
+  }
+
+  @keyframes wait2 {
+    0% {
+      opacity: 0;
+    }
+    30%,100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes wait3 {
+    0% {
+      opacity: 0;
+    }
+    60%,100% {
+      opacity: 1;
+    }
+  }
+}
+
+.groups {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 90%;
+  gap: 5vw;
+  justify-content: space-between;
+  flex: 1;
+
+  .colorIndicator {
+    width: 100%;
+    height: 4vh;
+    border-radius: 5px;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.367);
+    position: relative;
+    display: flex;
+
+    .activator_name {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      flex: 2;
+      width: 100%;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      padding-inline: 0.5em;
+    }
+
+    img {
+      flex: 1;
+      width: 0;
+      object-fit: contain;
+    }
+  }
+
+  .redGroup {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    .colorIndicator {
+      background-color: rgb(182, 15, 15);
+      flex-direction: row-reverse;
+
+      .activator_name {
+        justify-content: flex-start;
+      }
+    }
+    ul {
+      li {
+        &::after {
+          right: 1vw;
+        }
+      }
+    }
+  }
+
+  .blueGroup {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    .colorIndicator {
+      background-color: rgb(19, 19, 187);
+
+      .activator_name {
+        justify-content: flex-end;
+      }
+      img {
+        transform: scaleX(-1);
+      }
+    }
+
+    ul {
+      li {
+        &::after {
+          left: 1vw;
+        }
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+
+    li {
+      text-align: center;
+      color: black;
+      height: 4vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid #cccc;
+      position: relative;
+      background-color: white;
+      border-radius: 5px;
+      margin-bottom: 3px;
+
+      &::after {
+        content: "";
+        background-image: url("../../../images/agent_black.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+        position: absolute;
+        top: 60%;
+        height: 3vh;
+        aspect-ratio: 1;
+        transform: translate(0%, -50%);
+      }
+
+      &:last-child {
+        border-bottom: none;
+        margin-bottom: 0px;
+      }
+    }
+  }
+}

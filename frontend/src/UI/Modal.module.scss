@@ -26,10 +26,10 @@
     }
 }
 .modal{
-    width: min(50% , 30rem);
+    width: min(75% , 25rem);
     padding: 1rem;
     border-radius: 25px;
-    background-color: white;
+    background-color: rgb(244, 243, 243);
     min-height: 10rem;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.26);
     display: flex;
@@ -74,12 +74,25 @@
         font-size: 1.2em;
         width: 90%;
         margin: 0 auto;
-        padding: 0.25em;
+        padding: 0.25em 0.5em;
         color: black;
     }
 
     h2{
         color: black;
         text-align: center;
+    }
+
+    .error{
+        color: red;
+        margin: 0;
+        text-align: center;
+        font-weight: bold;
+    }
+}
+
+@media (max-width: 740px){
+    .modal{
+        min-width: 40vw;
     }
 }

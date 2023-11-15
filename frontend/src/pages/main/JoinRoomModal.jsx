@@ -3,7 +3,7 @@ import { useState } from "react";
 import Modal from "../../UI/Modal";
 import { useCallback } from "react";
 import classes from "../../UI/Modal.module.scss";
-import { Link, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
@@ -67,14 +67,11 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
       <h2>הזן את קוד החדר</h2>
       <input
         type="text"
-        placeholder="קוד החדר"
         value={value}
         onChange={setValueHandler}
         onKeyDown={handleEnterPress}
       />
-      <Link to={`/room/${value}`}>
-        <button onClick={joinRoom}>הצטרף</button>
-      </Link>
+      <button onClick={joinRoom}>הצטרף</button>
     </Modal>
   );
 };

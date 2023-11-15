@@ -3,10 +3,11 @@ import { useState } from "react";
 import Modal from "../../UI/Modal";
 import { useCallback } from "react";
 import classes from "../../UI/Modal.module.scss";
-import { Link , useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
+  const [error, setError] = useState('');
   const [value, setValue] = useState("");
 
   let navigate = useNavigate();
@@ -24,7 +25,12 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const createRoom = () => {
     console.log("Room created:", value);
-    navigate(`/room/${value}`);
+    if(value.trim() === ""){
+      setError('יש להזין את שם או מספר החדר');
+      return;
+    }else{
+      navigate(`/room/${value}`);
+    }
     closeBackdrop();
   };
 
@@ -64,19 +70,17 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
       setBackdropShown={setBackdropShown}
       backdropShown={backdropShown}
     >
-      <h2>הזן את שם החדר</h2>
+      <h2>הזן את שם או מספר החדר</h2>
       <input
         type="text"
-        placeholder="שם החדר"
         value={value}
         onChange={setValueHandler}
         onKeyDown={handleEnterPress}
       />
-      <Link to={`/room/${value}`}>
-        <button className={classes.actionButton} onClick={createRoom}>
-          <span>יצירה</span>
-        </button>
-      </Link>
+      {error.length && <p className={classes.error}>{error}</p>}
+      <button className={classes.actionButton} onClick={createRoom}>
+        <span>יצירה</span>
+      </button>
     </Modal>
   );
 };
