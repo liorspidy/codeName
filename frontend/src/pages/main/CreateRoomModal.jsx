@@ -3,15 +3,17 @@ import { useState } from "react";
 import Modal from "../../UI/Modal";
 import { useCallback } from "react";
 import classes from "../../UI/Modal.module.scss";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setRoomId } from '../../store/slices/roomSlice';
 
 const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState('');
   const [value, setValue] = useState("");
-
+  
+  const dispatch = useDispatch();
   let navigate = useNavigate();
-
 
   const setValueHandler = (e) => {
     setValue(e.target.value);
@@ -25,10 +27,12 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const createRoom = () => {
     console.log("Room created:", value);
-    if(value.trim() === ""){
+    if (value.trim() === "") {
       setError('יש להזין את שם או מספר החדר');
       return;
-    }else{
+    } else {
+      // Dispatch action to set room ID in Redux store
+      dispatch(setRoomId(value));
       navigate(`/room/${value}`);
     }
     closeBackdrop();

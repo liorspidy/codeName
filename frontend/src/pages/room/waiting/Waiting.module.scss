@@ -39,6 +39,20 @@
   }
 }
 
+.action_buttons{
+  gap: 1rem;
+  display: flex;
+
+  .iconButton{
+    padding: 0.8rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: darkslateblue;
+  }
+}
+
 .groups {
   display: flex;
   flex-direction: row-reverse;
@@ -140,17 +154,17 @@
       border-radius: 5px;
       margin-bottom: 3px;
 
-      &::after {
-        content: "";
-        background-image: url("../../../images/agent_black.svg");
-        background-position: center;
-        background-repeat: no-repeat;
-        position: absolute;
-        top: 60%;
-        height: 3vh;
-        aspect-ratio: 1;
-        transform: translate(0%, -50%);
-      }
+      // &::after {
+      //   content: "";
+      //   background-image: url("../../../images/agent_black.svg");
+      //   background-position: center;
+      //   background-repeat: no-repeat;
+      //   position: absolute;
+      //   top: 60%;
+      //   height: 3vh;
+      //   aspect-ratio: 1;
+      //   transform: translate(0%, -50%);
+      // }
 
       &:last-child {
         border-bottom: none;

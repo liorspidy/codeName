@@ -104,6 +104,10 @@
     width: 50%;
     gap: 1.5rem;
 
+    span {
+      font-size: 1.5rem;
+    }
+
     .navlink {
       border-radius: 8px;
       border: 1px solid transparent;
@@ -129,13 +133,28 @@
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
+  .main {
+    overflow: hidden;
+    gap: 10vw;
+
+    .title {
+      width: 60vw;
+
+      h1 {
+        font-size: 25vw;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
   .main {
     overflow: hidden;
     gap: 10vw;
 
     .action_buttons {
-      width: 15%;
+      width: 20%;
       font-size: 1.5rem;
     }
 

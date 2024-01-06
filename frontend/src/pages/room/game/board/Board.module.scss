@@ -1,0 +1,413 @@
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&family=Jost:wght@200;300;400;500;600;700;800&display=swap");
+
+.gameBoard {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &.wordLocked {
+    animation: glowBackground 0.5s infinite alternate;
+  }
+
+  .upperBoardZone,
+  .lowerBoardZone {
+    flex: 1;
+  }
+
+  .upperBoardZone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .upperHUD {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 8vh;
+      width: 100%;
+
+      &.red{
+        background-image: linear-gradient(
+          180deg,
+          #ed4a44 0%,
+          #b3312d 100%
+        );
+      }
+
+      &.blue{
+        background-image: linear-gradient(
+          180deg,
+          #499fe1 0%,
+          #1c649c 100%
+        );
+      }
+
+
+      .minimapButton {
+        z-index: 10;
+        height: 60%;
+        aspect-ratio: 1/1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        flex: 1;
+
+        &.agent {
+          opacity: 0.5;
+        }
+
+        img {
+          object-fit: contain;
+          height: 100%;
+          filter: drop-shadow(0px 0px 2px white);
+        }
+      }
+
+      .currentAgentWordContainer {
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5vw;
+        flex: 2;
+        height: 100%;
+
+        .currentAgentWord,
+        .currentAgentNumber {
+          font-weight: 900;
+          font-size: 1.8rem;
+          margin: 0;
+          font-family: "Heebo", sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1.5vw;
+        }
+
+        .currentAgentWord {
+          &::after {
+            content: " | ";
+          }
+        }
+      }
+
+      .timer {
+        z-index: 10;
+
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+
+        .innerContainer {
+          border-radius: 50%;
+          background-color: white;
+          height: 75%;
+          aspect-ratio: 1/1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 3vw;
+          border: 5px solid #646cff;
+          box-shadow: 0 0 3px white;
+
+          &.timeout {
+            animation: flashred 1s step-end infinite;
+
+            .timeLeft {
+              animation: changecolor 1s step-end infinite;
+            }
+          }
+
+          .timeLeft {
+            font-family: "Heebo", sans-serif;
+            font-weight: bold;
+            font-size: 6.5vw;
+            color: black;
+          }
+        }
+      }
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      padding: 3vw;
+      padding-top: 6vw;
+      max-width: 900px;
+      position: relative;
+      z-index: 10;
+      align-self: normal;
+
+      .currentWord {
+        font-size: 8vw;
+        text-align: center;
+        margin-block: 1.5vh;
+      }
+
+      .card {
+        animation-name: flipCard;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+        backface-visibility: hidden;
+        transition: scale 0.3s;
+        scale: 0.95;
+        cursor: pointer;
+
+        &.picked {
+          outline: 2px solid rgb(131, 195, 255);
+          border-radius: 1vw;
+          scale: 1;
+          box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+        }
+
+        .cardContent {
+          aspect-ratio: 1.5/1;
+          max-width: 250px;
+          background-color: rgb(243, 220, 193);
+          border: 1px solid rgb(190, 190, 190);
+          border-radius: 1vw;
+          box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+          display: grid;
+          grid-template-rows: repeat(2, 1fr);
+
+          .word {
+            font-size: 2.8vw;
+            font-weight: bold;
+            text-align: center;
+            color: black;
+            background-color: white;
+            width: 95%;
+            display: block;
+            margin: auto;
+            grid-row-start: 2;
+            position: relative;
+            border-radius: 3px;
+            border: 2px solid rgb(154, 87, 56);
+
+            &::before {
+              content: var(--word);
+              width: 100%;
+              display: block;
+              position: absolute;
+              z-index: 1;
+              top: -4vw;
+              color: #6a6a6adb;
+              transform: rotateZ(180deg);
+              text-align: right;
+            }
+          }
+        }
+
+        &::after {
+          content: "";
+          background-color: rgb(243, 220, 193);
+          width: 100%;
+          height: 100%;
+          display: block;
+          position: absolute;
+          z-index: 1;
+          top: 0px;
+          left: 0px;
+          border-radius: 5px;
+          animation-name: flipCardBack;
+          animation-duration: 0.5s;
+          animation-fill-mode: forwards;
+          animation-timing-function: ease-out;
+          backface-visibility: hidden;
+        }
+      }
+
+      .flippedCard {
+        background-color: rgb(243, 220, 193);
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 5px;
+        animation-name: flipCardBack;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+        backface-visibility: visible;
+        color: transparent;
+
+        .cardContent {
+          aspect-ratio: 1.5/1;
+          max-width: 250px;
+
+          .word {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .currentCardContainer {
+      min-width: 40vw;
+      min-height: 15.8vw;
+      margin: 1rem auto;
+      border-radius: 1rem;
+      border: 2px solid #646cff;
+      z-index: 10;
+      padding: 0.15rem 0.75rem;
+      background-color: rgb(0, 0, 0);
+      box-shadow: 0px 0px 20px 0px rgba(71, 71, 71, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .currentCard {
+        text-align: center;
+        font-size: 6vw;
+        margin-block: 1vh;
+        font-weight: bold;
+        font-family: "Heebo", sans-serif;
+      }
+    }
+  }
+
+  .lowerBoardZone {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-block: 2vh;
+    margin-bottom: 6vh;
+
+    .scoreTable {
+      width: 100%;
+      height: 6vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .group {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.red {
+          background-color: #ed4a44;
+          border-left: 2px solid white;
+        }
+
+        &.blue {
+          background-color: #499fe1;
+          border-right: 2px solid white;
+        }
+
+        .cardsLeft{
+          font-size: 6vw;
+          font-weight: bold;
+          font-family: "Heebo", sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1.5vw;
+          color: white;
+        }
+      }
+    }
+
+    .actionButtons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .lockWord,
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .lockWord {
+        gap: 1vw;
+      }
+    }
+  }
+
+  .backdropBoard {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .board {
+    .cardContent {
+      .word {
+        font-size: 1.75vw;
+      }
+    }
+  }
+}
+
+@keyframes flipCard {
+  0% {
+    transform: rotateX(180deg);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes flipCardBack {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  100% {
+    transform: rotateX(180deg);
+  }
+}
+
+@keyframes flashred {
+  0% {
+    background-color: rgb(255, 0, 0);
+  }
+
+  50% {
+    background-color: white;
+  }
+
+  100% {
+    background-color: rgb(255, 0, 0);
+  }
+}
+
+@keyframes changecolor {
+  0% {
+    color: white;
+  }
+
+  50% {
+    color: black;
+  }
+
+  100% {
+    color: white;
+  }
+}
+
+@keyframes glowBackground {
+  0% {
+    box-shadow: inset 0px 0px 20px 0px rgba(254, 255, 231, 0.908);
+  }
+
+  100% {
+    box-shadow: inset 0px 0px 10px 0px rgba(254, 255, 231, 0.908);
+  }
+}

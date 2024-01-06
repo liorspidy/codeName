@@ -1,0 +1,247 @@
+:root {
+  --ratio: 0.9;
+}
+
+.minimapCardContainer {
+  background-color: rgba(0, 0, 0, 0.365);
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  transition: all 0.3s ease-out;
+  display: none;
+
+  .minimapContainer {
+    background-color: #6d646d;
+    width: calc(70vw / var(--ratio));
+    aspect-ratio: 1/1;
+    border-radius: calc(5vw / var(--ratio));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-out;
+    box-shadow: 0 0 30px 6px rgba(0, 0, 0, 0.5);
+
+    .innerMinimapMiddle {
+      width: calc(62vw / var(--ratio));
+      aspect-ratio: 1/1;
+      border-radius: calc(5vw / var(--ratio));
+      background-color: #62555a;
+      border: 1px solid #4b3f43;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .innerMinimapMain {
+        width: calc(52vw / var(--ratio));
+        aspect-ratio: 1/1;
+        border: calc(4px / var(--ratio)) solid #4b3f43;
+        background-color: #161815;
+        border-radius: calc(3vw / var(--ratio));
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        gap: calc(3px / var(--ratio));
+        padding: calc(3vw / var(--ratio));
+
+        .minimapCell {
+          border-radius: calc(1vw / var(--ratio));
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+          &.red {
+            &::after {
+              content: "";
+              width: calc(2.5vw / var(--ratio));
+              aspect-ratio: 1/1;
+              rotate: 45deg;
+              background-color: #ec4542;
+              border: 1px solid #851614a6;
+              filter: drop-shadow(0 0 5px rgb(255, 255, 255));
+              border-radius: 2px;
+            }
+          }
+
+          &.blue {
+            &::after {
+              content: "";
+              width: calc(2.5vw / var(--ratio));
+              aspect-ratio: 1/1;
+              background-color: #008ed5;
+              border: 1px solid #0f577b;
+              filter: drop-shadow(0 0 5px rgb(255, 255, 255));
+              border-radius: 50%;
+            }
+          }
+
+          &.black {
+            &::after {
+              content: "X";
+              width: calc(2.5vw / var(--ratio));
+              aspect-ratio: 1/1;
+              filter: drop-shadow(0 0 5px rgb(255, 255, 255));
+              color: black;
+              font-weight: bold;
+              font-size: calc(5.5vw / var(--ratio));
+              position: absolute;
+              left: calc(3.4vw / var(--ratio));
+            }
+          }
+        }
+      }
+    }
+
+    .innerMinimapCorner {
+      background-color: #6d646d;
+      border: 1px solid #4b3f43;
+      width: calc(3vw / var(--ratio));
+      height: calc(30vw / var(--ratio));
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .edgeLight {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.red {
+          background-color: rgb(124, 5, 5);
+        }
+
+        &.blue {
+          background-color: rgb(5, 23, 124);
+        }
+
+        .innerLight {
+          background-color: white;
+          filter: blur(2px);
+
+          &.red {
+            box-shadow: 0 0 12px calc(8px / var(--ratio)) rgb(241, 95, 95);
+            animation: glowLightRed 0.8s ease-in-out infinite alternate;
+          }
+
+          &.blue {
+            box-shadow: 0 0 12px calc(8px / var(--ratio)) rgb(95, 156, 241);
+            animation: glowLightBlue 0.8s ease-in-out infinite alternate;
+          }
+        }
+      }
+
+      &:nth-of-type(1) {
+        left: -1px;
+        top: 50%;
+        transform: translate(0%, -50%);
+        border-left: 1px solid #6d646d;
+        .edgeLight {
+          height: calc(8vw / var(--ratio));
+          width: calc(3vw / var(--ratio));
+
+          .innerLight {
+            width: calc(1vw / var(--ratio));
+            height: calc(1.75vw / var(--ratio));
+          }
+        }
+      }
+
+      &:nth-of-type(2) {
+        left: 50%;
+        bottom: -1px;
+        height: calc(3vw / var(--ratio));
+        width: calc(30vw / var(--ratio));
+        transform: translate(-50%, 0);
+        border-bottom: 1px solid #6d646d;
+        .edgeLight {
+          width: calc(8vw / var(--ratio));
+          height: calc(3vw / var(--ratio));
+
+          .innerLight {
+            height: calc(1vw / var(--ratio));
+            width: calc(1.75vw / var(--ratio));
+          }
+        }
+      }
+
+      &:nth-of-type(3) {
+        left: 50%;
+        top: -1px;
+        height: calc(3vw / var(--ratio));
+        width: calc(30vw / var(--ratio));
+        transform: translate(-50%, 0);
+        border-top: 1px solid #6d646d;
+        .edgeLight {
+          width: calc(8vw / var(--ratio));
+          height: calc(3vw / var(--ratio));
+
+          .innerLight {
+            height: calc(1vw / var(--ratio));
+            width: calc(1.75vw / var(--ratio));
+          }
+        }
+      }
+
+      &:nth-of-type(4) {
+        right: -1px;
+        top: 50%;
+        transform: translate(0%, -50%);
+        border-right: 1px solid #6d646d;
+        .edgeLight {
+          height: calc(8vw / var(--ratio));
+          width: calc(3vw / var(--ratio));
+        }
+
+        .innerLight {
+          width: calc(1vw / var(--ratio));
+          height: calc(1.75vw / var(--ratio));
+        }
+      }
+    }
+
+    &.show {
+      display: flex;
+      transition: all 0.5s ease-out;
+      animation: showMinimap 0.3s ease-out;
+    }
+  }
+
+  &.show {
+    display: flex;
+    transition: all 0.5s ease-out;
+  }
+}
+
+@keyframes glowLightRed {
+  0% {
+    box-shadow: 0 0 12px calc(8px / var(--ratio)) rgb(241, 95, 95);
+  }
+  100% {
+    box-shadow: 0 0 12px calc(12px / var(--ratio)) rgb(241, 95, 95);
+  }
+}
+@keyframes glowLightBlue {
+  0% {
+    box-shadow: 0 0 12px calc(8px / var(--ratio)) rgb(95, 156, 241);
+  }
+  100% {
+    box-shadow: 0 0 12px calc(12px / var(--ratio)) rgb(95, 156, 241);
+  }
+}
+
+@keyframes showMinimap {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
