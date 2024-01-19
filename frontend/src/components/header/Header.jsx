@@ -10,6 +10,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import Menu from "./menu/Menu";
 import { useState } from "react";
 import InfoModal from "./InfoModal";
+import ChatModal from "./ChatModal";
 
 const Header = () => {
   const { roomId } = useParams();
@@ -40,6 +41,13 @@ const Header = () => {
           setModalOpen={setModalOpen}
           setModalShown={setOpenInfo}
           modalShown={openInfo}
+        />
+      )}
+      {modalOpen && (
+        <ChatModal
+          setModalOpen={setModalOpen}
+          setModalShown={setOpenChat}
+          modalShown={openChat}
         />
       )}
       <div className={classes.rightSection}>
