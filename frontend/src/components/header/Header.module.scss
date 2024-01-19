@@ -10,4 +10,20 @@ header{
         font-weight: bold;
         align-self: center;
     }
+
+    .leftSection , .middleSection , .rightSection{
+        display: flex;
+        gap: 2vw;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+    }   
+
+    .rightSection{
+        justify-content: flex-start;
+    }
+
+    .leftSection {
+        justify-content: flex-end;
+    }
 }

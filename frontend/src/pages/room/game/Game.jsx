@@ -6,6 +6,10 @@ import wordsList from "../../../words.json";
 
 const Game = () => {
   const [pickedRandomWords, setPickedRandomWords] = useState();
+  const [timer, setTimer] = useState(30);
+  const [timerStarts, setTimerStarts] = useState(false);
+  const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
+  const [timeRanOut, setTimeRanOut] = useState(true);
 
   useEffect(() => {
     const randomWords = wordsList.words
@@ -17,7 +21,17 @@ const Game = () => {
   return (
     <div className={classes.gamePage}>
       <Header />
-      <Board randomWords={pickedRandomWords} />
+      <Board
+        randomWords={pickedRandomWords}
+        timer={timer}
+        setTimer={setTimer}
+        timerStarts={timerStarts}
+        setTimerStarts={setTimerStarts}
+        timeIsRunningOut={timeIsRunningOut}
+        setTimeIsRunningOut={setTimeIsRunningOut}
+        timeRanOut={timeRanOut}
+        setTimeRanOut={setTimeRanOut}
+      />
     </div>
   );
 };

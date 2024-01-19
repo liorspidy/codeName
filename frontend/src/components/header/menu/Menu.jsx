@@ -2,7 +2,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
@@ -60,7 +59,7 @@ export default function SwipeableTemporaryDrawer() {
   return (
     <>
       <React.Fragment key={anchor}>
-        <Toolbar sx={{ padding: 0 }}>
+        <Toolbar sx={{padding: "0 !important"}}>
           <IconButton
             onClick={toggleDrawer(anchor, true)}
             aria-label="open menu"

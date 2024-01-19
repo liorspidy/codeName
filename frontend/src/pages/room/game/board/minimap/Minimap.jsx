@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import classes from "./Minimap.module.scss";
 
 const Minimap = ({ showMinimap, setShowMinimap , groupColor }) => {
-  const [minimap , setMinimap] = useState([]);
-  const minimapMappingArray = [8, 8, 8, 1];
+  const [minimap, setMinimap] = useState([]);
+  const minimapMappingArray = groupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
 
   const tempMinimap = Array(25)
     .fill()
@@ -27,7 +27,16 @@ const Minimap = ({ showMinimap, setShowMinimap , groupColor }) => {
             : randFactor === 3
             ? "#3d3b3a"
             : "";
-        const subclass = randFactor === 0 ? classes.red : randFactor === 1 ? classes.blue : randFactor === 2 ? classes.neutral : randFactor === 3 ? classes.black : "";
+        const subclass =
+          randFactor === 0
+            ? classes.red
+            : randFactor === 1
+            ? classes.blue
+            : randFactor === 2
+            ? classes.neutral
+            : randFactor === 3
+            ? classes.black
+            : "";
         return (
           <div
             className={`${classes.minimapCell} ${subclass}`}
@@ -40,10 +49,9 @@ const Minimap = ({ showMinimap, setShowMinimap , groupColor }) => {
       }
     });
 
-    useEffect(() => {
-        setMinimap(tempMinimap)
-      },[])
-
+  useEffect(() => {
+    setMinimap(tempMinimap);
+  }, []);
 
   const backdropMinimapHandler = () => {
     setShowMinimap(false);

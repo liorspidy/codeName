@@ -1,22 +1,27 @@
-.waitingRoom{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3vh;
-    padding: 2rem;
-    flex: 1;
+.waitingRoom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3vh;
+  padding: 1rem;
+  padding-bottom: 8rem;
+  flex: 1;
+
+  .readyButton {
+    scale: 1.25;
+  }
 }
 
 .title {
   font-size: 1.8rem;
   margin: 0;
 
-  .waiting2{
+  .waiting2 {
     animation: wait2 1s step-end infinite;
   }
 
-  .waiting3{
+  .waiting3 {
     animation: wait3 1s step-end infinite;
   }
 
@@ -24,7 +29,8 @@
     0% {
       opacity: 0;
     }
-    30%,100% {
+    30%,
+    100% {
       opacity: 1;
     }
   }
@@ -33,23 +39,24 @@
     0% {
       opacity: 0;
     }
-    60%,100% {
+    60%,
+    100% {
       opacity: 1;
     }
   }
 }
 
-.action_buttons{
+.action_buttons {
   gap: 1rem;
   display: flex;
 
-  .iconButton{
+  .iconButton {
     padding: 0.8rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: darkslateblue;
+    background-color: #646cff;
   }
 }
 
@@ -69,10 +76,11 @@
     position: relative;
     display: flex;
 
-    .activator_name {
+    .activatorName {
       margin: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
       flex: 2;
       width: 100%;
       white-space: nowrap;
@@ -96,13 +104,9 @@
     .colorIndicator {
       background-color: rgb(182, 15, 15);
       flex-direction: row-reverse;
-
-      .activator_name {
-        justify-content: flex-start;
-      }
     }
-    ul {
-      li {
+    .playersList {
+      .playerItem {
         &::after {
           right: 1vw;
         }
@@ -118,9 +122,6 @@
     .colorIndicator {
       background-color: rgb(19, 19, 187);
 
-      .activator_name {
-        justify-content: flex-end;
-      }
       img {
         transform: scaleX(-1);
       }

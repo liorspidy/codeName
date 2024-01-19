@@ -81,7 +81,7 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
         onChange={setValueHandler}
         onKeyDown={handleEnterPress}
       />
-      {error.length && <p className={classes.error}>{error}</p>}
+      {!!error.length && <p className={classes.error}>{error}</p>}
       <button className={classes.actionButton} onClick={createRoom}>
         <span>יצירה</span>
       </button>
