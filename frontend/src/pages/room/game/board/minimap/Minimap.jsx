@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 import classes from "./Minimap.module.scss";
 
-const Minimap = ({ showMinimap, setShowMinimap , groupColor }) => {
+const Minimap = ({ showMinimap, setShowMinimap , leadGroupColor }) => {
   const [minimap, setMinimap] = useState([]);
-  const minimapMappingArray = groupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
+  const minimapMappingArray = leadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
 
   const tempMinimap = Array(25)
     .fill()
@@ -75,23 +75,23 @@ const Minimap = ({ showMinimap, setShowMinimap , groupColor }) => {
       >
         <div className={classes.innerMinimapMiddle}>
           <div className={classes.innerMinimapCorner}>
-            <div className={groupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
-            <div className={groupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
+            <div className={leadGroupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
+            <div className={leadGroupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
             </div>
           </div>
           <div className={classes.innerMinimapCorner}>
-          <div className={groupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
-          <div className={groupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
+          <div className={leadGroupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
+          <div className={leadGroupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
             </div>
           </div>
           <div className={classes.innerMinimapCorner}>
-          <div className={groupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
-          <div className={groupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
+          <div className={leadGroupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
+          <div className={leadGroupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
             </div>
           </div>
           <div className={classes.innerMinimapCorner}>
-          <div className={groupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
-            <div className={groupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
+          <div className={leadGroupColor === "red" ? `${classes.edgeLight} ${classes.red}` : `${classes.edgeLight} ${classes.blue}`}>
+            <div className={leadGroupColor === "red" ? `${classes.innerLight} ${classes.red}` : `${classes.innerLight} ${classes.blue}`}/>
             </div>
           </div>
           <div className={classes.innerMinimapMain}>{minimap}</div>

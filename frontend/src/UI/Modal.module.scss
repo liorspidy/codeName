@@ -141,6 +141,9 @@
     }
 
     .chatInput {
+      display: flex;
+      gap: 2vw;
+      
       input {
         width: 100%;
         padding: 0.75rem;
@@ -153,7 +156,7 @@
     color: black;
 
     h2 {
-      font-size: 8vw;
+      font-size: 7vw;
       margin-top: 0;
     }
 
@@ -185,6 +188,7 @@
       margin-bottom: 0;
       text-align: center;
       padding: 0.75rem;
+      direction: ltr;
     }
   }
 }

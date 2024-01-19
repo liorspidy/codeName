@@ -10,6 +10,8 @@ import IconButton from "@mui/material/IconButton";
 const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
+  const [wordValue, setWordValue] = useState("");
+  const [error, setError] = useState("");
 
   const closeBackdrop = useCallback(() => {
     const modal = document.querySelector(`.${classes.modal}.${classes.active}`);
@@ -55,7 +57,15 @@ const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
   };
 
   const submitWordHandler = () => {
-    
+    if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
+      closeBackdrop();
+    } else {
+      setError("אחד או יותר מהשדות לא מולאו כראוי");
+    }
+  };
+
+  const wordValueChange = (e) => {
+    setWordValue(e.target.value);
   };
 
   return (
@@ -71,7 +81,12 @@ const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
         <h2>הצע מילה לסוכנים</h2>
         <div className={classes.inputs}>
           <div className={classes.wordInput}>
-            <input type="text" placeholder="הצע מילה" />
+            <input
+              type="text"
+              placeholder="הצע מילה"
+              value={wordValue}
+              onChange={wordValueChange}
+            />
           </div>
           <div className={classes.wordsToFind}>
             <div className={classes.moreWords}>
@@ -97,7 +112,7 @@ const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
             <div className={classes.lessWords}>
               <IconButton
                 onClick={lessWordsHandler}
-                aria-label="remove word"
+                aria-label="reduce words"
                 sx={{
                   backgroundColor: "#646cff",
                   color: "#fff",
@@ -109,8 +124,16 @@ const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
             </div>
           </div>
           <div className={classes.submitWord}>
-            <button className={classes.submitButton} onClick={submitWordHandler}>שלח מסר</button>
+            <button
+              className={classes.submitButton}
+              onClick={submitWordHandler}
+            >
+              שלח מסר
+            </button>
           </div>
+        </div>
+        <div className={classes.error}>
+          <p>{error}</p>
         </div>
       </div>
     </Modal>

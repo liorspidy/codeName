@@ -2,10 +2,13 @@
 import { useState } from "react";
 import Modal from "../../UI/Modal";
 import { useCallback } from "react";
+import SendIcon from '@mui/icons-material/Send';
 import classes from "../../UI/Modal.module.scss";
+import IconButton from "@mui/material/IconButton";
 
 const ChatModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
+  const [messageValue , setMessageValue] = useState("");
 
   const closeBackdrop = useCallback(() => {
     const modal = document.querySelector(`.${classes.modal}.${classes.active}`);
@@ -35,6 +38,14 @@ const ChatModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
     setModalShown(false);
   }, [setModalShown, setBackdropShown, setModalOpen]);
+
+  const sendMessageHandler = () => {
+    console.log(messageValue);
+  };
+
+  const typeMessage = (e) => {
+    setMessageValue(e.target.value);
+  };
 
   return (
     <Modal
@@ -91,7 +102,19 @@ const ChatModal = ({ setModalShown, modalShown, setModalOpen }) => {
           </div>
         </div>
         <div className={classes.chatInput}>
-          <input type="text" placeholder="כתוב הודעה..." />
+        <IconButton
+                onClick={sendMessageHandler}
+                aria-label="send message"
+                sx={{
+                  backgroundColor: "#646cff",
+                  color: "#fff",
+                  ":hover": { backgroundColor: "#464cc2" },
+                  width: "45px"
+                }}
+              >
+                <SendIcon />
+              </IconButton>
+          <input type="text" placeholder="כתוב הודעה..." value={messageValue} onChange={typeMessage} />
         </div>
       </div>
     </Modal>

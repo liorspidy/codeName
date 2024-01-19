@@ -24,7 +24,7 @@ const Board = (props) => {
   const [cards, setCards] = useState([]);
   const [currentCard, setCurrentCard] = useState(null);
   const [wordLocked, setWordLocked] = useState(false);
-  const [role, setRole] = useState("operator"); // "operator" or "agent"
+  const [role, setRole] = useState("agent"); // "operator" or "agent"
   const [leadGroupColor, setLeadGroupColor] = useState("red");
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
   const [redGroupCounter, setRedGroupCounter] = useState(
