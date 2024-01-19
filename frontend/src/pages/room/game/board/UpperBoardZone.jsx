@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import classes from "./Board.module.scss";
 import { motion } from "framer-motion";
 import minimapButton from "../../../../images/minimapPurple.svg";
@@ -17,10 +17,9 @@ const UpperBoardZone = (props) => {
     timeIsRunningOut,
     cards,
     currentCard,
-    restartClock
+    restartClock,
+    role
   } = props;
-
-  const [role, setRole] = useState("operator"); // "operator" or "agent"
 
   const minimapHandler = () => {
     if (role !== "agent") {

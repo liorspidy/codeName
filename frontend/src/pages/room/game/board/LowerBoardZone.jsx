@@ -3,6 +3,8 @@ import classes from "./Board.module.scss";
 import { motion } from "framer-motion";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+import { useState } from "react";
+import OperatorsModal from "../../../../components/OperatorsModal";
 
 const LowerBoardZone = (props) => {
   const {
@@ -12,8 +14,12 @@ const LowerBoardZone = (props) => {
     wordLocked,
     setWordLocked,
     setTimerStarts,
-    restartClock
+    restartClock,
+    role,
   } = props;
+
+  const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const lockWordHandler = () => {
     if (currentCard !== null) {
@@ -28,8 +34,20 @@ const LowerBoardZone = (props) => {
     }
   };
 
+  const openOperatorsModalHandler = () => {
+    setModalOpen(!modalOpen);
+    setOpenOperatorsModal(!opanOperatorsModal);
+  };
+
   return (
     <div className={classes.lowerBoardZone}>
+      {modalOpen && (
+        <OperatorsModal
+          setModalOpen={setModalOpen}
+          setModalShown={setOpenOperatorsModal}
+          modalShown={opanOperatorsModal}
+        />
+      )}
       <div className={classes.scoreTable}>
         <div className={`${classes.group} ${classes.red}`}>
           <div className={classes.cardsLeft}>{redGroupCounter}</div>
@@ -38,21 +56,34 @@ const LowerBoardZone = (props) => {
           <div className={classes.cardsLeft}>{blueGroupCounter}</div>
         </div>
       </div>
-      <div className={classes.actionButtons}>
-        <motion.button
-          className={classes.lockWord}
-          onClick={lockWordHandler}
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-        >
-          <span className={classes.icon}>
-            {wordLocked ? <LockIcon /> : <LockOpenOutlinedIcon />}
-          </span>
-          <span className={classes.content}>
-            {wordLocked ? "בטל בחירה" : "נעל בחירה"}
-          </span>
-        </motion.button>
-      </div>
+      {role === "agent" && (
+        <div className={classes.actionButtons}>
+          <motion.button
+            className={classes.lockWord}
+            onClick={lockWordHandler}
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }}
+          >
+            <span className={classes.icon}>
+              {wordLocked ? <LockIcon /> : <LockOpenOutlinedIcon />}
+            </span>
+            <span className={classes.content}>
+              {wordLocked ? "בטל בחירה" : "נעל בחירה"}
+            </span>
+          </motion.button>
+        </div>
+      )}
+      {role === "operator" && (
+        <div className={classes.actionButtons}>
+          <motion.button
+            onClick={openOperatorsModalHandler}
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }}
+          >
+            <span className={classes.content}>הפעל סוכנים</span>
+          </motion.button>
+        </div>
+      )}
     </div>
   );
 };

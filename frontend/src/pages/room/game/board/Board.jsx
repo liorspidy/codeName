@@ -24,6 +24,7 @@ const Board = (props) => {
   const [cards, setCards] = useState([]);
   const [currentCard, setCurrentCard] = useState(null);
   const [wordLocked, setWordLocked] = useState(false);
+  const [role, setRole] = useState("operator"); // "operator" or "agent"
   const [leadGroupColor, setLeadGroupColor] = useState("red");
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
   const [redGroupCounter, setRedGroupCounter] = useState(
@@ -62,7 +63,6 @@ const Board = (props) => {
     setTimer(30);
   };
 
-
   return (
     <div
       className={
@@ -91,6 +91,7 @@ const Board = (props) => {
         cards={cards}
         currentCard={currentCard}
         restartClock={restartClock}
+        role={role}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -100,6 +101,7 @@ const Board = (props) => {
         setWordLocked={setWordLocked}
         setTimerStarts={setTimerStarts}
         restartClock={restartClock}
+        role={role}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

@@ -12,7 +12,6 @@ const InfoModal = ({ setModalShown, modalShown, setModalOpen }) => {
     const backdrop = document.querySelector(
       `.${classes.backdrop}.${classes.active}`
     );
-    console.log(modal, backdrop);
 
     if (modal) {
       modal.addEventListener(
