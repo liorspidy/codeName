@@ -16,6 +16,8 @@ const LowerBoardZone = (props) => {
     setTimerStarts,
     restartClock,
     role,
+    setCurrentOperatorsWordCount,
+    setCurrentOperatorsWord
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -46,6 +48,8 @@ const LowerBoardZone = (props) => {
           setModalOpen={setModalOpen}
           setModalShown={setOpenOperatorsModal}
           modalShown={opanOperatorsModal}
+          setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
+          setCurrentOperatorsWord={setCurrentOperatorsWord}
         />
       )}
       <div className={classes.scoreTable}>

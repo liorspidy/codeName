@@ -23,6 +23,8 @@ const Board = (props) => {
   const [showMinimap, setShowMinimap] = useState(false);
   const [cards, setCards] = useState([]);
   const [currentCard, setCurrentCard] = useState(null);
+  const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
+  const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
   const [wordLocked, setWordLocked] = useState(false);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
   const [leadGroupColor, setLeadGroupColor] = useState("red");
@@ -58,7 +60,6 @@ const Board = (props) => {
 
   const restartClock = () => {
     setTimerStarts(false);
-    setTimeRanOut(false);
     setTimeIsRunningOut(false);
     setTimer(30);
   };
@@ -83,15 +84,20 @@ const Board = (props) => {
         timerStarts={timerStarts}
         setTimer={setTimer}
         setTimeIsRunningOut={setTimeIsRunningOut}
+        timeIsRunningOut={timeIsRunningOut}
+        setTimeRanOut={setTimeRanOut}
+        restartClock={restartClock}
         setWordLocked={setWordLocked}
         leadGroupColor={leadGroupColor}
         currentGroupColor={currentGroupColor}
         setCurrentGroupColor={setCurrentGroupColor}
-        timeIsRunningOut={timeIsRunningOut}
         cards={cards}
         currentCard={currentCard}
-        restartClock={restartClock}
         role={role}
+        currentOperatorsWord={currentOperatorsWord}
+        currentOperatorsWordCount={currentOperatorsWordCount}
+        setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
+        setCurrentOperatorsWord={setCurrentOperatorsWord}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -102,6 +108,8 @@ const Board = (props) => {
         setTimerStarts={setTimerStarts}
         restartClock={restartClock}
         role={role}
+        setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
+        setCurrentOperatorsWord={setCurrentOperatorsWord}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

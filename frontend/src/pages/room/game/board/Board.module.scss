@@ -24,7 +24,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 8vh;
+      height: 9dvh;
       width: 100%;
 
       &.red{
@@ -69,9 +69,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 1.5vw;
+        gap: 1.5dvw;
         flex: 2;
         height: 100%;
+
+        &.hide{
+          visibility: hidden;
+        }
 
         .currentAgentWord,
         .currentAgentNumber {
@@ -82,7 +86,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 1.5vw;
+          gap: 1.5dvw;
         }
 
         .currentAgentWord {
@@ -109,12 +113,12 @@
         .innerContainer {
           border-radius: 50%;
           background-color: white;
-          height: 75%;
-          aspect-ratio: 1/1;
+          height: 13dvw;
+          width: 13dvw;
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 3vw;
+          padding: 3dvw;
           border: 5px solid #646cff;
           box-shadow: 0 0 3px white;
 
@@ -129,7 +133,7 @@
           .timeLeft {
             font-family: "Heebo", sans-serif;
             font-weight: bold;
-            font-size: 6.5vw;
+            font-size: 6dvw;
             color: black;
           }
         }
@@ -140,17 +144,17 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 5px;
-      padding: 3vw;
-      padding-top: 6vw;
+      padding: 3dvw;
+      padding-top: 6dvw;
       max-width: 900px;
       position: relative;
       z-index: 10;
       align-self: normal;
 
       .currentWord {
-        font-size: 8vw;
+        font-size: 8dvw;
         text-align: center;
-        margin-block: 1.5vh;
+        margin-block: 1.5dvh;
       }
 
       .card {
@@ -165,7 +169,7 @@
 
         &.picked {
           outline: 2px solid rgb(131, 195, 255);
-          border-radius: 1vw;
+          border-radius: 1dvw;
           scale: 1;
           box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
         }
@@ -175,13 +179,13 @@
           max-width: 250px;
           background-color: rgb(243, 220, 193);
           border: 1px solid rgb(190, 190, 190);
-          border-radius: 1vw;
+          border-radius: 1dvw;
           box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
           display: grid;
           grid-template-rows: repeat(2, 1fr);
 
           .word {
-            font-size: 2.4vw;
+            font-size: 2.4dvw;
             font-weight: bold;
             text-align: center;
             color: black;
@@ -200,7 +204,7 @@
               display: block;
               position: absolute;
               z-index: 1;
-              top: -4vw;
+              top: -4dvw;
               color: #6a6a6adb;
               transform: rotateZ(180deg);
               text-align: right;
@@ -252,8 +256,8 @@
     }
 
     .currentCardContainer {
-      min-width: 35vw;
-      min-height: 13.8vw;
+      min-width: 35dvw;
+      min-height: 13.8dvw;
       margin: 1rem auto;
       border-radius: 1rem;
       border: 2px solid #646cff;
@@ -273,8 +277,8 @@
 
       .currentCard {
         text-align: center;
-        font-size: 5vw;
-        margin-block: 1vh;
+        font-size: 5dvw;
+        margin-block: 1dvh;
         font-weight: bold;
         font-family: "Heebo", sans-serif;
       }
@@ -286,12 +290,12 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    margin-block: 2vh;
-    margin-bottom: 8rem;
+    margin-block: 2dvh;
+    margin-bottom: 3rem;
 
     .scoreTable {
       width: 100%;
-      height: 6vh;
+      height: 6dvh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -314,13 +318,13 @@
         }
 
         .cardsLeft{
-          font-size: 6vw;
+          font-size: 6dvw;
           font-weight: bold;
           font-family: "Heebo", sans-serif;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 1.5vw;
+          gap: 1.5dvw;
           color: white;
         }
       }
@@ -339,7 +343,7 @@
       }
 
       .lockWord {
-        gap: 1vw;
+        gap: 1dvw;
       }
     }
   }
@@ -359,7 +363,7 @@
   .board {
     .cardContent {
       .word {
-        font-size: 1.75vw;
+        font-size: 1.75dvw;
       }
     }
   }

@@ -7,10 +7,18 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import IconButton from "@mui/material/IconButton";
 
-const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
+const OperatorsModal = (props) => {
+  const {
+    setModalShown,
+    modalShown,
+    setModalOpen,
+    setCurrentOperatorsWordCount,
+    setCurrentOperatorsWord,
+  } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
   const [wordValue, setWordValue] = useState("");
+
   const [error, setError] = useState("");
 
   const closeBackdrop = useCallback(() => {
@@ -58,6 +66,8 @@ const OperatorsModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const submitWordHandler = () => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
+      setCurrentOperatorsWordCount(wordsCountValue);
+      setCurrentOperatorsWord(wordValue);
       closeBackdrop();
     } else {
       setError("אחד או יותר מהשדות לא מולאו כראוי");

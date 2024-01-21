@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 30vw;
+  gap: 30dvw;
   background: radial-gradient(
     circle,
     rgba(241, 211, 1, 1) 0%,
@@ -12,7 +12,7 @@
     #660332 88%,
     rgba(80, 1, 30, 1) 100%
   );
-  min-height: 100vh;
+  min-height: 100dvh;
 
   .circles {
     position: absolute;
@@ -67,14 +67,14 @@
   }
 
   .title {
-    width: 64vw;
+    width: 64dvw;
     z-index: 1;
 
     h1 {
       display: block;
       width: 100%;
       margin: 0 auto;
-      font-size: 27vw;
+      font-size: 27dvw;
       line-height: 0.75;
       animation: wave 3s ease-in-out infinite;
 
@@ -136,13 +136,13 @@
 @media (min-width: 768px) {
   .main {
     overflow: hidden;
-    gap: 10vw;
+    gap: 10dvw;
 
     .title {
-      width: 60vw;
+      width: 60dvw;
 
       h1 {
-        font-size: 25vw;
+        font-size: 25dvw;
       }
     }
   }
@@ -151,7 +151,7 @@
 @media (min-width: 1024px) {
   .main {
     overflow: hidden;
-    gap: 10vw;
+    gap: 10dvw;
 
     .action_buttons {
       width: 20%;
@@ -159,10 +159,10 @@
     }
 
     .title {
-      width: 26vw;
+      width: 26dvw;
 
       h1 {
-        font-size: 12vw;
+        font-size: 12dvw;
       }
     }
   }

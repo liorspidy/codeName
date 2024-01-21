@@ -3,13 +3,13 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    height: 100vh;
+    height: 100dvh;
     .title{
         font-size: 4rem;
         font-weight: 700;
         margin: 0;
         color: white;
-        padding-top: 20vh;
+        padding-top: 20dvh;
         text-align: center;
     }
 
@@ -24,11 +24,11 @@
 
     .image{
         margin: 0 auto;
-        width: 75vw;
+        width: 75dvw;
+        height: 75dvw;
         max-width: 400px;
         border-radius: 20%;
         overflow: hidden;
-        aspect-ratio: 1/1;
         margin-bottom: 6rem;
         filter: drop-shadow(0 2px 20px rgba(255, 255, 255, 0.188));
     

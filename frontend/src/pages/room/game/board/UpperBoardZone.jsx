@@ -1,8 +1,11 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import classes from "./Board.module.scss";
 import { motion } from "framer-motion";
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import IconButton from "@mui/material/IconButton";
 import minimapButton from "../../../../images/minimapPurple.svg";
+import ReportWordModal from "../../../../components/ReportWordModal";
 
 const UpperBoardZone = (props) => {
   const {
@@ -15,11 +18,19 @@ const UpperBoardZone = (props) => {
     setWordLocked,
     setShowMinimap,
     timeIsRunningOut,
+    setTimeRanOut,
     cards,
     currentCard,
     restartClock,
-    role
+    role,
+    currentOperatorsWordCount,
+    currentOperatorsWord,
+    setCurrentOperatorsWord,
+    setCurrentOperatorsWordCount
   } = props;
+
+  const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const minimapHandler = () => {
     if (role !== "agent") {
@@ -34,7 +45,7 @@ const UpperBoardZone = (props) => {
     } else {
       setCurrentGroupColor("red");
     }
-  }
+  };
 
   useEffect(() => {
     if (timerStarts) {
@@ -47,7 +58,10 @@ const UpperBoardZone = (props) => {
           if (prevTimer === 1) {
             clearInterval(interval);
             restartClock();
-            switchColorGroup();
+            setTimeRanOut(true);
+            setCurrentOperatorsWord("");
+            setCurrentOperatorsWordCount(0);
+            switchColorGroup();            
             return 0;
           }
           return prevTimer - 1;
@@ -58,10 +72,22 @@ const UpperBoardZone = (props) => {
     }
   }, [timerStarts]);
 
-
+  const reportWordHandler = () => {
+    if (currentOperatorsWord !== "") {
+      setModalOpen(!modalOpen);
+      setReportWordModalOpen(!reportWordModalOpen);
+    }
+  };
 
   return (
     <div className={classes.upperBoardZone}>
+      {modalOpen && (
+        <ReportWordModal
+          setModalOpen={setModalOpen}
+          setModalShown={setReportWordModalOpen}
+          modalShown={reportWordModalOpen}
+        />
+      )}
       <div
         className={
           currentGroupColor === "red"
@@ -81,9 +107,29 @@ const UpperBoardZone = (props) => {
         >
           <img src={minimapButton} alt="minimap" />
         </motion.div>
-        <div className={classes.currentAgentWordContainer}>
-          <p className={classes.currentAgentWord}>בית ספר</p>
-          <p className={classes.currentAgentNumber}>2</p>
+        <div
+          className={`${classes.currentAgentWordContainer} ${
+            currentOperatorsWord === "" && currentOperatorsWordCount === 0
+              ? classes.hide
+              : ""
+          }`}
+        >
+          <IconButton
+            onClick={reportWordHandler}
+            aria-label="go back"
+            sx={{
+              backgroundColor: "orange",
+              color: "white",
+              ":hover": { backgroundColor: "#c1861b" },
+              scale: "0.75"
+            }}
+          >
+            <ReportProblemOutlinedIcon />
+          </IconButton>
+          <p className={classes.currentAgentWord}>{currentOperatorsWord}</p>
+          <p className={classes.currentAgentNumber}>
+            {currentOperatorsWordCount}
+          </p>
         </div>
         <div
           className={`${classes.timer} ${timerStarts ? classes.starts : ""}`}
