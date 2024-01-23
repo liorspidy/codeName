@@ -1,3 +1,4 @@
+
 header{
     display: flex;
     justify-content: space-between;
@@ -25,5 +26,23 @@ header{
 
     .leftSection {
         justify-content: flex-end;
+    }
+
+    .chatButton{
+        position: relative;
+        &.hasNotif{
+            &::after{
+                content: var(--notifCount);
+                position: absolute;
+                width: 1.5rem;
+                height: 1.5rem;
+                background-color: #ff6464;
+                border-radius: 50%;
+                bottom: 0rem;
+                right: -1rem;
+                z-index: 100;
+                color: white;
+            }
+        }
     }
 }

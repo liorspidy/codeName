@@ -17,6 +17,7 @@ const Header = () => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [notificationsNumber, setNotificationsNumber] = useState(1);
 
   let navigate = useNavigate();
 
@@ -81,17 +82,24 @@ const Header = () => {
         <h1 className={classes.roomId}>{roomId}</h1>
       </div>
       <div className={classes.leftSection}>
-        <IconButton
-          onClick={chatHandler}
-          aria-label="go back"
-          sx={{
-            backgroundColor: "#646cff",
-            color: "#fff",
-            ":hover": { backgroundColor: "#464cc2" },
-          }}
+        <div
+          className={`${classes.chatButton} ${
+            notificationsNumber > 0 ? classes.hasNotif : ""
+          }`}
+          style={{ "--notifCount": toString(notificationsNumber) }}
         >
-          <ChatIcon className={classes.chatIcon} sx={{ scale: "0.9" }} />
-        </IconButton>
+          <IconButton
+            onClick={chatHandler}
+            aria-label="go back"
+            sx={{
+              backgroundColor: "#646cff",
+              color: "#fff",
+              ":hover": { backgroundColor: "#464cc2" },
+            }}
+          >
+            <ChatIcon className={classes.chatIcon} sx={{ scale: "0.9" }} />
+          </IconButton>
+        </div>
         <Menu />
       </div>
     </header>

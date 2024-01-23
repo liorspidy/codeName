@@ -26,7 +26,7 @@ const Board = (props) => {
   const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
   const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
   const [wordLocked, setWordLocked] = useState(false);
-  const [role, setRole] = useState("agent"); // "operator" or "agent"
+  const [role, setRole] = useState("operator"); // "operator" or "agent"
   const [leadGroupColor, setLeadGroupColor] = useState("red");
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
   const [redGroupCounter, setRedGroupCounter] = useState(

@@ -2,7 +2,7 @@ import classes from "./Waiting.module.scss";
 import SyncAltRoundedIcon from "@mui/icons-material/SyncAltRounded";
 import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import TeamBuilder from "./TeamBuilder";

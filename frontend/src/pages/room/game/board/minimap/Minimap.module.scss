@@ -86,7 +86,6 @@
             &::after {
               content: "X";
               width: calc(2.5dvw / var(--ratio));
-              height: calc(2.5dvw / var(--ratio));
               filter: drop-shadow(0 0 5px rgb(255, 255, 255));
               color: black;
               font-weight: bold;

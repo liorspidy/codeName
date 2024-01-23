@@ -95,6 +95,40 @@
           }
         }
       }
+      .currentAgentWordContainerWaiting {
+        .title {
+          font-size: 1.8rem;
+          margin: 0;
+        
+          .waiting2 {
+            animation: wait2 1s step-end infinite;
+          }
+        
+          .waiting3 {
+            animation: wait3 1s step-end infinite;
+          }
+        
+          @keyframes wait2 {
+            0% {
+              opacity: 0;
+            }
+            30%,
+            100% {
+              opacity: 1;
+            }
+          }
+        
+          @keyframes wait3 {
+            0% {
+              opacity: 0;
+            }
+            60%,
+            100% {
+              opacity: 1;
+            }
+          }
+        }
+      }
 
       .timer {
         z-index: 10;

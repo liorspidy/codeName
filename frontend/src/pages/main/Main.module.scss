@@ -131,6 +131,18 @@
       outline: 4px auto -webkit-focus-ring-color;
     }
   }
+
+  .usersActions{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    button {
+      width: 100%;
+    }
+  }
 }
 
 @media (min-width: 768px) {

@@ -18,6 +18,7 @@ const UpperBoardZone = (props) => {
     setWordLocked,
     setShowMinimap,
     timeIsRunningOut,
+    timeRanOut,
     setTimeRanOut,
     cards,
     currentCard,
