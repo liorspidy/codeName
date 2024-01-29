@@ -15,9 +15,11 @@ const Game = () => {
   const [timerStarts, setTimerStarts] = useState(false);
   const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
   const [timeRanOut, setTimeRanOut] = useState(true);
-  const [leadGroupColor, setLeadGroupColor] = useState("red");
   const [roomDetails, setRoomDetails] = useState(null);
   const [myDetails, setMyDetails] = useState(null);
+  const [currentGroupColor, setCurrentGroupColor] = useState("red");
+  const [leadGroupColor, setLeadGroupColor] = useState("red");
+
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
@@ -91,8 +93,17 @@ const Game = () => {
         );
 
         const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
-        setLeadGroupColor(randomLeadGroupColor);
-        setCardsAndTurnInDb(room, uniqueRandomWords, randomLeadGroupColor);
+        if(room.turn !== "" ){
+          setLeadGroupColor(room.turn);
+          setCurrentGroupColor(room.turn);
+        }else{
+          setLeadGroupColor(randomLeadGroupColor);
+          setCurrentGroupColor(randomLeadGroupColor);
+        }
+
+        const leadColorToPass = room.turn !== "" ? room.turn : randomLeadGroupColor;
+
+        setCardsAndTurnInDb(room, uniqueRandomWords, leadColorToPass);
 
         const myName = playerDetails.name;
         const myTeam = room.blueTeam.includes(playerDetails.name)
@@ -112,7 +123,7 @@ const Game = () => {
           team: myTeam,
           role: myRole,
         };
-        setMyDetails(fullPlayerDetails);
+        setMyDetails(fullPlayerDetails);        
       })
       .catch((err) => {
         console.log(err);
@@ -136,6 +147,8 @@ const Game = () => {
         leadGroupColor={leadGroupColor}
         roomDetails={roomDetails}
         myDetails={myDetails}
+        setCurrentGroupColor={setCurrentGroupColor}
+        currentGroupColor={currentGroupColor}
       />
     </div>
   );

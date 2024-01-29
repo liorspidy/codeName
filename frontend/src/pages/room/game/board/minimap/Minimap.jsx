@@ -12,9 +12,9 @@ const Minimap = ({
   roomDetails,
 }) => {
   const [minimap, setMinimap] = useState([]);
+  const { roomId } = useParams();
   const minimapMappingArray =
     leadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
-  const { roomId } = useParams();
 
   const setMinimapInDb = async (minimapToPass) => {
     try {
@@ -22,7 +22,6 @@ const Minimap = ({
         roomId,
         map: minimapToPass,
       });
-      console.log("minimap set in db");
     } catch (err) {
       console.log(err);
     }
@@ -33,7 +32,7 @@ const Minimap = ({
       if (roomDetails.map.length === 25) {
         const mappedMinimap = roomDetails.map.map((cell, index) => (
           <div
-            className={`${cell.props.className}`}
+            className={cell.props.className}
             style={{ backgroundColor: cell.props.style.backgroundColor }}
             key={index}
           >
@@ -43,7 +42,6 @@ const Minimap = ({
   
         setMinimap(mappedMinimap);
       } else {
-        console.log("minimap not full");
         const tempMinimap = Array(25)
           .fill()
           .map((_, index) => {

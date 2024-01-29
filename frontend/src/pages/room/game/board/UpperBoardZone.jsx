@@ -27,7 +27,8 @@ const UpperBoardZone = (props) => {
     currentOperatorsWordCount,
     currentOperatorsWord,
     setCurrentOperatorsWord,
-    setCurrentOperatorsWordCount
+    setCurrentOperatorsWordCount,
+    myDetails
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
@@ -73,6 +74,7 @@ const UpperBoardZone = (props) => {
     }
   }, [timerStarts]);
 
+
   const reportWordHandler = () => {
     if (currentOperatorsWord !== "") {
       setModalOpen(!modalOpen);
@@ -91,7 +93,7 @@ const UpperBoardZone = (props) => {
       )}
       <div
         className={
-          currentGroupColor === "red"
+          myDetails?.team === "red"
             ? `${classes.upperHUD} ${classes.red}`
             : `${classes.upperHUD} ${classes.blue}`
         }

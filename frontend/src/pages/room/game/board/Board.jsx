@@ -6,7 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import UpperBoardZone from "./UpperBoardZone";
 import LowerBoardZone from "./LowerBoardZone";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const Board = (props) => {
   const {
@@ -21,7 +21,9 @@ const Board = (props) => {
     setTimeRanOut,
     leadGroupColor,
     roomDetails,
-    myDetails
+    myDetails,
+    currentGroupColor,
+    setCurrentGroupColor,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -31,7 +33,7 @@ const Board = (props) => {
   const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
   const [wordLocked, setWordLocked] = useState(false);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
-  const [currentGroupColor, setCurrentGroupColor] = useState("red");
+
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
   );
@@ -68,10 +70,10 @@ const Board = (props) => {
   };
 
   useEffect(() => {
-    if(myDetails){
+    if (myDetails) {
       setRole(myDetails.role);
     }
-  },[myDetails])
+  }, [myDetails]);
 
   return (
     <div
@@ -108,6 +110,7 @@ const Board = (props) => {
         currentOperatorsWordCount={currentOperatorsWordCount}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         setCurrentOperatorsWord={setCurrentOperatorsWord}
+        myDetails={myDetails}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -121,6 +124,7 @@ const Board = (props) => {
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         setCurrentOperatorsWord={setCurrentOperatorsWord}
         currentGroupColor={currentGroupColor}
+        myDetails={myDetails}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

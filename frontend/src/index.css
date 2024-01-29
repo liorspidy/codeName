@@ -45,6 +45,7 @@ button {
   z-index: 50;
   position: relative;
   color: white;
+  transition: all 0.2s ease-in-out;
 }
 button:hover {
   border-color: #646cff;
@@ -52,6 +53,10 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 a {

@@ -19,6 +19,7 @@ const LowerBoardZone = (props) => {
     setCurrentOperatorsWordCount,
     setCurrentOperatorsWord,
     currentGroupColor,
+    myDetails
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -83,7 +84,7 @@ const LowerBoardZone = (props) => {
       )}
       {role === "operator" && (
         <div className={classes.actionButtons}>
-          <Button onclick={openOperatorsModalHandler}>
+          <Button onclick={openOperatorsModalHandler} disabled={myDetails?.team !== currentGroupColor}>
             <span className={classes.content}>הפעל סוכנים</span>
           </Button>
         </div>
