@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import classes from "./Board.module.scss";
-import { motion } from "framer-motion";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import { useState } from "react";
-import OperatorsModal from "../../../../components/OperatorsModal";
+import OperatorsModal from "../../../../UI/modals/OperatorsModal";
+import Button from "../../../../UI/button/Button";
 
 const LowerBoardZone = (props) => {
   const {
@@ -17,7 +17,8 @@ const LowerBoardZone = (props) => {
     restartClock,
     role,
     setCurrentOperatorsWordCount,
-    setCurrentOperatorsWord
+    setCurrentOperatorsWord,
+    currentGroupColor,
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -53,39 +54,38 @@ const LowerBoardZone = (props) => {
         />
       )}
       <div className={classes.scoreTable}>
-        <div className={`${classes.group} ${classes.red}`}>
+        <div
+          className={`${classes.group} ${classes.red} ${
+            currentGroupColor === "red" ? classes.glow : ""
+          }`}
+        >
           <div className={classes.cardsLeft}>{redGroupCounter}</div>
         </div>
-        <div className={`${classes.group} ${classes.blue}`}>
+        <div
+          className={`${classes.group} ${classes.blue} ${
+            currentGroupColor === "blue" ? classes.glow : ""
+          }`}
+        >
           <div className={classes.cardsLeft}>{blueGroupCounter}</div>
         </div>
       </div>
       {role === "agent" && (
         <div className={classes.actionButtons}>
-          <motion.button
-            className={classes.lockWord}
-            onClick={lockWordHandler}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
+          <Button classname={classes.lockWord} onclick={lockWordHandler}>
             <span className={classes.icon}>
               {wordLocked ? <LockIcon /> : <LockOpenOutlinedIcon />}
             </span>
             <span className={classes.content}>
               {wordLocked ? "בטל בחירה" : "נעל בחירה"}
             </span>
-          </motion.button>
+          </Button>
         </div>
       )}
       {role === "operator" && (
         <div className={classes.actionButtons}>
-          <motion.button
-            onClick={openOperatorsModalHandler}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
+          <Button onclick={openOperatorsModalHandler}>
             <span className={classes.content}>הפעל סוכנים</span>
-          </motion.button>
+          </Button>
         </div>
       )}
     </div>

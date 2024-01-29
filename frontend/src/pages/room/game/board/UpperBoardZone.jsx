@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 import IconButton from "@mui/material/IconButton";
 import minimapButton from "../../../../images/minimapPurple.svg";
-import ReportWordModal from "../../../../components/ReportWordModal";
+import ReportWordModal from "../../../../UI/modals/ReportWordModal";
 
 const UpperBoardZone = (props) => {
   const {

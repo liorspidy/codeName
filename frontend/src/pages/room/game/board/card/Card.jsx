@@ -37,10 +37,10 @@ const Card = ({ word, index, wordLocked, setCurrentCard, currentCard }) => {
 
     if (isPressed) {
       pressTimer = setTimeout(() => {
-        setIsPressed(false);
-        console.log("long press activated");
         setShowCardInfo(true);
-      }, 2000);
+      }, 1000);
+    }else{
+      setShowCardInfo(false);
     }
 
     return () => {

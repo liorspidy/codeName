@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Modal from "../UI/Modal";
+import Modal from "./Modal";
 import { useCallback } from "react";
-import classes from "../UI/Modal.module.scss";
+import classes from "./Modal.module.scss";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import IconButton from "@mui/material/IconButton";

@@ -4,13 +4,13 @@ import classes from "./Header.module.scss";
 import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import InfoIcon from "@mui/icons-material/Info";
-// import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import ChatIcon from "@mui/icons-material/Chat";
 import Menu from "./menu/Menu";
-import { useState } from "react";
-import InfoModal from "./InfoModal";
-import ChatModal from "./ChatModal";
+import { useEffect, useState } from "react";
+import InfoModal from "../../UI/modals/InfoModal";
+import ChatModal from "../../UI/modals/ChatModal";
+import axios from 'axios';
 
 const Header = () => {
   const { roomId } = useParams();
@@ -18,11 +18,12 @@ const Header = () => {
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [notificationsNumber, setNotificationsNumber] = useState(1);
+  const [roomName, setRoomName] = useState("");
 
   let navigate = useNavigate();
 
   const goBackHandler = () => {
-    navigate("/");
+    navigate(-1);
   };
 
   const infoHandler = () => {
@@ -34,6 +35,26 @@ const Header = () => {
     setModalOpen(!modalOpen);
     setOpenChat(!openChat);
   };
+
+  const getRoomDetails = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/room/${roomId}/getRoom`
+      );
+      setRoomName(response.data.name);
+    }
+    catch (error) {
+      if (error.response) {
+        if (error.response.status === 404) {
+          navigate("/404");
+        }
+      }
+    }
+  }
+
+  useEffect(()=> {
+    getRoomDetails();
+  },[])
 
   return (
     <header>
@@ -79,7 +100,8 @@ const Header = () => {
         {/* </Toolbar> */}
       </div>
       <div className={classes.middleSection}>
-        <h1 className={classes.roomId}>{roomId}</h1>
+        <h1 className={classes.roomName}>{roomName}</h1>
+        <p className={classes.roomId}>{roomId}</p>
       </div>
       <div className={classes.leftSection}>
         <div

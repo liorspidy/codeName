@@ -25,11 +25,17 @@ function App() {
         <>
           <Route path="/room" element={<NotFound />} />
           <Route path="/room/:roomId" element={<Room />} />
-          <Route path="/room/:roomId/:token/game" element={<Game />} />
+          <Route path="/room/:roomId/game" element={<Game />} />
         </>
       ) : (
         <Route path="*" element={<Navigate to="/" replace />} />
       )}
+        {/* <>
+          <Route path="/room" element={<NotFound />} />
+          <Route path="/room/:roomId" element={<Room />} />
+          <Route path="/room/:roomId/:token/game" element={<Game />} />
+        </> */}
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

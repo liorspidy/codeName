@@ -11,6 +11,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import classes from "./Menu.module.scss";
 
 export default function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
@@ -36,12 +37,12 @@ export default function SwipeableTemporaryDrawer() {
 
   const list = (anchor) => (
     <Box
-      sx={{ width: 250 }}
+      sx={{ width: 250 , flex: "1", display: "flex" ,flexDirection: "column"}}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List>
+      <List className={classes.list} sx={{flex: "1"}}>
         {["הגדרות", "עוד משחקים"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
@@ -53,6 +54,7 @@ export default function SwipeableTemporaryDrawer() {
           </ListItem>
         ))}
       </List>
+      <p className={classes.copyrights}>created by Lior Fridman 2024</p>
     </Box>
   );
 

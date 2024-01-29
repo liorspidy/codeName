@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Modal from "../../UI/Modal";
+import Modal from "./Modal";
 import { useCallback } from "react";
-import classes from "../../UI/Modal.module.scss";
+import classes from "./Modal.module.scss";
 
 const InfoModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);

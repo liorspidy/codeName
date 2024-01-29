@@ -90,6 +90,13 @@
     align-items: center;
     gap: 1rem;
   }
+
+  .createRoomModal,.joinRoomModal{
+    input{
+      text-align: center;
+    }
+  }
+
   .logInModal,
   .createUserModal {
     .passwordInputContainer {

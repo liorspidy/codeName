@@ -2,15 +2,17 @@ const mongoose = require('mongoose');
 
 const roomSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
-    name: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    players: { type: Array, required: true },
-    status: { type: String, required: true },
-    turn: { type: String, required: true },
-    winner: { type: String, required: true },
-    cards: { type: Array, required: true },
-    board: { type: Array, required: true },
-    round: { type: Number, required: true },
+    name: { type: String, required: true},
+    createdBy: { type: String, required: true },
+    players: { type: Array,default: [] },
+    redTeam: { type: Array, default: [] },
+    blueTeam: { type: Array, default: [] },
+    status: { type: String, default: "Waiting" },
+    turn: { type: String, default: '' },
+    winner: { type: String, default: ''},
+    cards: { type: Array, default: [] },
+    map: { type: Array, default: [] },
+    round: { type: Number,default: 1 },
 });
 
 module.exports = mongoose.model('Room', roomSchema);

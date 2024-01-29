@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import classes from "./Main.module.scss";
-import CreateRoomModal from "./CreateRoomModal";
-import { useEffect, useState } from "react";
-import JoinRoomModal from "./JoinRoomModal";
+import CreateRoomModal from "../../UI/modals/CreateRoomModal";
+import { useState } from "react";
+import JoinRoomModal from "../../UI/modals/JoinRoomModal";
 import Circles from "./Circles";
-import { motion } from "framer-motion";
-import LogInModal from "./LogInModal";
-import CreateUserModal from "./CreateUserModal";
+import LogInModal from "../../UI/modals/LogInModal";
+import CreateUserModal from "../../UI/modals/CreateUserModal";
+import Button from "../../UI/button/Button";
 
 const Main = ({ logedInPlayer, setLogedInPlayer }) => {
   const [createRoomModalShown, setCreateRoomModalShown] = useState(false);
@@ -90,49 +90,29 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
       </div>
       {logedInPlayer && (
         <div className={classes.action_buttons}>
-          <motion.button
-            onClick={openCreateRoomModal}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
+          <Button onclick={openCreateRoomModal}>
             <span>צור חדר</span>
-          </motion.button>
-          <motion.button
-            onClick={openJoinRoomModal}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
+          </Button>
+          <Button onclick={openJoinRoomModal}>
             <span>הצטרף לחדר</span>
-          </motion.button>
+          </Button>
         </div>
       )}
       {logedInPlayer && (
         <div className={classes.login_logout}>
-          <motion.button
-            onClick={logOutHandler}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
-            התנתק
-          </motion.button>
+          <Button onclick={logOutHandler}>
+            <span>התנתק</span>
+          </Button>
         </div>
       )}
       {!logedInPlayer && (
         <div className={classes.usersActions}>
-          <motion.button
-            onClick={openLogInModal}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
-            התחבר לחשבון
-          </motion.button>
-          <motion.button
-            onClick={createUserModal}
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-          >
-            הרשמה
-          </motion.button>
+          <Button onclick={openLogInModal}>
+            <span>התחבר לחשבון</span>
+          </Button>
+          <Button onclick={createUserModal}>
+            <span>הרשמה</span>
+          </Button>
         </div>
       )}
     </div>

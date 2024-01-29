@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Modal from "../../UI/Modal";
+import Modal from "./Modal";
 import { useCallback } from "react";
 import SendIcon from '@mui/icons-material/Send';
-import classes from "../../UI/Modal.module.scss";
+import classes from "./Modal.module.scss";
 import IconButton from "@mui/material/IconButton";
 
 const ChatModal = ({ setModalShown, modalShown, setModalOpen }) => {
@@ -109,7 +109,9 @@ const ChatModal = ({ setModalShown, modalShown, setModalOpen }) => {
                   backgroundColor: "#646cff",
                   color: "#fff",
                   ":hover": { backgroundColor: "#464cc2" },
-                  width: "45px"
+                  width: "45px",
+                  height: "45px",
+                  alignSelf: "center",
                 }}
               >
                 <SendIcon />

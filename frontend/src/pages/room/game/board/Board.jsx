@@ -2,10 +2,11 @@
 import classes from "./Board.module.scss";
 import Card from "./card/Card";
 import Minimap from "./minimap/Minimap";
-
+import axios from "axios";
 import { useEffect, useState } from "react";
 import UpperBoardZone from "./UpperBoardZone";
 import LowerBoardZone from "./LowerBoardZone";
+import {useParams} from "react-router-dom";
 
 const Board = (props) => {
   const {
@@ -18,6 +19,9 @@ const Board = (props) => {
     setTimeIsRunningOut,
     timeRanOut,
     setTimeRanOut,
+    leadGroupColor,
+    roomDetails,
+    myDetails
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -26,8 +30,7 @@ const Board = (props) => {
   const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
   const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
   const [wordLocked, setWordLocked] = useState(false);
-  const [role, setRole] = useState("operator"); // "operator" or "agent"
-  const [leadGroupColor, setLeadGroupColor] = useState("red");
+  const [role, setRole] = useState("agent"); // "operator" or "agent"
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
@@ -64,6 +67,12 @@ const Board = (props) => {
     setTimer(30);
   };
 
+  useEffect(() => {
+    if(myDetails){
+      setRole(myDetails.role);
+    }
+  },[myDetails])
+
   return (
     <div
       className={
@@ -77,6 +86,7 @@ const Board = (props) => {
         setShowMinimap={setShowMinimap}
         leadGroupColor={leadGroupColor}
         currentGroupColor={currentGroupColor}
+        roomDetails={roomDetails}
       />
       <UpperBoardZone
         setShowMinimap={setShowMinimap}
@@ -110,6 +120,7 @@ const Board = (props) => {
         role={role}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         setCurrentOperatorsWord={setCurrentOperatorsWord}
+        currentGroupColor={currentGroupColor}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

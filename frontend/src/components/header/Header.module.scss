@@ -5,13 +5,6 @@ header{
     background-color: white;
     padding: 0rem 0.8rem;
 
-    .roomId{
-        color: #646cff;
-        font-size: 1.25rem;
-        font-weight: bold;
-        align-self: center;
-    }
-
     .leftSection , .middleSection , .rightSection{
         display: flex;
         gap: 2dvw;
@@ -22,6 +15,31 @@ header{
 
     .rightSection{
         justify-content: flex-start;
+    }
+
+    .middleSection{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 4px;
+
+        .roomName{
+            font-size: 100%;
+            font-weight: bold;
+            margin-bottom: 0;
+            color: #646cff;
+            margin-top: 0.35rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .roomId{
+            font-size: 0.8rem;
+            margin-top: 0;
+            color: #646cff;
+            margin-bottom: 0.35rem;
+        }
     }
 
     .leftSection {

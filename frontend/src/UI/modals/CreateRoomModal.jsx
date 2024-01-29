@@ -1,20 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import Modal from "../../UI/Modal";
+import Modal from "./Modal";
 import { useCallback } from "react";
-import classes from "../../UI/Modal.module.scss";
+import classes from "./Modal.module.scss";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setRoomId } from "../../store/slices/roomSlice";
-import Loader from "../../UI/Loader";
+import Loader from "../loader/Loader";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [value, setValue] = useState("");
   const [creatingRoom, setCreatingRoom] = useState(false);
-
-  const dispatch = useDispatch();
+  const playerDetails = sessionStorage.getItem("token")
+    ? jwtDecode(sessionStorage.getItem("token"))
+    : null;
   let navigate = useNavigate();
 
   const setValueHandler = (e) => {
@@ -27,18 +29,47 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
     }
   };
 
+  useEffect(() => {
+    setCreatingRoom(false);
+  }, []);
+
   const createRoom = () => {
     if (value.trim() === "") {
-      console.log("empty")
       setError("יש להזין את שם או מספר החדר");
       return;
     } else {
-      // Dispatch action to set room ID in Redux store
-      dispatch(setRoomId(value));
-      //check if this room exists, if not, create it
       setCreatingRoom(true);
     }
   };
+
+  const createRoomInDb = async () => {
+    try {
+      const response = await axios.post("http://localhost:4000/room/create", {
+        name: value,
+        createdBy: playerDetails.name,
+      });
+      closeBackdrop();
+      setCreatingRoom(false);
+      navigate(`/room/${response.data.id}`);
+    } catch (error) {
+      if (error.response) {
+        setCreatingRoom(false);
+        if (error.response.status === 400) {
+          setError("שם החדר כבר קיים במערכת, אנא בחר שם אחר");
+        } else if (error.response.status === 401) {
+          setError("שם החדר לא יכול להיות מעל 20 תווים");
+        } else {
+          setError("ארעה שגיאה בעת יצירת החדר");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (creatingRoom) {
+      createRoomInDb();
+    }
+  }, [createRoomInDb, creatingRoom]);
 
   const closeBackdrop = useCallback(() => {
     const modal = document.querySelector(`.${classes.modal}.${classes.active}`);
@@ -62,21 +93,6 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
     );
   }, [setModalShown, setBackdropShown, setModalOpen]);
 
-  useEffect(() => {
-    setCreatingRoom(false);
-  }, []);
-
-  useEffect(() => {
-    if (creatingRoom) {
-      const timeout = setTimeout(() => {
-        closeBackdrop();
-        setCreatingRoom(false);
-        navigate(`/room/${value}`);
-      }, 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [creatingRoom, closeBackdrop, navigate, value]);
-
   return (
     <Modal
       closeBackdrop={closeBackdrop}
@@ -88,13 +104,13 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
     >
       {!creatingRoom && (
         <div className={classes.createRoomModal}>
-          <h2>הזן את שם או מספר החדר</h2>
+          <h2>הזן את שם החדר</h2>
           <input
             type="text"
             value={value}
             onChange={setValueHandler}
             onKeyDown={handleEnterPress}
-            placeholder="מספר החדר"
+            placeholder="שם החדר"
           />
           {!!error.length && <p className={classes.error}>{error}</p>}
           <button className={classes.actionButton} onClick={createRoom}>

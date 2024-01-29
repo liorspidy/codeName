@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import Modal from "../../UI/Modal";
+import Modal from "./Modal";
 import { useCallback } from "react";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import classes from "../../UI/Modal.module.scss";
-import Loader from "../../UI/Loader";
+import classes from "./Modal.module.scss";
+import Loader from "../loader/Loader";
 import axios from "axios";
 
 const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
@@ -14,11 +14,12 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [error, setError] = useState("");
   const [usernameValue, setUsernameValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-  const [emailValue, setEmailValue] = useState(""); // Add state for email
+  const [emailValue, setEmailValue] = useState("");
+  const [fullNameValue, setFullNameValue] = useState("");
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [passwordType, setPasswordType] = useState(true);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [isEmailValid, setIsEmailValid] = useState(true); // Add state for email validation
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
   const setUsernameValueHandler = (e) => {
     setUsernameValue(e.target.value);
@@ -61,6 +62,10 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
     // Validate the email using a simple regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsEmailValid(emailRegex.test(value));
+  };
+
+  const setFullNameValueHandler = (e) => {
+    setFullNameValue(e.target.value);
   };
 
   const handleEnterPress = (e) => {
@@ -129,6 +134,7 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
         username: usernameValue,
         email: emailValue,
         password: passwordValue,
+        fullName: fullNameValue,
       });
       closeBackdrop();
       setCreatingAccount(false);
@@ -138,7 +144,9 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
         setError("שם המשתמש שנבחר כבר קיים במערכת. אנא בחר שם משתמש אחר.");
       } else if (error.response && error.response.status === 410) {
         setCreatingAccount(false);
-        setError("הדואר האלקטרוני שנבחר כבר קיים במערכת. אנא בחר דואר אלקטרוני אחר.");
+        setError(
+          "הדואר האלקטרוני שנבחר כבר קיים במערכת. אנא בחר דואר אלקטרוני אחר."
+        );
       } else {
         setCreatingAccount(false);
         setError("ארעה שגיאה בעת יצירת החשבון. אנא נסה שוב מאוחר יותר.");
@@ -174,12 +182,12 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
         <div className={classes.createUserModal}>
           <h2>הזן את פרטי ההרשמה</h2>
           <input
-            className={classes.userNameInput}
+            className={classes.fullNameInput}
             type="text"
-            value={usernameValue}
-            onChange={setUsernameValueHandler}
+            value={fullNameValue}
+            onChange={setFullNameValueHandler}
             onKeyDown={handleEnterPress}
-            placeholder="שם משתמש"
+            placeholder="שם מלא"
           />
           <input
             className={classes.emailInput}
@@ -188,6 +196,14 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
             onChange={setEmailValueHandler}
             onKeyDown={handleEnterPress}
             placeholder="כתובת אימייל"
+          />
+          <input
+            className={classes.userNameInput}
+            type="text"
+            value={usernameValue}
+            onChange={setUsernameValueHandler}
+            onKeyDown={handleEnterPress}
+            placeholder="שם משתמש"
           />
           <div className={classes.passwordInputContainer}>
             <input

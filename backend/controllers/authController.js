@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password , fullName} = req.body;
 
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
@@ -25,12 +25,13 @@ const register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      fullName
     });
 
     await newUser.save();
 
     const token = jwt.sign(
-      { name: newUser.username, email: newUser.email },
+      { name: newUser.username, email: newUser.email , fullName: newUser.fullName },
       "your-secret-key",
       {
         expiresIn: "1h",
@@ -50,7 +51,12 @@ const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const user = await User.findOne({ username });
+    // Convert input username to lowercase
+    const lowerCaseUsername = username.toLowerCase();
+
+    // Find user in the database using the lowercase username
+    const user = await User.findOne({ username: lowerCaseUsername });
+
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -61,7 +67,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { name: user.username, email: user.email },
+      { name: user.username, email: user.email, fullName: user.fullName },
       "your-secret-key",
       {
         expiresIn: "1h",

@@ -1,16 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import Modal from "../../UI/Modal";
+import Modal from "./Modal";
 import { useCallback } from "react";
-import classes from "../../UI/Modal.module.scss";
+import classes from "./Modal.module.scss";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../UI/Loader";
+import Loader from "../loader/Loader";
+import axios from "axios";
+import {jwtDecode} from 'jwt-decode';
 
 const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [value, setValue] = useState("");
   const [joiningRoom, setJoiningRoom] = useState(false);
+  const playerDetails = sessionStorage.getItem("token")
+    ? jwtDecode(sessionStorage.getItem("token"))
+    : null;
 
   let navigate = useNavigate();
 
@@ -60,16 +66,30 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
     setJoiningRoom(false);
   }, []);
 
+  const joiningRoomHandler = async () => {
+    try {
+      const response = await axios.post("http://localhost:4000/room/join", {
+        roomId: value,
+        playerName: playerDetails.name,
+      });
+      closeBackdrop();
+      setJoiningRoom(false);
+      navigate(`/room/${value}`);
+    } catch (err) {
+      setJoiningRoom(false);
+      if (err.response.status === 404) {
+        setError("החדר לא קיים");
+      } else if (err.response.status === 405) {
+        setError("החדר מלא");
+      }
+    }
+  };
+
   useEffect(() => {
     if (joiningRoom) {
-      const timeout = setTimeout(() => {
-        closeBackdrop();
-        setJoiningRoom(false);
-        navigate(`/room/${value}`);
-      }, 3000);
-      return () => clearTimeout(timeout);
+      joiningRoomHandler();
     }
-  }, [joiningRoom, closeBackdrop, navigate, value]);
+  }, [joiningRoom, joiningRoomHandler]);
 
   return (
     <Modal
