@@ -11,10 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 const Game = () => {
   const [pickedRandomWords, setPickedRandomWords] = useState([]);
-  const [timer, setTimer] = useState(30);
-  const [timerStarts, setTimerStarts] = useState(false);
-  const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
-  const [timeRanOut, setTimeRanOut] = useState(true);
   const [roomDetails, setRoomDetails] = useState(null);
   const [myDetails, setMyDetails] = useState(null);
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
@@ -136,14 +132,6 @@ const Game = () => {
       <Header />
       <Board
         randomWords={pickedRandomWords}
-        timer={timer}
-        setTimer={setTimer}
-        timerStarts={timerStarts}
-        setTimerStarts={setTimerStarts}
-        timeIsRunningOut={timeIsRunningOut}
-        setTimeIsRunningOut={setTimeIsRunningOut}
-        timeRanOut={timeRanOut}
-        setTimeRanOut={setTimeRanOut}
         leadGroupColor={leadGroupColor}
         roomDetails={roomDetails}
         myDetails={myDetails}

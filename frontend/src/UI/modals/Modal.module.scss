@@ -240,6 +240,40 @@
     }
   }
 
+  .gameOverModal {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+      font-size: 7dvw;
+      margin-top: 0;
+      text-underline-offset: 0.25rem;
+    }
+
+    .winnerIs{
+      margin: 0;
+      font-size: 4dvw;
+    }
+
+    .winnerName {
+      font-size: 8dvw;
+      margin-block: 1rem;
+      font-weight: bold;
+
+      &.red{
+        color: #ec4542;
+      }
+
+      &.blue{
+        color: #008ed5;
+      }
+    }
+
+  }
+
   .chatModal {
     color: black;
     width: 100%;

@@ -72,7 +72,7 @@ const LowerBoardZone = (props) => {
       </div>
       {role === "agent" && (
         <div className={classes.actionButtons}>
-          <Button classname={classes.lockWord} onclick={lockWordHandler}>
+          <Button classname={classes.lockWord} onclick={lockWordHandler} disabled={myDetails?.team !== currentGroupColor}>
             <span className={classes.icon}>
               {wordLocked ? <LockIcon /> : <LockOpenOutlinedIcon />}
             </span>

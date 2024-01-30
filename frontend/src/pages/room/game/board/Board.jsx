@@ -2,23 +2,14 @@
 import classes from "./Board.module.scss";
 import Card from "./card/Card";
 import Minimap from "./minimap/Minimap";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import UpperBoardZone from "./UpperBoardZone";
 import LowerBoardZone from "./LowerBoardZone";
-import { useParams } from "react-router-dom";
+import GameOverModal from "../../../../UI/modals/GameOverModal";
 
 const Board = (props) => {
   const {
     randomWords,
-    timer,
-    setTimer,
-    timerStarts,
-    setTimerStarts,
-    timeIsRunningOut,
-    setTimeIsRunningOut,
-    timeRanOut,
-    setTimeRanOut,
     leadGroupColor,
     roomDetails,
     myDetails,
@@ -32,7 +23,16 @@ const Board = (props) => {
   const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
   const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
   const [wordLocked, setWordLocked] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [winnerGroup, setWinnerGroup] = useState("");
+
+  const [timer, setTimer] = useState(30);
+  const [timerStarts, setTimerStarts] = useState(false);
+  const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
+  const [timeRanOut, setTimeRanOut] = useState(false);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
+  const [modalOpen, setModalOpen] = useState(false);
+  const [openGameOver, setOpenGameOver] = useState(false);
 
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
@@ -50,6 +50,15 @@ const Board = (props) => {
         wordLocked={wordLocked}
         currentCard={currentCard}
         setCurrentCard={setCurrentCard}
+        timeRanOut={timeRanOut}
+        setTimeRanOut={setTimeRanOut}
+        setRedGroupCounter={setRedGroupCounter}
+        setBlueGroupCounter={setBlueGroupCounter}
+        setGameOver={setGameOver}
+        setModalOpen={setModalOpen}
+        setOpenGameOver={setOpenGameOver}
+        setWinnerGroup={setWinnerGroup}
+        myDetails={myDetails}
       />
     ));
 
@@ -75,6 +84,21 @@ const Board = (props) => {
     }
   }, [myDetails]);
 
+  useEffect(() => {
+    if(blueGroupCounter === 0){
+      setModalOpen(true);
+      setOpenGameOver(true);
+      setGameOver(true);
+      setWinnerGroup("blue");
+    }
+    else if(redGroupCounter === 0){
+      setModalOpen(true);
+      setOpenGameOver(true);
+      setGameOver(true);
+      setWinnerGroup("red");
+    }
+  },[blueGroupCounter, redGroupCounter])
+
   return (
     <div
       className={
@@ -83,6 +107,14 @@ const Board = (props) => {
           : classes.gameBoard
       }
     >
+      {modalOpen && gameOver && (
+        <GameOverModal
+          setModalOpen={setModalOpen}
+          setModalShown={setOpenGameOver}
+          modalShown={openGameOver}
+          winnerGroup={winnerGroup}
+        />
+      )}
       <Minimap
         showMinimap={showMinimap}
         setShowMinimap={setShowMinimap}

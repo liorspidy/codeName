@@ -6,6 +6,8 @@ import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined
 import IconButton from "@mui/material/IconButton";
 import minimapButton from "../../../../images/minimapPurple.svg";
 import ReportWordModal from "../../../../UI/modals/ReportWordModal";
+import axios from "axios";
+import {useParams} from "react-router-dom";
 
 const UpperBoardZone = (props) => {
   const {
@@ -18,7 +20,6 @@ const UpperBoardZone = (props) => {
     setWordLocked,
     setShowMinimap,
     timeIsRunningOut,
-    timeRanOut,
     setTimeRanOut,
     cards,
     currentCard,
@@ -33,10 +34,22 @@ const UpperBoardZone = (props) => {
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const { roomId } = useParams();
 
   const minimapHandler = () => {
     if (role !== "agent") {
       setShowMinimap(true);
+    }
+  };
+
+  const setNextTurnInDB = async () => {
+    try{
+      const response = await axios.post("http://localhost:4000/room/{}/nextTurn",{
+        roomId
+      });
+      console.log(response);
+    }catch(err){
+      console.log(err);
     }
   };
 
@@ -47,6 +60,8 @@ const UpperBoardZone = (props) => {
     } else {
       setCurrentGroupColor("red");
     }
+
+    setNextTurnInDB();
   };
 
   useEffect(() => {

@@ -305,21 +305,74 @@ const setTeamPlayers = async (req, res) => {
   }
 };
 
-const setMap = async (req,res) => {
-  try{
+const setMap = async (req, res) => {
+  try {
     const roomId = req.body.roomId;
     const map = req.body.map;
 
     const room = await Room.findOne({ id: roomId }).exec();
-    if(!room){
+    if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
 
     room.map = map;
     await room.save();
     return res.status(200).json(room);
-  }catch(error){
+  } catch (error) {
     console.error("Error setting map:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const checkCard = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const cardIndex = req.body.index;
+
+    const room = await Room.findOne({ id: roomId }).exec();
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    const map = room.map;
+
+    const checkInMap = (colorMap) => {
+      let tempColor = "";
+      colorMap.forEach((color) => {
+        if (map[cardIndex].props.className.includes(color)) {
+          tempColor = color;
+        }
+      });
+      return tempColor;
+    };
+
+    const cardsColor = checkInMap(["red", "blue", "black", "neutral"]);
+    return res.status(200).json({ color: cardsColor });
+  } catch (error) {
+    console.error("Error checking card:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const nextTurn = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+
+    const room = await Room.findOne({ id: roomId }).exec();
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    room.round++;
+    const turn = room.turn;
+    if (turn === "red") {
+      room.turn = "blue";
+    } else if (turn === "blue") {
+      room.turn = "red";
+    }
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error next turn:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -339,5 +392,7 @@ module.exports = {
   setCards,
   setTurn,
   setMap,
-  setTeamPlayers
+  setTeamPlayers,
+  checkCard,
+  nextTurn,
 };

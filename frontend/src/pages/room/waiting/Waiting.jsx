@@ -60,25 +60,37 @@ const Waiting = () => {
   };
 
   const readyButtonHandler = () => {};
+  
+// Switch teams on button click
+const switchTeamsHandler = () => {
+  const tempRedTeamPlayers = [...redTeamPlayers];
+  const tempBlueTeamPlayers = [...blueTeamPlayers];
 
-  // Switch teams on button click
-  const switchTeamsHandler = () => {
-    const tempRedTeamPlayers = [...redTeamPlayers];
-    const tempBlueTeamPlayers = [...blueTeamPlayers];
+  if (redTeamPlayers.includes(playerDetails.name)) {
+    const playerIndex = redTeamPlayers.indexOf(playerDetails.name);
 
-    if (redTeamPlayers.includes(playerDetails.name)) {
-      const playerIndex = redTeamPlayers.indexOf(playerDetails.name);
+    // Check if there are other players in the red team before switching
+    if (tempRedTeamPlayers.length > 1) {
       tempRedTeamPlayers.splice(playerIndex, 1);
       tempBlueTeamPlayers.push(playerDetails.name);
-    } else if (blueTeamPlayers.includes(playerDetails.name)) {
-      const playerIndex = blueTeamPlayers.indexOf(playerDetails.name);
+    }
+  } else if (blueTeamPlayers.includes(playerDetails.name)) {
+    const playerIndex = blueTeamPlayers.indexOf(playerDetails.name);
+
+    // Check if there are other players in the blue team before switching
+    if (tempBlueTeamPlayers.length > 1) {
       tempBlueTeamPlayers.splice(playerIndex, 1);
       tempRedTeamPlayers.push(playerDetails.name);
     }
-    setRedTeamPlayers(tempRedTeamPlayers);
-    setBlueTeamPlayers(tempBlueTeamPlayers);
-    setTeamsChanged(true);
-  };
+  }
+
+  setRedTeamPlayers(tempRedTeamPlayers);
+  setBlueTeamPlayers(tempBlueTeamPlayers);
+  setTeamsChanged(true);
+};
+
+
+
 
   const getRoomDetails = async () => {
     try {
@@ -105,47 +117,52 @@ const Waiting = () => {
     }
   }, [roomDetails]);
 
-  // Set teams on players change
-  useEffect(() => {
-    if (players.length > 0 && roomDetails) {
-      const tempRedTeamPlayers = [];
-      const tempBlueTeamPlayers = [];
-      const randFactor = Math.random() < 0.5 ? 1 : 0;
-      let teamPosition = 0;
+// Set teams on players change
+useEffect(() => {
+  if (players.length > 0 && roomDetails) {
+    const tempRedTeamPlayers = [...roomDetails.redTeam];
+    const tempBlueTeamPlayers = [...roomDetails.blueTeam];
+    
+    let teamPosition = 0;
 
-      players.forEach((player, index) => {
-        if (roomDetails.redTeam.includes(player)) {
-          tempRedTeamPlayers.push(player);
-        } else if (roomDetails.blueTeam.includes(player)) {
-          tempBlueTeamPlayers.push(player);
-        } else {
-          if (index % 2 === 0) {
-            if (randFactor === 1) {
-              tempRedTeamPlayers.push(player);
-              teamPosition = 1;
-            } else {
-              tempBlueTeamPlayers.push(player);
-              teamPosition = 2;
-            }
+    players.forEach((player, index) => {
+      if (roomDetails.redTeam.includes(player)) {
+        // Player already in the red team
+      } else if (roomDetails.blueTeam.includes(player)) {
+        // Player already in the blue team
+      } else {
+        if (index % 2 === 0) {
+          // Even index, assign to team with fewer members
+          if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
+            tempRedTeamPlayers.push(player);
           } else {
-            if (teamPosition === 1) {
-              tempBlueTeamPlayers.push(player);
-            } else if (teamPosition === 2) {
+            tempBlueTeamPlayers.push(player);
+          }
+        } else {
+          // Odd index, assign to the opposite team of the last assignment
+          if (teamPosition === 1) {
+            tempBlueTeamPlayers.push(player);
+          } else if (teamPosition === 2) {
+            tempRedTeamPlayers.push(player);
+          } else {
+            // If no last assignment, assign to team with fewer members
+            if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
               tempRedTeamPlayers.push(player);
             } else {
-              roomDetails.redTeam.length > roomDetails.blueTeam.length
-                ? tempBlueTeamPlayers.push(player)
-                : tempRedTeamPlayers.push(player);
+              tempBlueTeamPlayers.push(player);
             }
-            teamPosition = 0;
           }
+          teamPosition = 0;
         }
-      });
-      setRedTeamPlayers(tempRedTeamPlayers);
-      setBlueTeamPlayers(tempBlueTeamPlayers);
-      setTeamsChanged(true);
-    }
-  }, [players]);
+      }
+    });
+
+    setRedTeamPlayers(tempRedTeamPlayers);
+    setBlueTeamPlayers(tempBlueTeamPlayers);
+    setTeamsChanged(true);
+  }
+}, [players, roomDetails]);
+
 
   // Set teams in db
   const setTeamPlayersInDb = async () => {
