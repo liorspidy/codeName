@@ -3,12 +3,16 @@ import { useState } from "react";
 import Modal from "./Modal";
 import { useCallback } from "react";
 import classes from "./Modal.module.scss";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const ReportWordModal = (props) => {
-  const { setModalShown, modalShown, setModalOpen } = props;
+  const { setModalShown, modalShown, setModalOpen, roomDetails } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [reportText, setReportText] = useState("");
   const [error, setError] = useState("");
+
+  const { roomId } = useParams();
 
   const closeBackdrop = useCallback(() => {
     const modal = document.querySelector(`.${classes.modal}.${classes.active}`);
@@ -43,6 +47,10 @@ const ReportWordModal = (props) => {
     if (reportText.length === 0) {
       setError("אנא הזן סיבה לדיווח");
       return;
+    } else {
+      // open debate modal
+      console.log("open debate modal");
+      closeBackdrop();
     }
   };
 
@@ -71,7 +79,7 @@ const ReportWordModal = (props) => {
               className={classes.submitButton}
               onClick={reportWordHandler}
             >
-             צור דיווח
+              צור דיווח
             </button>
           </div>
         </div>

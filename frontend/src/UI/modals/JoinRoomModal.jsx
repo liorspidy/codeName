@@ -68,7 +68,7 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const joiningRoomHandler = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/room/join", {
+      await axios.post("http://localhost:4000/room/join", {
         roomId: value,
         playerName: playerDetails.name,
       });

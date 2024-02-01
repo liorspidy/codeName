@@ -14,8 +14,10 @@ router.post('/:id/setTurn', roomController.setTurn);
 router.post('/:id/setTeamPlayers', roomController.setTeamPlayers);
 router.post('/:id/setMap', roomController.setMap);
 router.post('/:id/checkCard', roomController.checkCard);
+router.post('/:id/nextRound', roomController.nextRound);
 router.post('/:id/nextTurn', roomController.nextTurn);
-
+router.post('/:id/setOperatorsWord', roomController.setOperatorsWord);
+router.post('/:id/updateRevealedCards', roomController.updateRevealedCards);
 router.post('/:id/leave', roomController.leaveRoom);
 router.post('/:id/end', roomController.endGame);
 router.post('/:id/delete', roomController.deleteRoom);

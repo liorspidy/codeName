@@ -18,6 +18,8 @@ const Waiting = () => {
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
   const [teamsChanged, setTeamsChanged] = useState(false);
+  const [roomReady , setRoomReady] = useState(true);
+
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
@@ -60,37 +62,26 @@ const Waiting = () => {
   };
 
   const readyButtonHandler = () => {};
-  
-// Switch teams on button click
-const switchTeamsHandler = () => {
-  const tempRedTeamPlayers = [...redTeamPlayers];
-  const tempBlueTeamPlayers = [...blueTeamPlayers];
 
-  if (redTeamPlayers.includes(playerDetails.name)) {
-    const playerIndex = redTeamPlayers.indexOf(playerDetails.name);
+  // Switch teams on button click
+  const switchTeamsHandler = () => {
+    const isOnRedTeam = redTeamPlayers.includes(playerDetails.name);
+    const isOnBlueTeam = blueTeamPlayers.includes(playerDetails.name);
 
-    // Check if there are other players in the red team before switching
-    if (tempRedTeamPlayers.length > 1) {
-      tempRedTeamPlayers.splice(playerIndex, 1);
-      tempBlueTeamPlayers.push(playerDetails.name);
+    if (isOnRedTeam) {
+      setRedTeamPlayers(
+        redTeamPlayers.filter((player) => player !== playerDetails.name)
+      );
+      setBlueTeamPlayers([...blueTeamPlayers, playerDetails.name]);
+    } else if (isOnBlueTeam) {
+      setBlueTeamPlayers(
+        blueTeamPlayers.filter((player) => player !== playerDetails.name)
+      );
+      setRedTeamPlayers([...redTeamPlayers, playerDetails.name]);
     }
-  } else if (blueTeamPlayers.includes(playerDetails.name)) {
-    const playerIndex = blueTeamPlayers.indexOf(playerDetails.name);
 
-    // Check if there are other players in the blue team before switching
-    if (tempBlueTeamPlayers.length > 1) {
-      tempBlueTeamPlayers.splice(playerIndex, 1);
-      tempRedTeamPlayers.push(playerDetails.name);
-    }
-  }
-
-  setRedTeamPlayers(tempRedTeamPlayers);
-  setBlueTeamPlayers(tempBlueTeamPlayers);
-  setTeamsChanged(true);
-};
-
-
-
+    setTeamsChanged(true);
+  };
 
   const getRoomDetails = async () => {
     try {
@@ -117,52 +108,51 @@ const switchTeamsHandler = () => {
     }
   }, [roomDetails]);
 
-// Set teams on players change
-useEffect(() => {
-  if (players.length > 0 && roomDetails) {
-    const tempRedTeamPlayers = [...roomDetails.redTeam];
-    const tempBlueTeamPlayers = [...roomDetails.blueTeam];
-    
-    let teamPosition = 0;
+  // Set teams on players change
+  useEffect(() => {
+    if (players.length > 0 && roomDetails) {
+      const tempRedTeamPlayers = [...roomDetails.redTeam];
+      const tempBlueTeamPlayers = [...roomDetails.blueTeam];
 
-    players.forEach((player, index) => {
-      if (roomDetails.redTeam.includes(player)) {
-        // Player already in the red team
-      } else if (roomDetails.blueTeam.includes(player)) {
-        // Player already in the blue team
-      } else {
-        if (index % 2 === 0) {
-          // Even index, assign to team with fewer members
-          if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
-            tempRedTeamPlayers.push(player);
-          } else {
-            tempBlueTeamPlayers.push(player);
-          }
+      let teamPosition = 0;
+
+      players.forEach((player, index) => {
+        if (roomDetails.redTeam.includes(player)) {
+          // Player already in the red team
+        } else if (roomDetails.blueTeam.includes(player)) {
+          // Player already in the blue team
         } else {
-          // Odd index, assign to the opposite team of the last assignment
-          if (teamPosition === 1) {
-            tempBlueTeamPlayers.push(player);
-          } else if (teamPosition === 2) {
-            tempRedTeamPlayers.push(player);
-          } else {
-            // If no last assignment, assign to team with fewer members
+          if (index % 2 === 0) {
+            // Even index, assign to team with fewer members
             if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
               tempRedTeamPlayers.push(player);
             } else {
               tempBlueTeamPlayers.push(player);
             }
+          } else {
+            // Odd index, assign to the opposite team of the last assignment
+            if (teamPosition === 1) {
+              tempBlueTeamPlayers.push(player);
+            } else if (teamPosition === 2) {
+              tempRedTeamPlayers.push(player);
+            } else {
+              // If no last assignment, assign to team with fewer members
+              if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
+                tempRedTeamPlayers.push(player);
+              } else {
+                tempBlueTeamPlayers.push(player);
+              }
+            }
+            teamPosition = 0;
           }
-          teamPosition = 0;
         }
-      }
-    });
+      });
 
-    setRedTeamPlayers(tempRedTeamPlayers);
-    setBlueTeamPlayers(tempBlueTeamPlayers);
-    setTeamsChanged(true);
-  }
-}, [players, roomDetails]);
-
+      setRedTeamPlayers(tempRedTeamPlayers);
+      setBlueTeamPlayers(tempBlueTeamPlayers);
+      setTeamsChanged(true);
+    }
+  }, [players, roomDetails]);
 
   // Set teams in db
   const setTeamPlayersInDb = async () => {
@@ -180,13 +170,23 @@ useEffect(() => {
     }
   };
 
+  const checkWaitingRoomReady = () => {
+    if(redTeamPlayers.length === 0 || blueTeamPlayers.length === 0){
+      return true;
+    }
+    return false;
+  }
+
   // Set teams in db on teams change
   useEffect(() => {
     if (teamsChanged) {
       setTeamPlayersInDb();
       setTeamsChanged(false);
+      setRoomReady(checkWaitingRoomReady());
     }
   }, [teamsChanged]);
+
+
 
   return (
     <div className={classes.waitingRoom}>
@@ -217,7 +217,7 @@ useEffect(() => {
       </div>
 
       <Link to={`/room/${roomId}/game`} className={classes.readyButton}>
-        <button onClick={readyButtonHandler}>{readyButtonText}</button>
+        <Button onclick={readyButtonHandler} disabled={roomReady}>{readyButtonText}</Button>
       </Link>
     </div>
   );

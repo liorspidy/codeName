@@ -6,6 +6,8 @@ import classes from "./Modal.module.scss";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import IconButton from "@mui/material/IconButton";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const OperatorsModal = (props) => {
   const {
@@ -14,12 +16,14 @@ const OperatorsModal = (props) => {
     setModalOpen,
     setCurrentOperatorsWordCount,
     setCurrentOperatorsWord,
+    setWordsToGuess,
   } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
   const [wordValue, setWordValue] = useState("");
 
   const [error, setError] = useState("");
+  const { roomId } = useParams();
 
   const closeBackdrop = useCallback(() => {
     const modal = document.querySelector(`.${classes.modal}.${classes.active}`);
@@ -64,10 +68,25 @@ const OperatorsModal = (props) => {
     setWordsCountValue((prevState) => Math.max(1, prevState - 1));
   };
 
+  const setWordInDb = () => {
+    try {
+      axios.post(`http://localhost:4000/room/${roomId}/setOperatorsWord`, {
+        roomId,
+        word: wordValue,
+        count: wordsCountValue,
+        wordsToGuess: wordsCountValue
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const submitWordHandler = () => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
       setCurrentOperatorsWordCount(wordsCountValue);
       setCurrentOperatorsWord(wordValue);
+      setWordsToGuess(wordsCountValue);
+      setWordInDb();
       closeBackdrop();
     } else {
       setError("אחד או יותר מהשדות לא מולאו כראוי");

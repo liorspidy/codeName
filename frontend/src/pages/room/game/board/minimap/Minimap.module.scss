@@ -57,6 +57,13 @@
           justify-content: center;
           align-items: center;
           position: relative;
+          
+          &.neutral {
+            &::after {
+              content: "";
+            }
+          }
+
           &.red {
             &::after {
               content: "";

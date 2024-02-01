@@ -11,8 +11,12 @@ const roomSchema = new mongoose.Schema({
     turn: { type: String, default: '' },
     winner: { type: String, default: ''},
     cards: { type: Array, default: [] },
+    revealedCards: { type: Array, default: [] },
     map: { type: Array, default: [] },
     round: { type: Number,default: 1 },
+    currentWord: { type: String, default: '' },
+    currentWordCount: { type: Number, default: 0 },
+    wordsToGuess: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model('Room', roomSchema);

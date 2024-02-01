@@ -117,7 +117,72 @@ const Minimap = ({
       >
         <div className={classes.innerMinimapMiddle}>
           <div className={classes.innerMinimapCorner}>
-            {/* ... (your existing code for innerMinimapCorner) */}
+            <div
+              className={
+                leadGroupColor === "red"
+                  ? `${classes.edgeLight} ${classes.red}`
+                  : `${classes.edgeLight} ${classes.blue}`
+              }
+            >
+              <div
+                className={
+                  leadGroupColor === "red"
+                    ? `${classes.innerLight} ${classes.red}`
+                    : `${classes.innerLight} ${classes.blue}`
+                }
+              />
+            </div>
+          </div>
+          <div className={classes.innerMinimapCorner}>
+            <div
+              className={
+                leadGroupColor === "red"
+                  ? `${classes.edgeLight} ${classes.red}`
+                  : `${classes.edgeLight} ${classes.blue}`
+              }
+            >
+              <div
+                className={
+                  leadGroupColor === "red"
+                    ? `${classes.innerLight} ${classes.red}`
+                    : `${classes.innerLight} ${classes.blue}`
+                }
+              />
+            </div>
+          </div>
+          <div className={classes.innerMinimapCorner}>
+            <div
+              className={
+                leadGroupColor === "red"
+                  ? `${classes.edgeLight} ${classes.red}`
+                  : `${classes.edgeLight} ${classes.blue}`
+              }
+            >
+              <div
+                className={
+                  leadGroupColor === "red"
+                    ? `${classes.innerLight} ${classes.red}`
+                    : `${classes.innerLight} ${classes.blue}`
+                }
+              />
+            </div>
+          </div>
+          <div className={classes.innerMinimapCorner}>
+            <div
+              className={
+                leadGroupColor === "red"
+                  ? `${classes.edgeLight} ${classes.red}`
+                  : `${classes.edgeLight} ${classes.blue}`
+              }
+            >
+              <div
+                className={
+                  leadGroupColor === "red"
+                    ? `${classes.innerLight} ${classes.red}`
+                    : `${classes.innerLight} ${classes.blue}`
+                }
+              />
+            </div>
           </div>
           <div className={classes.innerMinimapMain}>{minimap}</div>
         </div>

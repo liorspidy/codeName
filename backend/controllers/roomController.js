@@ -1,4 +1,6 @@
 const Room = require("../models/roomModel");
+const { BardAPI } = require("bard-api-node");
+const assistant = new BardAPI();
 
 const getRooms = async (req, res) => {
   try {
@@ -111,8 +113,12 @@ const createRoom = async (req, res) => {
       turn: "",
       winner: "",
       cards: [],
+      revealedCards: [],
       map: [],
       round: 1,
+      currentWord: "",
+      currentWordCount: 0,
+      wordsToGuess: 0,
     });
 
     await newRoom.save();
@@ -354,6 +360,25 @@ const checkCard = async (req, res) => {
   }
 };
 
+const nextRound = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+
+    const room = await Room.findOne({ id: roomId }).exec();
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    room.round = room.round + 1;
+
+    await room.save();
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error next turn:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const nextTurn = async (req, res) => {
   try {
     const roomId = req.body.roomId;
@@ -363,19 +388,67 @@ const nextTurn = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    room.round++;
     const turn = room.turn;
+
     if (turn === "red") {
       room.turn = "blue";
     } else if (turn === "blue") {
       room.turn = "red";
     }
+
+    await room.save();
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error next turn:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const setOperatorsWord = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const word = req.body.word;
+    const wordCount = req.body.count;
+    const wordsToGuess = req.body.wordsToGuess;
+
+    const room = await Room.findOne({ id: roomId }).exec();
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    room.currentWord = word;
+    room.currentWordCount = wordCount;
+    room.wordsToGuess = wordsToGuess;
+
+    await room.save();
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error setting operators word:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const updateRevealedCards = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const cardIndex = req.body.index;
+    const color = req.body.color;
+
+    const room = await Room.findOne({ id: roomId }).exec();
+
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    room.revealedCards.push({ index: cardIndex, color: color });
+    await room.save();
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error updating revealed cards:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 module.exports = {
   getRooms,
@@ -394,5 +467,8 @@ module.exports = {
   setMap,
   setTeamPlayers,
   checkCard,
+  nextRound,
   nextTurn,
+  setOperatorsWord,
+  updateRevealedCards,
 };

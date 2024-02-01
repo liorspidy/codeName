@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import UpperBoardZone from "./UpperBoardZone";
 import LowerBoardZone from "./LowerBoardZone";
 import GameOverModal from "../../../../UI/modals/GameOverModal";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Board = (props) => {
   const {
@@ -15,13 +17,19 @@ const Board = (props) => {
     myDetails,
     currentGroupColor,
     setCurrentGroupColor,
+    setCurrentOperatorsWord,
+    setCurrentOperatorsWordCount,
+    currentOperatorsWord,
+    currentOperatorsWordCount,
+    setWordsToGuess,
+    wordsToGuess,
+    revealedCards,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
   const [cards, setCards] = useState([]);
   const [currentCard, setCurrentCard] = useState(null);
-  const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
-  const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
+  const [newWordSetted, setNewWordSetted] = useState(false);
   const [wordLocked, setWordLocked] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [winnerGroup, setWinnerGroup] = useState("");
@@ -41,6 +49,8 @@ const Board = (props) => {
     leadGroupColor === "blue" ? 9 : 8
   );
 
+  const { roomId } = useParams();
+
   useEffect(() => {
     const tempCards = randomWords?.map((word, index) => (
       <Card
@@ -59,10 +69,15 @@ const Board = (props) => {
         setOpenGameOver={setOpenGameOver}
         setWinnerGroup={setWinnerGroup}
         myDetails={myDetails}
+        wordsToGuess={wordsToGuess}
+        setWordsToGuess={setWordsToGuess}
+        switchColorGroup={switchColorGroup}
+        revealedCards={revealedCards}
       />
     ));
 
     setCards(tempCards);
+
   }, [currentCard, randomWords, wordLocked]);
 
   const backdropBoardHandler = () => {
@@ -85,19 +100,49 @@ const Board = (props) => {
   }, [myDetails]);
 
   useEffect(() => {
-    if(blueGroupCounter === 0){
+    if (blueGroupCounter === 0) {
       setModalOpen(true);
       setOpenGameOver(true);
       setGameOver(true);
       setWinnerGroup("blue");
-    }
-    else if(redGroupCounter === 0){
+    } else if (redGroupCounter === 0) {
       setModalOpen(true);
       setOpenGameOver(true);
       setGameOver(true);
       setWinnerGroup("red");
     }
-  },[blueGroupCounter, redGroupCounter])
+  }, [blueGroupCounter, redGroupCounter]);
+
+  const setNextRoundInDB = async () => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/nextRound`, {
+        roomId,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const setNextTurnInDB = async () => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/nextTurn`, {
+        roomId,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const switchColorGroup = () => {
+    setWordLocked(false);
+    if (currentGroupColor === "red") {
+      setCurrentGroupColor("blue");
+    } else {
+      setCurrentGroupColor("red");
+    }
+    setNextTurnInDB();
+    setNextRoundInDB();
+  };
 
   return (
     <div
@@ -131,10 +176,7 @@ const Board = (props) => {
         timeIsRunningOut={timeIsRunningOut}
         setTimeRanOut={setTimeRanOut}
         restartClock={restartClock}
-        setWordLocked={setWordLocked}
         leadGroupColor={leadGroupColor}
-        currentGroupColor={currentGroupColor}
-        setCurrentGroupColor={setCurrentGroupColor}
         cards={cards}
         currentCard={currentCard}
         role={role}
@@ -142,7 +184,15 @@ const Board = (props) => {
         currentOperatorsWordCount={currentOperatorsWordCount}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         setCurrentOperatorsWord={setCurrentOperatorsWord}
+        newWordSetted={newWordSetted}
+        setNewWordSetted={setNewWordSetted}
+        wordsToGuess={wordsToGuess}
+        setWordsToGuess={setWordsToGuess}
         myDetails={myDetails}
+        switchColorGroup={switchColorGroup}
+        setWordLocked={setWordLocked}
+        setNextRoundInDB={setNextRoundInDB}
+        roomDetails={roomDetails}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -155,8 +205,10 @@ const Board = (props) => {
         role={role}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         setCurrentOperatorsWord={setCurrentOperatorsWord}
+        setNewWordSetted={setNewWordSetted}
         currentGroupColor={currentGroupColor}
         myDetails={myDetails}
+        setWordsToGuess={setWordsToGuess}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

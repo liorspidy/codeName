@@ -15,6 +15,10 @@ const Game = () => {
   const [myDetails, setMyDetails] = useState(null);
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
   const [leadGroupColor, setLeadGroupColor] = useState("red");
+  const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
+  const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
+  const [wordsToGuess, setWordsToGuess] = useState(0);
+  const [revealedCards , setRevealedCards] = useState([]);
 
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -89,15 +93,16 @@ const Game = () => {
         );
 
         const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
-        if(room.turn !== "" ){
+        if (room.turn !== "") {
           setLeadGroupColor(room.turn);
           setCurrentGroupColor(room.turn);
-        }else{
+        } else {
           setLeadGroupColor(randomLeadGroupColor);
           setCurrentGroupColor(randomLeadGroupColor);
         }
 
-        const leadColorToPass = room.turn !== "" ? room.turn : randomLeadGroupColor;
+        const leadColorToPass =
+          room.turn !== "" ? room.turn : randomLeadGroupColor;
 
         setCardsAndTurnInDb(room, uniqueRandomWords, leadColorToPass);
 
@@ -119,7 +124,12 @@ const Game = () => {
           team: myTeam,
           role: myRole,
         };
-        setMyDetails(fullPlayerDetails);        
+        setMyDetails(fullPlayerDetails);
+
+        setCurrentOperatorsWord(room.currentWord);
+        setCurrentOperatorsWordCount(room.currentWordCount);
+        setWordsToGuess(room.wordsToGuess);
+        setRevealedCards(room.revealedCards);
       })
       .catch((err) => {
         console.log(err);
@@ -137,6 +147,13 @@ const Game = () => {
         myDetails={myDetails}
         setCurrentGroupColor={setCurrentGroupColor}
         currentGroupColor={currentGroupColor}
+        setCurrentOperatorsWord={setCurrentOperatorsWord}
+        setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
+        currentOperatorsWord={currentOperatorsWord}
+        currentOperatorsWordCount={currentOperatorsWordCount}
+        setWordsToGuess={setWordsToGuess}
+        wordsToGuess={wordsToGuess}
+        revealedCards={revealedCards}
       />
     </div>
   );

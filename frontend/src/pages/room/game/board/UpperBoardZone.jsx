@@ -2,22 +2,17 @@
 import { useEffect, useState } from "react";
 import classes from "./Board.module.scss";
 import { motion } from "framer-motion";
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 import IconButton from "@mui/material/IconButton";
 import minimapButton from "../../../../images/minimapPurple.svg";
 import ReportWordModal from "../../../../UI/modals/ReportWordModal";
-import axios from "axios";
-import {useParams} from "react-router-dom";
 
 const UpperBoardZone = (props) => {
   const {
-    currentGroupColor,
-    setCurrentGroupColor,
     timer,
     timerStarts,
     setTimer,
     setTimeIsRunningOut,
-    setWordLocked,
     setShowMinimap,
     timeIsRunningOut,
     setTimeRanOut,
@@ -29,12 +24,16 @@ const UpperBoardZone = (props) => {
     currentOperatorsWord,
     setCurrentOperatorsWord,
     setCurrentOperatorsWordCount,
-    myDetails
+    myDetails,
+    setWordLocked,
+    setNextRoundInDB,
+    wordsToGuess,
+    switchColorGroup,
+    roomDetails
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const { roomId } = useParams();
 
   const minimapHandler = () => {
     if (role !== "agent") {
@@ -42,26 +41,10 @@ const UpperBoardZone = (props) => {
     }
   };
 
-  const setNextTurnInDB = async () => {
-    try{
-      const response = await axios.post("http://localhost:4000/room/{}/nextTurn",{
-        roomId
-      });
-      console.log(response);
-    }catch(err){
-      console.log(err);
-    }
-  };
 
-  const switchColorGroup = () => {
+  const setNextRound = () => {
     setWordLocked(false);
-    if (currentGroupColor === "red") {
-      setCurrentGroupColor("blue");
-    } else {
-      setCurrentGroupColor("red");
-    }
-
-    setNextTurnInDB();
+    setNextRoundInDB();
   };
 
   useEffect(() => {
@@ -76,9 +59,15 @@ const UpperBoardZone = (props) => {
             clearInterval(interval);
             restartClock();
             setTimeRanOut(true);
-            setCurrentOperatorsWord("");
-            setCurrentOperatorsWordCount(0);
-            switchColorGroup();            
+            
+            if (wordsToGuess === 0) {
+              setCurrentOperatorsWord("");
+              setCurrentOperatorsWordCount(0);
+              switchColorGroup();
+            }else{
+              setNextRound();
+            }
+
             return 0;
           }
           return prevTimer - 1;
@@ -88,7 +77,6 @@ const UpperBoardZone = (props) => {
       return () => clearInterval(interval);
     }
   }, [timerStarts]);
-
 
   const reportWordHandler = () => {
     if (currentOperatorsWord !== "") {
@@ -104,6 +92,7 @@ const UpperBoardZone = (props) => {
           setModalOpen={setModalOpen}
           setModalShown={setReportWordModalOpen}
           modalShown={reportWordModalOpen}
+          roomDetails={roomDetails}
         />
       )}
       <div
@@ -139,7 +128,7 @@ const UpperBoardZone = (props) => {
               backgroundColor: "orange",
               color: "white",
               ":hover": { backgroundColor: "#c1861b" },
-              scale: "0.75"
+              scale: "0.75",
             }}
           >
             <ReportProblemOutlinedIcon />

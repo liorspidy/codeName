@@ -19,11 +19,15 @@ const Card = (props) => {
     setModalOpen,
     setOpenGameOver,
     setWinnerGroup,
-    myDetails
+    wordsToGuess,
+    setWordsToGuess,
+    myDetails,
+    switchColorGroup,
+    revealedCards,
   } = props;
   const [isFlipped, setIsFlipped] = useState(true);
   const [isPressed, setIsPressed] = useState(false);
-  const [cardColor , setCardColor] = useState("neutral");
+  const [cardColor, setCardColor] = useState("neutral");
   const [showCardInfo, setShowCardInfo] = useState(false);
   const { roomId } = useParams();
 
@@ -33,24 +37,39 @@ const Card = (props) => {
     }
   };
 
-  // const handlePress = () => {
-  //   setIsPressed(true);
-  // };
-
-  // const handleRelease = () => {
-  //   setIsPressed(false);
-  //   setShowCardInfo(false);
-  // };
-
+  // flip the cards after the timer
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const revealCardAfterTimer = () => {
       setIsFlipped(false);
-    }, index * 100);
+    };
+
+    const timer = setTimeout(revealCardAfterTimer, index * 100);
 
     return () => {
       clearTimeout(timer);
     };
   }, [index]);
+
+  // flip the already revealed cards
+  useEffect(() => {
+    const flipCardIfRevealed = () => {
+      if (!isFlipped) {
+        revealedCards.forEach((card) => {
+          if (card.index === index) {
+            setIsFlipped(true);
+            setCardColor(card.color);
+            console.log(card.color); 
+          }
+        });
+      }
+    };
+
+    const timer = setTimeout(flipCardIfRevealed, 600);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [index, isFlipped, revealedCards]);
 
   useEffect(() => {
     let pressTimer;
@@ -83,6 +102,18 @@ const Card = (props) => {
     }
   };
 
+  const updateRevealedCards = (color) => {
+    console.log(color);
+    try {
+      axios.post(`http://localhost:4000/room/${roomId}/updateRevealedCards`, {
+        roomId,
+        color,
+        index,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     const flipCard = async () => {
@@ -91,23 +122,44 @@ const Card = (props) => {
         setTimeRanOut(false);
         const color = await checkCard();
         setCardColor(color);
-        if(color === "red"){
+        updateRevealedCards(color);
+
+        if (color === "red") {
           setRedGroupCounter((prev) => prev - 1);
-        }else if(color === "blue"){
+          if (myDetails.team === "red") {
+            if (wordsToGuess === 1) {
+              switchColorGroup();
+            }
+            setWordsToGuess((prev) => prev - 1);
+          } else {
+            switchColorGroup();
+          }
+        } else if (color === "blue") {
           setBlueGroupCounter((prev) => prev - 1);
-        }else if(color === "black"){
+          if (myDetails.team === "blue") {
+            if (wordsToGuess === 1) {
+              switchColorGroup();
+            }
+            setWordsToGuess((prev) => prev - 1);
+          } else {
+            switchColorGroup();
+          }
+        } else if (color === "black") {
           setGameOver(true);
           setModalOpen(true);
           setOpenGameOver(true);
-          if(myDetails.team === "red"){
+          if (myDetails.team === "red") {
             setWinnerGroup("blue");
-          }else if(myDetails.team === "blue"){
+          } else if (myDetails.team === "blue") {
             setWinnerGroup("red");
           }
+        } else if (color === "neutral") {
+          setWordsToGuess(0);
+          switchColorGroup();
         }
       }
     };
-  
+
     flipCard();
   }, [timeRanOut]);
 
@@ -123,10 +175,6 @@ const Card = (props) => {
       } ${`${classes[cardColor]}`} ${isPressed ? classes.overlay : ""}`}
       style={{ "--word": `"${word}"` }}
       onClick={selectCardHandler}
-      // onMouseDown={handlePress}
-      // onMouseUp={handleRelease}
-      // onTouchStart={handlePress}
-      // onTouchEnd={handleRelease}
     >
       <div
         className={`${classes.cardInfo} ${showCardInfo ? classes.show : ""}`}
