@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 const Game = () => {
+  const [roomName, setRoomName] = useState("");
   const [pickedRandomWords, setPickedRandomWords] = useState([]);
   const [roomDetails, setRoomDetails] = useState(null);
   const [myDetails, setMyDetails] = useState(null);
@@ -18,7 +19,13 @@ const Game = () => {
   const [currentOperatorsWord, setCurrentOperatorsWord] = useState("");
   const [currentOperatorsWordCount, setCurrentOperatorsWordCount] = useState(0);
   const [wordsToGuess, setWordsToGuess] = useState(0);
-  const [revealedCards , setRevealedCards] = useState([]);
+  const [revealedCards, setRevealedCards] = useState([]);
+  const [openGameOver, setOpenGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [winnerGroup, setWinnerGroup] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [redGroupCounter, setRedGroupCounter] = useState(null);
+  const [blueGroupCounter, setBlueGroupCounter] = useState(null);
 
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -71,11 +78,33 @@ const Game = () => {
     }
   };
 
+  const setStatusInDb = async (status) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setStatus`, {
+        roomId,
+        status,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const setScoreInDb = async (team, score) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setScore`, {
+        roomId,
+        team,
+        score,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
+    console.log("fetching room details");
     fetchRoomDetails()
       .then((room) => {
-        setRoomDetails(room);
-
         // set unique cards
         const uniqueRandomWords = [];
 
@@ -93,12 +122,34 @@ const Game = () => {
         );
 
         const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
-        if (room.turn !== "") {
-          setLeadGroupColor(room.turn);
-          setCurrentGroupColor(room.turn);
-        } else {
+
+        if (room.turn === "") {
           setLeadGroupColor(randomLeadGroupColor);
           setCurrentGroupColor(randomLeadGroupColor);
+        } else {
+          setLeadGroupColor(room.turn);
+          setCurrentGroupColor(room.turn);
+        }
+
+        if (room.round > 1) {
+          setRedGroupCounter(room.redScore);
+          setBlueGroupCounter(room.blueScore);
+        } else if (
+          room.round === 1 &&
+          room.redScore === 0 &&
+          room.blueScore === 0
+        ) {
+          if (randomLeadGroupColor === "red") {
+            setRedGroupCounter(9);
+            setScoreInDb("red", 9);
+            setBlueGroupCounter(8);
+            setScoreInDb("blue", 8);
+          } else if (randomLeadGroupColor === "blue") {
+            setBlueGroupCounter(9);
+            setScoreInDb("blue", 9);
+            setRedGroupCounter(8);
+            setScoreInDb("red", 8);
+          }
         }
 
         const leadColorToPass =
@@ -124,12 +175,25 @@ const Game = () => {
           team: myTeam,
           role: myRole,
         };
+        setRoomDetails(room);
+        setRoomName(room.name);
         setMyDetails(fullPlayerDetails);
-
         setCurrentOperatorsWord(room.currentWord);
         setCurrentOperatorsWordCount(room.currentWordCount);
         setWordsToGuess(room.wordsToGuess);
         setRevealedCards(room.revealedCards);
+
+        if (room.status === "finished") {
+          setOpenGameOver(true);
+          setGameOver(true);
+          setModalOpen(true);
+          setWinnerGroup(room.winner);
+        } 
+
+        if(room.status === "waiting") {
+          setStatusInDb("playing");
+        }
+
       })
       .catch((err) => {
         console.log(err);
@@ -139,7 +203,7 @@ const Game = () => {
 
   return (
     <div className={classes.gamePage}>
-      <Header />
+      <Header roomName={roomName} roomId={roomId} />
       <Board
         randomWords={pickedRandomWords}
         leadGroupColor={leadGroupColor}
@@ -154,6 +218,18 @@ const Game = () => {
         setWordsToGuess={setWordsToGuess}
         wordsToGuess={wordsToGuess}
         revealedCards={revealedCards}
+        setOpenGameOver={setOpenGameOver}
+        openGameOver={openGameOver}
+        gameOver={gameOver}
+        setGameOver={setGameOver}
+        winnerGroup={winnerGroup}
+        setWinnerGroup={setWinnerGroup}
+        setModalOpen={setModalOpen}
+        modalOpen={modalOpen}
+        redGroupCounter={redGroupCounter}
+        setRedGroupCounter={setRedGroupCounter}
+        blueGroupCounter={blueGroupCounter}
+        setBlueGroupCounter={setBlueGroupCounter}
       />
     </div>
   );

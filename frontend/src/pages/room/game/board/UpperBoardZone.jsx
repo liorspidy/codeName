@@ -25,8 +25,7 @@ const UpperBoardZone = (props) => {
     setCurrentOperatorsWord,
     setCurrentOperatorsWordCount,
     myDetails,
-    setWordLocked,
-    setNextRoundInDB,
+    setNextRound,
     wordsToGuess,
     switchColorGroup,
     roomDetails
@@ -41,12 +40,6 @@ const UpperBoardZone = (props) => {
     }
   };
 
-
-  const setNextRound = () => {
-    setWordLocked(false);
-    setNextRoundInDB();
-  };
-
   useEffect(() => {
     if (timerStarts) {
       // Timer logic
@@ -59,13 +52,12 @@ const UpperBoardZone = (props) => {
             clearInterval(interval);
             restartClock();
             setTimeRanOut(true);
-            
-            if (wordsToGuess === 0) {
+            setNextRound();
+
+            if(wordsToGuess === 0) {
+              switchColorGroup();
               setCurrentOperatorsWord("");
               setCurrentOperatorsWordCount(0);
-              switchColorGroup();
-            }else{
-              setNextRound();
             }
 
             return 0;
@@ -115,7 +107,7 @@ const UpperBoardZone = (props) => {
           <img src={minimapButton} alt="minimap" />
         </motion.div>
         <div
-          className={`${classes.currentAgentWordContainer} ${
+          className={`${classes.currentOperatorsWordContainer} ${
             currentOperatorsWord === "" && currentOperatorsWordCount === 0
               ? classes.hide
               : ""
@@ -133,8 +125,8 @@ const UpperBoardZone = (props) => {
           >
             <ReportProblemOutlinedIcon />
           </IconButton>
-          <p className={classes.currentAgentWord}>{currentOperatorsWord}</p>
-          <p className={classes.currentAgentNumber}>
+          <p className={classes.currentOperatorsWord}>{currentOperatorsWord}</p>
+          <p className={classes.currentOperatorsNumber}>
             {currentOperatorsWordCount}
           </p>
         </div>

@@ -68,13 +68,13 @@ const OperatorsModal = (props) => {
     setWordsCountValue((prevState) => Math.max(1, prevState - 1));
   };
 
-  const setWordInDb = () => {
+  const setWordInDb = async () => {
     try {
-      axios.post(`http://localhost:4000/room/${roomId}/setOperatorsWord`, {
+      await axios.post(`http://localhost:4000/room/${roomId}/setOperatorsWord`, {
         roomId,
         word: wordValue,
         count: wordsCountValue,
-        wordsToGuess: wordsCountValue
+        wordsToGuess: wordsCountValue + 1
       });
     } catch (err) {
       console.log(err);
@@ -85,7 +85,7 @@ const OperatorsModal = (props) => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
       setCurrentOperatorsWordCount(wordsCountValue);
       setCurrentOperatorsWord(wordValue);
-      setWordsToGuess(wordsCountValue);
+      setWordsToGuess(wordsCountValue + 1);
       setWordInDb();
       closeBackdrop();
     } else {

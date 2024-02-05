@@ -75,7 +75,7 @@
         }
       }
 
-      .currentAgentWordContainer {
+      .currentOperatorsWordContainer {
         z-index: 10;
         display: flex;
         justify-content: center;
@@ -88,10 +88,10 @@
           visibility: hidden;
         }
 
-        .currentAgentWord,
-        .currentAgentNumber {
+        .currentOperatorsWord,
+        .currentOperatorsNumber {
           font-weight: 900;
-          font-size: 1.8rem;
+          font-size: 1.7rem;
           margin: 0;
           font-family: "Heebo", sans-serif;
           display: flex;
@@ -100,48 +100,14 @@
           gap: 1.5dvw;
         }
 
-        .currentAgentWord {
+        .currentOperatorsWord {
           max-width: 15dvh;
           overflow: auto;
         }
 
-        .currentAgentNumber {
+        .currentOperatorsNumber {
           &::before {
             content: " | ";
-          }
-        }
-      }
-      .currentAgentWordContainerWaiting {
-        .title {
-          font-size: 1.8rem;
-          margin: 0;
-
-          .waiting2 {
-            animation: wait2 1s step-end infinite;
-          }
-
-          .waiting3 {
-            animation: wait3 1s step-end infinite;
-          }
-
-          @keyframes wait2 {
-            0% {
-              opacity: 0;
-            }
-            30%,
-            100% {
-              opacity: 1;
-            }
-          }
-
-          @keyframes wait3 {
-            0% {
-              opacity: 0;
-            }
-            60%,
-            100% {
-              opacity: 1;
-            }
           }
         }
       }
@@ -321,7 +287,8 @@
         width: 100%;
         height: 100%;
         display: block;
-        border-radius: 5px;
+        border-radius: 1dvw;
+        scale: 0.95;
         animation-name: flipCardBack;
         animation-duration: 0.5s;
         animation-fill-mode: forwards;
@@ -367,7 +334,7 @@
 
     .currentCardContainer {
       min-width: 35dvw;
-      min-height: 13.8dvw;
+      min-height: 14.2dvw;
       margin: 1rem auto;
       border-radius: 1rem;
       border: 2px solid #646cff;
@@ -417,6 +384,7 @@
         align-items: center;
         justify-content: center;
         filter: brightness(0.7);
+        position: relative;
 
         &.red {
           background-color: #ed4a44;
@@ -446,6 +414,103 @@
           }
         }
 
+        &.blue.glow.bonus , &.red.glow.bonus {
+          animation: 0.6s ease-out glowScoreGreen infinite alternate;
+          .bonus1 {
+            position: absolute;
+            top: 0;
+            &::after{
+              content: "+";
+              direction: ltr;
+              font-weight: bold;
+              color: rgb(3, 97, 3);
+              font-size: 1.2rem;
+              animation: riseUp 3s 0.5s ease-out infinite;
+              position: absolute;
+              top: 0;
+              opacity: 0;
+              right: 10dvw;
+              filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+            }
+
+            &::before{
+              content: "+";
+              direction: ltr;
+              font-weight: bold;
+              color: green;
+              font-size: 0.8rem;
+              animation: riseUp 3s ease-out infinite;
+              position: absolute;
+              top: 0;
+              opacity: 0;
+              left: 10dvw;
+              filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+            }
+          }
+
+          .bonus2 {
+            position: absolute;
+            top: 0;
+            &::after{
+              content: "+";
+              direction: ltr;
+              font-weight: bold;
+              color: rgb(3, 97, 3);
+              font-size: 1.3rem;
+              animation: riseUp 3s 1.5s ease-out infinite;
+              position: absolute;
+              top: 0;
+              opacity: 0;
+              right: 20dvw;
+              filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+            }
+
+            &::before{
+              content: "+";
+              direction: ltr;
+              font-weight: bold;
+              color: rgb(91, 214, 91);
+              font-size: 0.9rem;
+              animation: riseUp 3s 2s ease-out infinite;
+              position: absolute;
+              top: 0;
+              opacity: 0;
+              left: 20dvw;
+              filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+            }
+          }
+
+          .bonus3 {
+            position: absolute;
+            top: 0;
+            &::after{
+              content: "+";
+              direction: ltr;
+              font-weight: bold;
+              color:  rgb(91, 214, 91);
+              font-size: 1.4rem;
+              animation: riseUp 3s 2.5s ease-out infinite;
+              position: absolute;
+              top: 0;
+              opacity: 0;
+              right: 15dvw;
+              filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+            }
+
+            &::before{
+              content: "+";
+              direction: ltr;
+              font-weight: bold;
+              color:  green;
+              font-size: 0.7rem;
+              animation: riseUp 3s 3s ease-out infinite;
+              position: absolute;
+              top: 0;
+              opacity: 0;
+              left: 15dvw;
+              filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+            }
+          }        }
         .cardsLeft {
           font-size: 5dvw;
           font-weight: bold;
@@ -464,6 +529,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 16px;
 
       .lockWord,
       .icon {
@@ -474,6 +540,12 @@
 
       .lockWord {
         gap: 1dvw;
+      }
+
+      .skipTurn{
+        background-color: white;
+        color: #646cff;
+        animation: fadeIn 0.75s ease-out;
       }
     }
   }
@@ -559,25 +631,37 @@
 
 @keyframes glowScoreRed {
   0% {
-    box-shadow: inset 0 0 10px rgba(255, 222, 222, 0.677),
-      0 0 20px rgba(255, 255, 255, 0.543);
+    box-shadow: inset 0 0 5px 5px rgba(255, 222, 222, 0.677),
+      0 0 0px rgba(255, 255, 255, 0.543);
   }
 
   100% {
-    box-shadow: inset 0 0 10px rgba(255, 222, 222, 0.677),
-      0 0 35px rgba(255, 255, 255, 0.543);
+    box-shadow: inset 0 0 0 0px rgba(255, 222, 222, 0.677),
+      0 0 20px rgba(255, 255, 255, 0.543);
   }
 }
 
 @keyframes glowScoreBlue {
   0% {
-    box-shadow: inset 0 0 20px rgb(222, 225, 255),
-      0 0 20px rgba(255, 255, 255, 0.543);
+    box-shadow: inset 0 0 5px 5px rgb(222, 225, 255),
+    0 0 0px rgba(255, 255, 255, 0.543);
   }
 
   100% {
-    box-shadow: inset 0 0 20px rgb(222, 225, 255),
-      0 0 35px rgba(255, 255, 255, 0.543);
+    box-shadow: inset 0 0 0 0px rgb(222, 225, 255),
+    0 0 20px rgba(255, 255, 255, 0.543);
+  }
+}
+
+@keyframes glowScoreGreen{
+  0% {
+    box-shadow: inset 0 0 5px 5px rgb(158, 217, 149),
+    0 0 0px rgba(255, 255, 255, 0.543);
+  }
+
+  100% {
+    box-shadow: inset 0 0 0 0px rgb(158, 217, 149),
+    0 0 20px rgba(255, 255, 255, 0.543);
   }
 }
 
@@ -590,5 +674,39 @@
   100% {
     top: -80%;
     opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes riseUp {
+ 0% {
+   opacity: 0;
+   top: 0;
+  }
+
+  10%{
+    top: -1dvh;
+  }
+
+  50%{
+    opacity: 1;
+  }
+
+  90%{
+    top: -4dvh;
+  }
+
+  100% {
+    opacity: 0;
+    top: -5dvh;
   }
 }

@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import { useParams } from "react-router-dom"; // Import useParams hook
 import classes from "./Header.module.scss";
 import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -7,18 +6,15 @@ import InfoIcon from "@mui/icons-material/Info";
 import IconButton from "@mui/material/IconButton";
 import ChatIcon from "@mui/icons-material/Chat";
 import Menu from "./menu/Menu";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InfoModal from "../../UI/modals/InfoModal";
 import ChatModal from "../../UI/modals/ChatModal";
-import axios from 'axios';
 
-const Header = () => {
-  const { roomId } = useParams();
+const Header = ({roomName , roomId}) => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [notificationsNumber, setNotificationsNumber] = useState(1);
-  const [roomName, setRoomName] = useState("");
 
   let navigate = useNavigate();
 
@@ -35,26 +31,6 @@ const Header = () => {
     setModalOpen(!modalOpen);
     setOpenChat(!openChat);
   };
-
-  const getRoomDetails = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:4000/room/${roomId}/getRoom`
-      );
-      setRoomName(response.data.name);
-    }
-    catch (error) {
-      if (error.response) {
-        if (error.response.status === 404) {
-          navigate("/404");
-        }
-      }
-    }
-  }
-
-  useEffect(()=> {
-    getRoomDetails();
-  },[])
 
   return (
     <header>

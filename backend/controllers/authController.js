@@ -21,17 +21,30 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const randColorGenerator = () => {
+      let randomColor = Math.floor(Math.random()*16777215).toString(16);
+      let color = "#" + randomColor;
+      while (color === "#ffffff") {
+        randomColor = Math.floor(Math.random()*16777215).toString(16);
+        color = "#" + randomColor;
+      }
+      return color;
+    }
+
+    const randColor = randColorGenerator();
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      fullName
+      fullName,
+      randColor: randColor 
     });
 
     await newUser.save();
 
     const token = jwt.sign(
-      { name: newUser.username, email: newUser.email , fullName: newUser.fullName },
+      { name: newUser.username, email: newUser.email , fullName: newUser.fullName , randColor: newUser.randColor},
       "your-secret-key",
       {
         expiresIn: "1h",
@@ -67,7 +80,7 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { name: user.username, email: user.email, fullName: user.fullName },
+      { name: user.username, email: user.email, fullName: user.fullName,  randColor: user.randColor },
       "your-secret-key",
       {
         expiresIn: "1h",

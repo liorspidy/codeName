@@ -16,12 +16,18 @@ const LowerBoardZone = (props) => {
     setTimerStarts,
     restartClock,
     role,
+    currentOperatorsWord,
+    currentOperatorsWordCount,
     setCurrentOperatorsWordCount,
     setCurrentOperatorsWord,
     setNewWordSetted,
     currentGroupColor,
     myDetails,
+    wordsToGuess,
     setWordsToGuess,
+    gameOver,
+    switchColorGroup,
+    resetOperatorsWord
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -45,6 +51,12 @@ const LowerBoardZone = (props) => {
     setOpenOperatorsModal(!opanOperatorsModal);
   };
 
+  const skipTurnHandler = () => {
+    setWordsToGuess(0);
+    switchColorGroup();
+    resetOperatorsWord();
+  };
+
   return (
     <div className={classes.lowerBoardZone}>
       {modalOpen && (
@@ -62,21 +74,36 @@ const LowerBoardZone = (props) => {
         <div
           className={`${classes.group} ${classes.red} ${
             currentGroupColor === "red" ? classes.glow : ""
-          }`}
+          } ${wordsToGuess === 1 && currentGroupColor === "red" ? classes.bonus : ""}`}
         >
           <div className={classes.cardsLeft}>{redGroupCounter}</div>
+          <span className={`${wordsToGuess === 1 && currentGroupColor === "red" ? classes.bonus1 : ""}`}></span>
+          <span className={`${wordsToGuess === 1 && currentGroupColor === "red" ? classes.bonus2 : ""}`}></span>
+          <span className={`${wordsToGuess === 1 && currentGroupColor === "red" ? classes.bonus3 : ""}`}></span>
         </div>
         <div
           className={`${classes.group} ${classes.blue} ${
             currentGroupColor === "blue" ? classes.glow : ""
-          }`}
+          } ${wordsToGuess === 1 && currentGroupColor === "blue" ? classes.bonus : ""}`}
         >
           <div className={classes.cardsLeft}>{blueGroupCounter}</div>
+          <span className={`${wordsToGuess === 1 && currentGroupColor === "blue" ? classes.bonus1 : ""}`}></span>
+          <span className={`${wordsToGuess === 1 && currentGroupColor === "blue" ? classes.bonus2 : ""}`}></span>
+          <span className={`${wordsToGuess === 1 && currentGroupColor === "blue" ? classes.bonus3 : ""}`}></span>
         </div>
       </div>
       {role === "agent" && (
         <div className={classes.actionButtons}>
-          <Button classname={classes.lockWord} onclick={lockWordHandler} disabled={myDetails?.team !== currentGroupColor}>
+          {wordsToGuess === 1 && (
+            <Button classname={classes.skipTurn} onclick={skipTurnHandler}>
+              <span className={classes.content}>דלג</span>
+            </Button>
+          )}
+          <Button
+            classname={classes.lockWord}
+            onclick={lockWordHandler}
+            disabled={myDetails?.team !== currentGroupColor || currentOperatorsWord === "" && currentOperatorsWordCount === 0 || gameOver}
+          >
             <span className={classes.icon}>
               {wordLocked ? <LockIcon /> : <LockOpenOutlinedIcon />}
             </span>
@@ -88,7 +115,10 @@ const LowerBoardZone = (props) => {
       )}
       {role === "operator" && (
         <div className={classes.actionButtons}>
-          <Button onclick={openOperatorsModalHandler} disabled={myDetails?.team !== currentGroupColor}>
+          <Button
+            onclick={openOperatorsModalHandler}
+            disabled={myDetails?.team !== currentGroupColor || gameOver}
+          >
             <span className={classes.content}>הפעל סוכנים</span>
           </Button>
         </div>

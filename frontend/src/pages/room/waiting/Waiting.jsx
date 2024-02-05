@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import classes from "./Waiting.module.scss";
 import SyncAltRoundedIcon from "@mui/icons-material/SyncAltRounded";
@@ -11,7 +12,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Button from "../../../UI/button/Button";
 
-const Waiting = () => {
+const Waiting = ({roomDetails}) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [players, setPlayers] = useState([]);
   const [readyButtonText, setReadyButtonText] = useState("אני מוכן");
@@ -24,7 +25,6 @@ const Waiting = () => {
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
 
-  const [roomDetails, setRoomDetails] = useState(null);
 
   const { roomId } = useParams();
 
@@ -83,24 +83,6 @@ const Waiting = () => {
     setTeamsChanged(true);
   };
 
-  const getRoomDetails = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:4000/room/${roomId}/getRoom`
-      );
-      const room = response.data;
-      setRoomDetails(room);
-    } catch (err) {
-      console.log(err);
-      navigator.navigate("/404");
-    }
-  };
-
-  // Get room details on component mount
-  useEffect(() => {
-    getRoomDetails();
-  }, []);
-
   // Set players on room details change
   useEffect(() => {
     if (roomDetails) {
@@ -157,7 +139,7 @@ const Waiting = () => {
   // Set teams in db
   const setTeamPlayersInDb = async () => {
     try {
-      const response = await axios.post(
+      await axios.post(
         `http://localhost:4000/room/${roomId}/setTeamPlayers`,
         {
           roomId,
@@ -185,8 +167,6 @@ const Waiting = () => {
       setRoomReady(checkWaitingRoomReady());
     }
   }, [teamsChanged]);
-
-
 
   return (
     <div className={classes.waitingRoom}>

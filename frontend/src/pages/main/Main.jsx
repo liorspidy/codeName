@@ -1,19 +1,24 @@
+/* eslint-disable no-inner-declarations */
 /* eslint-disable react/prop-types */
 import classes from "./Main.module.scss";
 import CreateRoomModal from "../../UI/modals/CreateRoomModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JoinRoomModal from "../../UI/modals/JoinRoomModal";
 import Circles from "./Circles";
 import LogInModal from "../../UI/modals/LogInModal";
 import CreateUserModal from "../../UI/modals/CreateUserModal";
 import Button from "../../UI/button/Button";
+import { jwtDecode } from "jwt-decode";
+import { motion } from "framer-motion";
 
 const Main = ({ logedInPlayer, setLogedInPlayer }) => {
   const [createRoomModalShown, setCreateRoomModalShown] = useState(false);
   const [joinModalShown, setJoinModalShown] = useState(false);
   const [logInShown, setLogInShown] = useState(false);
   const [createUserShown, setCreateUserShown] = useState(false);
-
+  const [playersDetails, setPlayersDetails] = useState({});
+  const [shortName, setShortName] = useState("");
+  const [isDetailsClicked, setIsDetailsClicked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const openCreateRoomModal = () => {
@@ -36,13 +41,25 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
     setModalOpen(true);
   };
 
-  // useEffect(() => {
-  //   const playersDetailsFromLocalStorage = localStorage.getItem("playerGoogleObject");
-  //   if(!playersDetailsFromLocalStorage){
-  //     dispatch(setPlayerGoogleObject({"name":"lior"}));
-  //     localStorage.setItem("playerGoogleObject",JSON.stringify({"name":"lior"}));
-  //   }
-  // },[])
+  const onDetailsClick = () => {
+    setIsDetailsClicked(!isDetailsClicked);
+  };
+
+  useEffect(() => {
+    if (sessionStorage.getItem("token")) {
+      const tokenDetails = jwtDecode(sessionStorage.getItem("token"));
+      if (tokenDetails) {
+        setPlayersDetails({
+          email: tokenDetails.email,
+          fullName: tokenDetails.fullName,
+          nickname: tokenDetails.name,
+          color: tokenDetails.randColor,
+        });
+
+        setShortName(tokenDetails.name.substring(0, 3).toUpperCase());
+      }
+    }
+  }, [logedInPlayer]);
 
   const logOutHandler = () => {
     sessionStorage.removeItem("token");
@@ -82,6 +99,29 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
       )}
 
       <Circles />
+      {logedInPlayer && (
+        <div className={classes.loggedInDetails}>
+          <motion.div
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }}
+            className={classes.nameContainer}
+            onClick={onDetailsClick}
+          >
+            <span className={classes.name} style={{ color: playersDetails.color }}>{shortName}</span>
+          </motion.div>
+          <div
+            className={`${classes.dropdown} ${
+              isDetailsClicked ? classes.active : ""
+            }`}
+          >
+            <ul className={classes.detailsList}>
+              <li>{playersDetails.nickname}</li>
+              <li>{playersDetails.fullName}</li>
+              <li>{playersDetails.email}</li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       <div className={classes.title}>
         <h1>

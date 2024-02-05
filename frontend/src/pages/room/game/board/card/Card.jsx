@@ -13,8 +13,11 @@ const Card = (props) => {
     currentCard,
     timeRanOut,
     setTimeRanOut,
+    redGroupCounter,
     setRedGroupCounter,
+    blueGroupCounter,
     setBlueGroupCounter,
+    gameOver,
     setGameOver,
     setModalOpen,
     setOpenGameOver,
@@ -24,18 +27,156 @@ const Card = (props) => {
     myDetails,
     switchColorGroup,
     revealedCards,
+    resetOperatorsWord,
   } = props;
+
   const [isFlipped, setIsFlipped] = useState(true);
-  const [isPressed, setIsPressed] = useState(false);
   const [cardColor, setCardColor] = useState("neutral");
+  const [isPressed, setIsPressed] = useState(false);
   const [showCardInfo, setShowCardInfo] = useState(false);
   const { roomId } = useParams();
+
+  const checkCard = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:4000/room/${roomId}/checkCard`,
+        {
+          roomId,
+          index,
+        }
+      );
+      return response.data.color;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateRevealedCardsInDb = async (color) => {
+    try {
+      await axios.post(
+        `http://localhost:4000/room/${roomId}/updateRevealedCards`,
+        {
+          roomId,
+          color,
+          index,
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const setWinnerInDb = async (winner) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setWinner`, {
+        roomId,
+        winner,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const setScoreInDb = async (team, score) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setScore`, {
+        roomId,
+        team,
+        score,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const setWordsToGuessCountInDb = async (updatedWordsToGuessCount) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setWordsToGuess`, {
+        roomId,
+        wordsToGuess: updatedWordsToGuessCount,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const selectCardHandler = () => {
     if (!isFlipped && !wordLocked) {
       setCurrentCard({ index, word });
     }
   };
+
+  const finishTurn = () => {
+    setWordsToGuess(0);
+    setWordsToGuessCountInDb(0);
+    switchColorGroup();
+    resetOperatorsWord();
+  };
+
+  const checkIfItsMyCard = (myteam) => {
+    if (myDetails.team === myteam) {
+      if (wordsToGuess === 1) {
+        finishTurn();
+      } else {
+        setWordsToGuess((prev) => prev - 1);
+        setWordsToGuessCountInDb(wordsToGuess - 1);
+      }
+    } else {
+      finishTurn();
+    }
+  };
+
+  const gameOverHandler = (winnerTeam) => {
+    setWinnerGroup(winnerTeam);
+    if (!gameOver) {
+      setWinnerInDb(winnerTeam);
+    }
+    setWordsToGuess(0);
+    setGameOver(true);
+    setModalOpen(true);
+    setOpenGameOver(true);
+  };
+
+  useEffect(() => {
+    const flipCard = async () => {
+      if (timeRanOut && currentCard?.index === index && !isFlipped) {
+        setIsFlipped(!isFlipped);
+        setTimeRanOut(false);
+        const color = await checkCard();
+        setCardColor(color);
+        updateRevealedCardsInDb(color);
+
+        if (color === "red") {
+          setRedGroupCounter((prev) => prev - 1);
+          setScoreInDb("red", redGroupCounter - 1);
+          if (redGroupCounter > 1) {
+            checkIfItsMyCard("red");
+          } else {
+            gameOverHandler("red");
+          }
+        } else if (color === "blue") {
+          setBlueGroupCounter((prev) => prev - 1);
+          setScoreInDb("blue", blueGroupCounter - 1);
+          if (blueGroupCounter > 1) {
+            checkIfItsMyCard("blue");
+          } else {
+            gameOverHandler("blue");
+          }
+        } else if (color === "black") {
+          if (myDetails.team === "red") {
+            gameOverHandler("blue");
+          } else if (myDetails.team === "blue") {
+            gameOverHandler("red");
+          }
+        } else if (color === "neutral") {
+          finishTurn();
+        }
+      }
+    };
+
+    flipCard();
+  }, [timeRanOut]);
+
 
   // flip the cards after the timer
   useEffect(() => {
@@ -58,7 +199,6 @@ const Card = (props) => {
           if (card.index === index) {
             setIsFlipped(true);
             setCardColor(card.color);
-            console.log(card.color); 
           }
         });
       }
@@ -71,97 +211,21 @@ const Card = (props) => {
     };
   }, [index, isFlipped, revealedCards]);
 
-  useEffect(() => {
-    let pressTimer;
+  // useEffect(() => {
+  //   let pressTimer;
 
-    if (isPressed) {
-      pressTimer = setTimeout(() => {
-        setShowCardInfo(true);
-      }, 1000);
-    } else {
-      setShowCardInfo(false);
-    }
+  //   if (isPressed) {
+  //     pressTimer = setTimeout(() => {
+  //       setShowCardInfo(true);
+  //     }, 1000);
+  //   } else {
+  //     setShowCardInfo(false);
+  //   }
 
-    return () => {
-      clearTimeout(pressTimer);
-    };
-  }, [isPressed]);
-
-  const checkCard = async () => {
-    try {
-      const response = await axios.post(
-        `http://localhost:4000/room/${roomId}/checkCard`,
-        {
-          roomId,
-          index,
-        }
-      );
-      return response.data.color;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const updateRevealedCards = (color) => {
-    console.log(color);
-    try {
-      axios.post(`http://localhost:4000/room/${roomId}/updateRevealedCards`, {
-        roomId,
-        color,
-        index,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    const flipCard = async () => {
-      if (timeRanOut && currentCard?.index === index && !isFlipped) {
-        setIsFlipped(!isFlipped);
-        setTimeRanOut(false);
-        const color = await checkCard();
-        setCardColor(color);
-        updateRevealedCards(color);
-
-        if (color === "red") {
-          setRedGroupCounter((prev) => prev - 1);
-          if (myDetails.team === "red") {
-            if (wordsToGuess === 1) {
-              switchColorGroup();
-            }
-            setWordsToGuess((prev) => prev - 1);
-          } else {
-            switchColorGroup();
-          }
-        } else if (color === "blue") {
-          setBlueGroupCounter((prev) => prev - 1);
-          if (myDetails.team === "blue") {
-            if (wordsToGuess === 1) {
-              switchColorGroup();
-            }
-            setWordsToGuess((prev) => prev - 1);
-          } else {
-            switchColorGroup();
-          }
-        } else if (color === "black") {
-          setGameOver(true);
-          setModalOpen(true);
-          setOpenGameOver(true);
-          if (myDetails.team === "red") {
-            setWinnerGroup("blue");
-          } else if (myDetails.team === "blue") {
-            setWinnerGroup("red");
-          }
-        } else if (color === "neutral") {
-          setWordsToGuess(0);
-          switchColorGroup();
-        }
-      }
-    };
-
-    flipCard();
-  }, [timeRanOut]);
+  //   return () => {
+  //     clearTimeout(pressTimer);
+  //   };
+  // }, [isPressed]);
 
   return (
     <div

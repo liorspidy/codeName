@@ -1,6 +1,4 @@
 const Room = require("../models/roomModel");
-const { BardAPI } = require("bard-api-node");
-const assistant = new BardAPI();
 
 const getRooms = async (req, res) => {
   try {
@@ -17,7 +15,7 @@ const getRoom = async (req, res) => {
 
   try {
     const room = await Room.findOne({ id: roomId });
-
+    
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
@@ -45,21 +43,42 @@ const getPlayers = async (req, res) => {
   }
 };
 
-const startGame = async (req, res) => {
+const setStatus = async (req, res) => {
   try {
     const roomId = req.body.roomId;
-    const room = await Room.findById(roomId);
+    const status = req.body.status;
+
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    // Add logic to start the game (initialize cards, set status, etc.)
+    room.status = status;
 
     await room.save();
-
-    return res.status(200).json(room);
+    return res.status(200);
   } catch (error) {
     console.error("Error starting game:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const setWinner = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const winner = req.body.winner;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    room.winner = winner;
+    room.status = "finished";
+    await room.save();
+    return res.status(200);
+  } catch (error) {
+    console.error("Error setting winner:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -108,7 +127,9 @@ const createRoom = async (req, res) => {
       createdBy,
       players: [createdBy],
       redTeam: [],
+      redScore: 0,
       blueTeam: [],
+      blueScore: 0,
       status: "waiting",
       turn: "",
       winner: "",
@@ -294,7 +315,7 @@ const setTeamPlayers = async (req, res) => {
     const redTeam = req.body.redTeamPlayers;
     const blueTeam = req.body.blueTeamPlayers;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
 
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
@@ -316,7 +337,7 @@ const setMap = async (req, res) => {
     const roomId = req.body.roomId;
     const map = req.body.map;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
@@ -335,7 +356,7 @@ const checkCard = async (req, res) => {
     const roomId = req.body.roomId;
     const cardIndex = req.body.index;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
@@ -364,7 +385,7 @@ const nextRound = async (req, res) => {
   try {
     const roomId = req.body.roomId;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
@@ -383,7 +404,7 @@ const nextTurn = async (req, res) => {
   try {
     const roomId = req.body.roomId;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
@@ -411,7 +432,7 @@ const setOperatorsWord = async (req, res) => {
     const wordCount = req.body.count;
     const wordsToGuess = req.body.wordsToGuess;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
@@ -421,7 +442,32 @@ const setOperatorsWord = async (req, res) => {
     room.wordsToGuess = wordsToGuess;
 
     await room.save();
-    return res.status(200).json(room);
+    return res.status(200);
+  } catch (error) {
+    console.error("Error setting operators word:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const setWordsToGuess = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const wordsToGuess = req.body.wordsToGuess;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    room.wordsToGuess = wordsToGuess;
+
+    if(room.wordsToGuess === 0){
+      room.currentWord = "";
+      room.currentWordCount = 0;
+    }
+
+    await room.save();
+    return res.status(200);
   } catch (error) {
     console.error("Error setting operators word:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -434,7 +480,7 @@ const updateRevealedCards = async (req, res) => {
     const cardIndex = req.body.index;
     const color = req.body.color;
 
-    const room = await Room.findOne({ id: roomId }).exec();
+    const room = await Room.findOne({ id: roomId });
 
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
@@ -449,6 +495,31 @@ const updateRevealedCards = async (req, res) => {
   }
 };
 
+const setScore = async (req,res) => {
+  try{
+    const roomId = req.body.roomId;
+    const team = req.body.team;
+    const score = req.body.score;
+
+    const room = await Room.findOne({ id: roomId });
+    if(!room){
+      return res.status(404).json({error: "Room not found"});
+    }
+
+    if(team === "red"){
+      room.redScore = score;
+    }
+    else if(team === "blue"){
+      room.blueScore = score;
+    }
+
+    await room.save();
+    return res.status(200);
+  }catch(err){
+    console.error("Error setting score:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   getRooms,
@@ -456,7 +527,8 @@ module.exports = {
   getPlayers,
   createRoom,
   joinRoom,
-  startGame,
+  setStatus,
+  setWinner,
   playTurn,
   leaveRoom,
   endGame,
@@ -470,5 +542,7 @@ module.exports = {
   nextRound,
   nextTurn,
   setOperatorsWord,
+  setWordsToGuess,
   updateRevealedCards,
+  setScore
 };
