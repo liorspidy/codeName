@@ -54,24 +54,28 @@
         opacity: 1;
       }
 
-      .minimapButton {
+      .minimapButtonContainer {
         z-index: 10;
         height: 60%;
         aspect-ratio: 1/1;
         display: flex;
         justify-content: center;
-        align-items: flex-end;
         flex: 1;
+        background-color: transparent;
 
         &.agent {
           filter: brightness(0.5);
           height: 70%;
         }
 
-        img {
-          object-fit: contain;
-          height: 100%;
-          filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.595));
+        .minimapButton {
+          background-color: transparent;
+
+          img {
+            object-fit: contain;
+            height: 100%;
+            filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.595));
+          }
         }
       }
 
@@ -185,6 +189,7 @@
         scale: 0.95;
         cursor: pointer;
         transition: all 0.3s ease-out;
+        padding: 0;
 
         &.picked {
           outline: 2px solid rgb(131, 195, 255);
@@ -296,6 +301,7 @@
         backface-visibility: visible;
         color: transparent;
         transition: all 0.3s ease-out;
+        padding: 0;
 
         .cardContent {
           aspect-ratio: 1.5/1;
@@ -414,12 +420,13 @@
           }
         }
 
-        &.blue.glow.bonus , &.red.glow.bonus {
+        &.blue.glow.bonus,
+        &.red.glow.bonus {
           animation: 0.6s ease-out glowScoreGreen infinite alternate;
           .bonus1 {
             position: absolute;
             top: 0;
-            &::after{
+            &::after {
               content: "+";
               direction: ltr;
               font-weight: bold;
@@ -433,7 +440,7 @@
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
             }
 
-            &::before{
+            &::before {
               content: "+";
               direction: ltr;
               font-weight: bold;
@@ -451,7 +458,7 @@
           .bonus2 {
             position: absolute;
             top: 0;
-            &::after{
+            &::after {
               content: "+";
               direction: ltr;
               font-weight: bold;
@@ -465,7 +472,7 @@
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
             }
 
-            &::before{
+            &::before {
               content: "+";
               direction: ltr;
               font-weight: bold;
@@ -483,11 +490,11 @@
           .bonus3 {
             position: absolute;
             top: 0;
-            &::after{
+            &::after {
               content: "+";
               direction: ltr;
               font-weight: bold;
-              color:  rgb(91, 214, 91);
+              color: rgb(91, 214, 91);
               font-size: 1.4rem;
               animation: riseUp 3s 2.5s ease-out infinite;
               position: absolute;
@@ -497,11 +504,11 @@
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
             }
 
-            &::before{
+            &::before {
               content: "+";
               direction: ltr;
               font-weight: bold;
-              color:  green;
+              color: green;
               font-size: 0.7rem;
               animation: riseUp 3s 3s ease-out infinite;
               position: absolute;
@@ -510,7 +517,8 @@
               left: 15dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
             }
-          }        }
+          }
+        }
         .cardsLeft {
           font-size: 5dvw;
           font-weight: bold;
@@ -542,7 +550,7 @@
         gap: 1dvw;
       }
 
-      .skipTurn{
+      .skipTurn {
         background-color: white;
         color: #646cff;
         animation: fadeIn 0.75s ease-out;
@@ -644,24 +652,24 @@
 @keyframes glowScoreBlue {
   0% {
     box-shadow: inset 0 0 5px 5px rgb(222, 225, 255),
-    0 0 0px rgba(255, 255, 255, 0.543);
+      0 0 0px rgba(255, 255, 255, 0.543);
   }
 
   100% {
     box-shadow: inset 0 0 0 0px rgb(222, 225, 255),
-    0 0 20px rgba(255, 255, 255, 0.543);
+      0 0 20px rgba(255, 255, 255, 0.543);
   }
 }
 
-@keyframes glowScoreGreen{
+@keyframes glowScoreGreen {
   0% {
     box-shadow: inset 0 0 5px 5px rgb(158, 217, 149),
-    0 0 0px rgba(255, 255, 255, 0.543);
+      0 0 0px rgba(255, 255, 255, 0.543);
   }
 
   100% {
     box-shadow: inset 0 0 0 0px rgb(158, 217, 149),
-    0 0 20px rgba(255, 255, 255, 0.543);
+      0 0 20px rgba(255, 255, 255, 0.543);
   }
 }
 
@@ -688,20 +696,20 @@
 }
 
 @keyframes riseUp {
- 0% {
-   opacity: 0;
-   top: 0;
+  0% {
+    opacity: 0;
+    top: 0;
   }
 
-  10%{
+  10% {
     top: -1dvh;
   }
 
-  50%{
+  50% {
     opacity: 1;
   }
 
-  90%{
+  90% {
     top: -4dvh;
   }
 

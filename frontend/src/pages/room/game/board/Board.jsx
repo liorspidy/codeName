@@ -43,6 +43,7 @@ const Board = (props) => {
   const [currentCard, setCurrentCard] = useState(null);
   const [newWordSetted, setNewWordSetted] = useState(false);
   const [wordLocked, setWordLocked] = useState(false);
+  const [minimap, setMinimap] = useState([]);
 
   const [timer, setTimer] = useState(30);
   const [timerStarts, setTimerStarts] = useState(false);
@@ -80,6 +81,7 @@ const Board = (props) => {
         setCurrentOperatorsWord={setCurrentOperatorsWord}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         resetOperatorsWord={resetOperatorsWord}
+        minimap={minimap}
       />
     ));
 
@@ -196,6 +198,8 @@ const Board = (props) => {
         leadGroupColor={leadGroupColor}
         currentGroupColor={currentGroupColor}
         roomDetails={roomDetails}
+        setMinimap={setMinimap}
+        minimap={minimap}
       />
       <UpperBoardZone
         setShowMinimap={setShowMinimap}

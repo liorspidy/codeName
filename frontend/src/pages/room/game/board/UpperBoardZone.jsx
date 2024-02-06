@@ -28,7 +28,7 @@ const UpperBoardZone = (props) => {
     setNextRound,
     wordsToGuess,
     switchColorGroup,
-    roomDetails
+    roomDetails,
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
@@ -54,7 +54,7 @@ const UpperBoardZone = (props) => {
             setTimeRanOut(true);
             setNextRound();
 
-            if(wordsToGuess === 0) {
+            if (wordsToGuess === 0) {
               switchColorGroup();
               setCurrentOperatorsWord("");
               setCurrentOperatorsWordCount(0);
@@ -94,18 +94,22 @@ const UpperBoardZone = (props) => {
             : `${classes.upperHUD} ${classes.blue}`
         }
       >
-        <motion.div
+        <div
           className={
             role === "agent"
-              ? `${classes.minimapButton} ${classes.agent}`
-              : classes.minimapButton
+              ? `${classes.minimapButtonContainer} ${classes.agent}`
+              : classes.minimapButtonContainer
           }
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-          onClick={minimapHandler}
         >
-          <img src={minimapButton} alt="minimap" />
-        </motion.div>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }}
+            onClick={minimapHandler}
+            className={classes.minimapButton}
+          >
+            <img src={minimapButton} alt="minimap" />
+          </motion.button>
+        </div>
         <div
           className={`${classes.currentOperatorsWordContainer} ${
             currentOperatorsWord === "" && currentOperatorsWordCount === 0

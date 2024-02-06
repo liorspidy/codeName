@@ -24,8 +24,12 @@ const Game = () => {
   const [gameOver, setGameOver] = useState(false);
   const [winnerGroup, setWinnerGroup] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [redGroupCounter, setRedGroupCounter] = useState(null);
-  const [blueGroupCounter, setBlueGroupCounter] = useState(null);
+  const [redGroupCounter, setRedGroupCounter] = useState(
+    leadGroupColor === "red" ? 9 : 8
+  );
+  const [blueGroupCounter, setBlueGroupCounter] = useState(
+    leadGroupColor === "blue" ? 9 : 8
+  );
 
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -130,15 +134,11 @@ const Game = () => {
           setLeadGroupColor(room.turn);
           setCurrentGroupColor(room.turn);
         }
+        
+        setRedGroupCounter(room.redScore);
+        setBlueGroupCounter(room.blueScore);
 
-        if (room.round > 1) {
-          setRedGroupCounter(room.redScore);
-          setBlueGroupCounter(room.blueScore);
-        } else if (
-          room.round === 1 &&
-          room.redScore === 0 &&
-          room.blueScore === 0
-        ) {
+        if (room.round === 1 && room.redScore === 0 && room.blueScore === 0) {
           if (randomLeadGroupColor === "red") {
             setRedGroupCounter(9);
             setScoreInDb("red", 9);
@@ -188,12 +188,11 @@ const Game = () => {
           setGameOver(true);
           setModalOpen(true);
           setWinnerGroup(room.winner);
-        } 
-
-        if(room.status === "waiting") {
-          setStatusInDb("playing");
         }
 
+        if (room.status === "waiting") {
+          setStatusInDb("playing");
+        }
       })
       .catch((err) => {
         console.log(err);

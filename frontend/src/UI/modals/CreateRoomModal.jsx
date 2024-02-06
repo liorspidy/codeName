@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../loader/Loader";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import Button from "../button/Button";
 
 const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
@@ -113,9 +114,9 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
             placeholder="שם החדר"
           />
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <button className={classes.actionButton} onClick={createRoom}>
+          <Button classname={classes.actionButton} onclick={createRoom}>
             <span>יצירה</span>
-          </button>
+          </Button>
         </div>
       )}
       {creatingRoom && (

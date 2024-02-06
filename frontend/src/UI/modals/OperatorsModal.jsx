@@ -8,6 +8,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import Button from "../button/Button";
 
 const OperatorsModal = (props) => {
   const {
@@ -153,12 +154,12 @@ const OperatorsModal = (props) => {
             </div>
           </div>
           <div className={classes.submitWord}>
-            <button
-              className={classes.submitButton}
-              onClick={submitWordHandler}
+            <Button
+              classname={classes.submitButton}
+              onclick={submitWordHandler}
             >
               שלח מסר
-            </button>
+            </Button>
           </div>
         </div>
         <div className={classes.error}>

@@ -8,6 +8,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import classes from "./Modal.module.scss";
 import Loader from "../loader/Loader";
 import axios from "axios";
+import Button from "../button/Button";
 
 const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
@@ -130,7 +131,7 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const registerUser = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/auth/register", {
+      await axios.post("http://localhost:4000/auth/register", {
         username: usernameValue,
         email: emailValue,
         password: passwordValue,
@@ -268,9 +269,9 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
             </ul>
           </div>
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <button className={classes.actionButton} onClick={createUserHandler}>
+          <Button classname={classes.actionButton} onclick={createUserHandler}>
             <span>צור חשבון</span>
-          </button>
+          </Button>
         </div>
       )}
       {creatingAccount && (

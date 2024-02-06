@@ -8,7 +8,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import classes from "./Modal.module.scss";
 import Loader from "../loader/Loader";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import Button from "../button/Button";
 
 const LogInModal = ({ setModalShown, modalShown, setModalOpen , setLogedInPlayer }) => {
   const [backdropShown, setBackdropShown] = useState(false);
@@ -135,9 +135,9 @@ const LogInModal = ({ setModalShown, modalShown, setModalOpen , setLogedInPlayer
             </span>
           </div>
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <button className={classes.actionButton} onClick={logInHandler}>
+          <Button classname={classes.actionButton} onclick={logInHandler}>
             <span>התחברות</span>
-          </button>
+          </Button>
           <a href="/forgotPass">שכחתי סיסמה</a>
         </div>
       )}

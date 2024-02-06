@@ -28,6 +28,7 @@ const Card = (props) => {
     switchColorGroup,
     revealedCards,
     resetOperatorsWord,
+    minimap,
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
@@ -36,20 +37,20 @@ const Card = (props) => {
   const [showCardInfo, setShowCardInfo] = useState(false);
   const { roomId } = useParams();
 
-  const checkCard = async () => {
-    try {
-      const response = await axios.post(
-        `http://localhost:4000/room/${roomId}/checkCard`,
-        {
-          roomId,
-          index,
+  const checkCard = () => {
+    const checkInMap = (colorMap) => {
+      let tempColor = "";
+      colorMap.forEach((color) => {
+        if (minimap[index].props.className.includes(color)) {
+          tempColor = color;
         }
-      );
-      return response.data.color;
-    } catch (err) {
-      console.log(err);
-    }
-  };
+      });
+      return tempColor;
+    };
+
+    const cardsColor = checkInMap(["red", "blue", "black", "neutral"]);
+    return cardsColor;
+  }
 
   const updateRevealedCardsInDb = async (color) => {
     try {
@@ -228,7 +229,7 @@ const Card = (props) => {
   // }, [isPressed]);
 
   return (
-    <div
+    <button
       key={index}
       className={`${
         isFlipped
@@ -246,7 +247,7 @@ const Card = (props) => {
       <div className={classes.cardContent}>
         <span className={classes.word}>{word}</span>
       </div>
-    </div>
+    </button>
   );
 };
 

@@ -6,12 +6,13 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const Minimap = ({
+  minimap,
+  setMinimap,
   showMinimap,
   setShowMinimap,
   leadGroupColor,
   roomDetails,
 }) => {
-  const [minimap, setMinimap] = useState([]);
   const { roomId } = useParams();
   const minimapMappingArray =
     leadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];

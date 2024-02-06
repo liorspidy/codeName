@@ -66,6 +66,12 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
     setLogedInPlayer(false);
   };
 
+  const closePlayerDetailsHandler = () => {
+    if(isDetailsClicked){
+      setIsDetailsClicked(false);
+    }
+  };
+
   return (
     <div className={classes.main}>
       {modalOpen && (
@@ -98,9 +104,9 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
         />
       )}
 
-      <Circles />
+      <Circles isDetailsClicked={isDetailsClicked} setIsDetailsClicked={setIsDetailsClicked}/>
       {logedInPlayer && (
-        <div className={classes.loggedInDetails}>
+        <div className={classes.loggedInDetails} onClick={closePlayerDetailsHandler}>
           <motion.div
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.1 }}
@@ -114,7 +120,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
               isDetailsClicked ? classes.active : ""
             }`}
           >
-            <ul className={classes.detailsList}>
+            <ul className={classes.detailsList} onClick={closePlayerDetailsHandler}>
               <li>{playersDetails.nickname}</li>
               <li>{playersDetails.fullName}</li>
               <li>{playersDetails.email}</li>
@@ -123,7 +129,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
         </div>
       )}
 
-      <div className={classes.title}>
+      <div className={classes.title} onClick={closePlayerDetailsHandler}>
         <h1>
           שֵׁם <span>קוֹד</span>
         </h1>

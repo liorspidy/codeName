@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../loader/Loader";
 import axios from "axios";
 import {jwtDecode} from 'jwt-decode';
+import Button from "../button/Button";
 
 const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
@@ -111,9 +112,9 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
             placeholder="קוד החדר"
           />
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <button className={classes.actionButton} onClick={joinRoom}>
+          <Button classname={classes.actionButton} onclick={joinRoom}>
             <span>הצטרפות</span>
-          </button>
+          </Button>
         </div>
       )}
       {joiningRoom && (
