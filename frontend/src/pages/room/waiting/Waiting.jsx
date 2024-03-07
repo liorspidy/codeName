@@ -38,14 +38,18 @@ const Waiting = ({
     setPlayerTitle(playerTitle === "מפעיל" ? "סוכן" : "מפעיל");
 
     // Determine teamLocation based on player's presence in redTeamPlayers
-    const teamLocation = redTeamPlayers.find((p) => p.name === currentPlayer?.name)
+    const teamLocation = redTeamPlayers.find(
+      (p) => p.name === currentPlayer?.name
+    )
       ? "red"
       : "blue";
 
     // Switch the role of the player in the specified team (red or blue)
     const switchRole = (rootTeam) => {
       const tempTeam = [...rootTeam];
-      const playerIndex = tempTeam.findIndex((player) => player.name === currentPlayer?.name);
+      const playerIndex = tempTeam.findIndex(
+        (player) => player.name === currentPlayer?.name
+      );
       tempTeam.splice(playerIndex, 1);
 
       // Move the player to the opposite position in the team
@@ -84,25 +88,61 @@ const Waiting = ({
   };
 
   const readyButtonHandler = () => {
-    // navigate(`/room/${roomId}/game`);
     setReadyButton(!readyButton);
     updatePlayerReady(playerDetails.name, !readyButton);
   };
 
   const updatePlayerReady = (playerName, ready) => {
+    const isOnRedTeam = redTeamPlayers.find(
+      (player) => player.name === currentPlayer?.name
+    );
+    const isOnBlueTeam = blueTeamPlayers.find(
+      (player) => player.name === currentPlayer?.name
+    );
     const tempPlayers = [...players];
     const playerIndex = tempPlayers.findIndex(
       (player) => player.name === playerName
     );
     tempPlayers[playerIndex].ready = ready;
-    setPlayers(tempPlayers);
-    socket.emit("playerReady", roomId, playerDetails.name, tempPlayers);
+    if (isOnRedTeam) {
+      const index = redTeamPlayers.findIndex(
+        (player) => player.name === playerName
+      );
+      const tempRedTeamPlayers = [...redTeamPlayers];
+      tempRedTeamPlayers[index].ready = ready;
+      socket.emit(
+        "playerReady",
+        roomId,
+        playerDetails.name,
+        tempPlayers,
+        tempRedTeamPlayers,
+        blueTeamPlayers
+      );
+    } else if (isOnBlueTeam) {
+      const index = blueTeamPlayers.findIndex(
+        (player) => player.name === playerName
+      );
+      const tempBlueTeamPlayers = [...blueTeamPlayers];
+      tempBlueTeamPlayers[index].ready = ready;
+      socket.emit(
+        "playerReady",
+        roomId,
+        playerDetails.name,
+        tempPlayers,
+        redTeamPlayers,
+        tempBlueTeamPlayers
+      );
+    }
   };
 
   // Switch teams on button click
   const switchTeamsHandler = () => {
-    const isOnRedTeam = redTeamPlayers.find((player) => player.name === currentPlayer?.name);
-    const isOnBlueTeam = blueTeamPlayers.find((player) => player.name === currentPlayer?.name);
+    const isOnRedTeam = redTeamPlayers.find(
+      (player) => player.name === currentPlayer?.name
+    );
+    const isOnBlueTeam = blueTeamPlayers.find(
+      (player) => player.name === currentPlayer?.name
+    );
 
     if (isOnRedTeam) {
       const tempRedTeamPlayers = redTeamPlayers.filter(
@@ -146,18 +186,20 @@ const Waiting = ({
         setBlueTeamPlayers(updatedBlueTeam);
         setTeamsChanged(true);
       }
-      );
-      
-      socket.on("updatingTeams", (redTeam, blueTeam) => {
-        setRedTeamPlayers(redTeam);
-        setBlueTeamPlayers(blueTeam);
-        setTeamsChanged(true);
-      });
-      
-      socket.on("updatingReadyPlayers", (players) => {
-        setPlayers(players);
-        setTeamsChanged(true);
-      });
+    );
+
+    socket.on("updatingTeams", (redTeam, blueTeam) => {
+      setRedTeamPlayers(redTeam);
+      setBlueTeamPlayers(blueTeam);
+      setTeamsChanged(true);
+    });
+
+    socket.on("updatingReadyPlayers", (readyPlayers) => {
+      console.log("updatingReadyPlayers");
+      if(!readyPlayers.some((player) => !player.ready)){
+        navigate(`/room/${roomId}/game`);
+      }
+    });
 
     return () => {
       socket.off("updatingPlayers");
@@ -184,10 +226,12 @@ const Waiting = ({
   }, [teamsChanged]);
 
   useEffect(() => {
-    if(players.length > 0){
-      setCurrentPlayer(players.find((player) => player.name === playerDetails.name));
+    if (players.length > 0) {
+      setCurrentPlayer(
+        players.find((player) => player.name === playerDetails.name)
+      );
     }
-  },[players])
+  }, [players]);
 
   const leaveRoomModalHandler = () => {
     setModalOpen(true);

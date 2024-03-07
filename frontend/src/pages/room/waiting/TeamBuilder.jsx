@@ -21,7 +21,7 @@ const TeamBuilder = (props) => {
           key={index}
           className={`${classes.playerItem} ${
             playerDetails.name === player.name ? classes.myPlayer : ""
-          }`}
+          } ${player.ready ? classes.ready : ""}`}
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
         >
@@ -43,7 +43,7 @@ const TeamBuilder = (props) => {
         <p
           className={`${classes.activatorName} ${
             playerDetails.name === captain?.name ? classes.myPlayer : ""
-          }`}
+          } ${captain?.ready ? classes?.ready : ""}`}
         >
           {captain?.name}
         </p>

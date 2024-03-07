@@ -69,6 +69,20 @@
       &.myPlayer {
         border: 2px solid rgb(255 127 31);
       }
+
+      &.ready{
+        &::after{
+          content: "";
+          position: absolute;
+          right: 3dvw;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 1dvh;
+          height: 1dvh;
+          border-radius: 50%;
+          background-color: #4caf50;
+        }
+      }
     }
 
     img {
@@ -105,12 +119,27 @@
 
   .playersList {
     .playerItem {
+      position: relative;
       &::after {
         right: 1dvw;
       }
 
       &.myPlayer {
         border: 2px solid rgb(255 127 31);
+      }
+
+      &.ready{
+        &::after{
+          content: "";
+          position: absolute;
+          right: 3dvw;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 1dvh;
+          height: 1dvh;
+          border-radius: 50%;
+          background-color: #4caf50;
+        }
       }
     }
   }

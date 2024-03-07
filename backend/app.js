@@ -33,7 +33,12 @@ io.on("connection", (socket) => {
       const players = roomDetails.players || [];
       const redTeam = roomDetails.redTeam || [];
       const blueTeam = roomDetails.blueTeam || [];
-      io.to(roomDetails.id).emit("updatingPlayersAndTeams", players, redTeam, blueTeam);
+      io.to(roomDetails.id).emit(
+        "updatingPlayersAndTeams",
+        players,
+        redTeam,
+        blueTeam
+      );
     } else {
       console.log("Invalid room details");
     }
@@ -49,6 +54,12 @@ io.on("connection", (socket) => {
     );
   });
 
+  socket.on("playerReady", (roomId, player, players, redTeam, blueTeam) => {
+    console.log(player + " is ready");
+    io.to(roomId).emit("updatingPlayersAndTeams", players, redTeam, blueTeam);
+    io.to(roomId).emit("updatingReadyPlayers", players);
+  });
+
   socket.on("playerSwitchedRole", (roomId, player, redTeam, blueTeam) => {
     console.log(player + " switched role");
     io.to(roomId).emit("updatingTeams", redTeam, blueTeam);
@@ -57,11 +68,6 @@ io.on("connection", (socket) => {
   socket.on("switchTeams", (roomId, redTeam, blueTeam) => {
     console.log("Teams switched");
     io.to(roomId).emit("updatingTeams", redTeam, blueTeam);
-  });
-
-  socket.on("playerReady", (roomId, player , tempPlayers) => {
-    console.log(player + " is ready");
-    io.to(roomId).emit("updatingReadyPlayers", tempPlayers);
   });
 });
 
