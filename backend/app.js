@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 
-  socket.on("joinRoom", (roomDetails , name) => {
+  socket.on("joinRoom", (roomDetails, name) => {
     if (roomDetails.id) {
       console.log(name + " joined room " + roomDetails.id);
       socket.join(roomDetails.id);
@@ -49,9 +49,14 @@ io.on("connection", (socket) => {
     );
   });
 
+  socket.on("playerSwitchedRole", (roomId, player, redTeam, blueTeam) => {
+    console.log(player + " switched role");
+    io.to(roomId).emit("updatingTeams", redTeam, blueTeam);
+  });
+
   socket.on("switchTeams", (roomId, redTeam, blueTeam) => {
     console.log("Teams switched");
-    io.to(roomId).emit("switchingTeams", redTeam, blueTeam);
+    io.to(roomId).emit("updatingTeams", redTeam, blueTeam);
   });
 });
 

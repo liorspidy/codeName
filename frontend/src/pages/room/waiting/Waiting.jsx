@@ -6,7 +6,6 @@ import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import { useEffect, useState } from "react";
 import TeamBuilder from "./TeamBuilder";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import Button from "../../../UI/button/Button";
 import { useNavigate } from "react-router-dom";
@@ -52,14 +51,29 @@ const Waiting = ({
       playerIndex === 0
         ? tempTeam.push(playerDetails.name)
         : tempTeam.unshift(playerDetails.name);
+
       return tempTeam;
     };
 
     // Update the appropriate team (red or blue) with the switched roles
     if (teamLocation === "red") {
-      setRedTeamPlayers((prev) => switchRole(prev));
+      const updatedRedTeamPlayers = switchRole(redTeamPlayers);
+      socket.emit(
+        "playerSwitchedRole",
+        roomId,
+        playerDetails.name,
+        updatedRedTeamPlayers,
+        blueTeamPlayers
+      );
     } else if (teamLocation === "blue") {
-      setBlueTeamPlayers((prev) => switchRole(prev));
+      const updatedBlueTeamPlayers = switchRole(blueTeamPlayers);
+      socket.emit(
+        "playerSwitchedRole",
+        roomId,
+        playerDetails.name,
+        redTeamPlayers,
+        updatedBlueTeamPlayers
+      );
     }
 
     // Indicate that teams have changed
@@ -119,14 +133,14 @@ const Waiting = ({
       }
     );
 
-    socket.on("switchingTeams", (redTeam, blueTeam) => {
+    socket.on("updatingTeams", (redTeam, blueTeam) => {
       setRedTeamPlayers(redTeam);
       setBlueTeamPlayers(blueTeam);
     });
 
     return () => {
       socket.off("updatingPlayers");
-      socket.off("switchingTeams");
+      socket.off("updatingTeams");
     };
   }, []);
 
@@ -197,7 +211,7 @@ const Waiting = ({
           onclick={readyButtonHandler}
           disabled={
             !inRoom ||
-            !(redTeamPlayers.length >= 2 && blueTeamPlayers.length >= 2)
+            !(redTeamPlayers?.length >= 2 && blueTeamPlayers?.length >= 2)
           }
         >
           {readyButtonText}
