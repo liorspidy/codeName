@@ -29,6 +29,7 @@ const Card = (props) => {
     revealedCards,
     resetOperatorsWord,
     minimap,
+    setMyDetails,
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
@@ -50,7 +51,7 @@ const Card = (props) => {
 
     const cardsColor = checkInMap(["red", "blue", "black", "neutral"]);
     return cardsColor;
-  }
+  };
 
   const updateRevealedCardsInDb = async (color) => {
     try {
@@ -115,9 +116,15 @@ const Card = (props) => {
   };
 
   const checkIfItsMyCard = (myteam) => {
+    // if the card is from my team
     if (myDetails.team === myteam) {
+      setMyDetails((prev) => {
+        return { ...prev, cardRevealed: prev.cardRevealed + 1 };
+      });
+      // bonus word was guessed
       if (wordsToGuess === 1) {
         finishTurn();
+        // regular word was guessed
       } else {
         setWordsToGuess((prev) => prev - 1);
         setWordsToGuessCountInDb(wordsToGuess - 1);
@@ -177,7 +184,6 @@ const Card = (props) => {
 
     flipCard();
   }, [timeRanOut]);
-
 
   // flip the cards after the timer
   useEffect(() => {

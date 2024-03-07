@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   try {
-    const { username, email, password , fullName} = req.body;
+    const { username, email, password, fullName } = req.body;
 
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
@@ -22,14 +22,14 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const randColorGenerator = () => {
-      let randomColor = Math.floor(Math.random()*16777215).toString(16);
+      let randomColor = Math.floor(Math.random() * 16777215).toString(16);
       let color = "#" + randomColor;
       while (color === "#ffffff") {
-        randomColor = Math.floor(Math.random()*16777215).toString(16);
+        randomColor = Math.floor(Math.random() * 16777215).toString(16);
         color = "#" + randomColor;
       }
       return color;
-    }
+    };
 
     const randColor = randColorGenerator();
 
@@ -38,13 +38,18 @@ const register = async (req, res) => {
       email,
       password: hashedPassword,
       fullName,
-      randColor: randColor 
+      randColor: randColor,
     });
 
     await newUser.save();
 
     const token = jwt.sign(
-      { name: newUser.username, email: newUser.email , fullName: newUser.fullName , randColor: newUser.randColor},
+      {
+        name: newUser.username,
+        email: newUser.email,
+        fullName: newUser.fullName,
+        randColor: newUser.randColor,
+      },
       "your-secret-key",
       {
         expiresIn: "1h",
@@ -80,7 +85,12 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { name: user.username, email: user.email, fullName: user.fullName,  randColor: user.randColor },
+      {
+        name: user.username,
+        email: user.email,
+        fullName: user.fullName,
+        randColor: user.randColor,
+      },
       "your-secret-key",
       {
         expiresIn: "1h",

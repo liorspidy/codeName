@@ -4,9 +4,14 @@ import Modal from "./Modal";
 import { useCallback } from "react";
 import classes from "./Modal.module.scss";
 import Button from "../button/Button";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const GameOverModal = ({ setModalShown, modalShown, setModalOpen , winnerGroup }) => {
+const GameOverModal = ({
+  setModalShown,
+  modalShown,
+  setModalOpen,
+  winnerGroup,
+}) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const navigate = useNavigate();
 
@@ -42,9 +47,10 @@ const GameOverModal = ({ setModalShown, modalShown, setModalOpen , winnerGroup }
   const backToLobbyHandler = () => {
     closeBackdrop();
     navigate("/");
-  }
+  };
 
-  const winnerGroupName = winnerGroup === "red" ? "האדומים" : winnerGroup === "blue" ? "הכחולים" : "";
+  const winnerGroupName =
+    winnerGroup === "red" ? "האדומים" : winnerGroup === "blue" ? "הכחולים" : "";
 
   return (
     <Modal
@@ -58,7 +64,9 @@ const GameOverModal = ({ setModalShown, modalShown, setModalOpen , winnerGroup }
       <div className={classes.gameOverModal}>
         <h2 className={classes.title}>המשחק נגמר!</h2>
         <p className={classes.winnerIs}>הקבוצה המנצחת היא:</p>
-        <p className={`${classes.winnerName} ${classes[winnerGroup]}`}>{winnerGroupName}</p>
+        <p className={`${classes.winnerName} ${classes[winnerGroup]}`}>
+          {winnerGroupName}
+        </p>
         <div>
           <Button onclick={backToLobbyHandler}>חזרה למסך הראשי</Button>
         </div>

@@ -18,11 +18,28 @@ header{
     }
 
     .middleSection{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 4px;
+        
+        .content{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .isConnected{
+            border-radius: 100%;
+            &.active{
+                width: 5px;
+                aspect-ratio: 1 / 1;
+                background-color: lawngreen;
+            }
+            &.inactive{
+                width: 5px;
+                aspect-ratio: 1 / 1;
+                background-color: red;
+            }
+        }
 
         .roomName{
             font-size: 100%;

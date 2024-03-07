@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import Header from "../../../components/header/Header";
@@ -9,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-const Game = () => {
+const Game = (props) => {
   const [roomName, setRoomName] = useState("");
   const [pickedRandomWords, setPickedRandomWords] = useState([]);
   const [roomDetails, setRoomDetails] = useState(null);
@@ -24,6 +25,7 @@ const Game = () => {
   const [gameOver, setGameOver] = useState(false);
   const [winnerGroup, setWinnerGroup] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [usersScoreWasSet, setUsersScoreWasSet] = useState(false);
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
   );
@@ -34,6 +36,8 @@ const Game = () => {
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
+
+    const { socket, isConnected } = props;
 
   const { roomId } = useParams();
   let navigate = useNavigate();
@@ -105,8 +109,27 @@ const Game = () => {
     }
   };
 
+  const setUserScoreInDb = async (winnigTeam) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setUsersScore`, {
+        roomId,
+        winnigTeam,
+        scoreToAdd: 50,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    console.log("fetching room details");
+
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    };
+  }, [socket]);
+
+  useEffect(() => {
     fetchRoomDetails()
       .then((room) => {
         // set unique cards
@@ -134,7 +157,7 @@ const Game = () => {
           setLeadGroupColor(room.turn);
           setCurrentGroupColor(room.turn);
         }
-        
+
         setRedGroupCounter(room.redScore);
         setBlueGroupCounter(room.blueScore);
 
@@ -174,6 +197,7 @@ const Game = () => {
           name: myName,
           team: myTeam,
           role: myRole,
+          cardRevealed: 0,
         };
         setRoomDetails(room);
         setRoomName(room.name);
@@ -182,6 +206,7 @@ const Game = () => {
         setCurrentOperatorsWordCount(room.currentWordCount);
         setWordsToGuess(room.wordsToGuess);
         setRevealedCards(room.revealedCards);
+        setUsersScoreWasSet(room.usersScoreWasSet);
 
         if (room.status === "finished") {
           setOpenGameOver(true);
@@ -200,9 +225,21 @@ const Game = () => {
       });
   }, []);
 
+  // Set the user score in the database when the game is over
+  useEffect(() => {
+    if (gameOver && !usersScoreWasSet) {
+      if (winnerGroup === "red") {
+        setUserScoreInDb(roomDetails.redTeam);
+      } else if (winnerGroup === "blue") {
+        setUserScoreInDb(roomDetails.blueTeam);
+      }
+      setUsersScoreWasSet(true);
+    }
+  }, [gameOver]);
+
   return (
     <div className={classes.gamePage}>
-      <Header roomName={roomName} roomId={roomId} />
+      <Header roomName={roomName} roomId={roomId} isConnected={isConnected}/>
       <Board
         randomWords={pickedRandomWords}
         leadGroupColor={leadGroupColor}
@@ -229,6 +266,7 @@ const Game = () => {
         setRedGroupCounter={setRedGroupCounter}
         blueGroupCounter={blueGroupCounter}
         setBlueGroupCounter={setBlueGroupCounter}
+        setMyDetails={setMyDetails}
       />
     </div>
   );

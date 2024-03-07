@@ -1,4 +1,5 @@
 const Room = require("../models/roomModel");
+const User = require("../models/userModel");
 
 const getRooms = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ const getRoom = async (req, res) => {
 
   try {
     const room = await Room.findOne({ id: roomId });
-    
+
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
@@ -140,6 +141,7 @@ const createRoom = async (req, res) => {
       currentWord: "",
       currentWordCount: 0,
       wordsToGuess: 0,
+      usersScoreWasSet: false,
     });
 
     await newRoom.save();
@@ -162,12 +164,13 @@ const joinRoom = async (req, res) => {
     }
 
     // Check if the room is full
-    if (room.players.length >= 4) {
-      return res.status(405).json({ error: "Room is full" });
-    } else {
+
+    if (room.players.length < 8) {
       if (!room.players.includes(playerName)) {
         room.players.push(playerName);
       }
+    } else {
+      return res.status(405).json({ error: "Room is full" });
     }
 
     await room.save();
@@ -181,28 +184,29 @@ const joinRoom = async (req, res) => {
 
 const leaveRoom = async (req, res) => {
   try {
-    const { roomId, playerId } = req.body;
+    const { roomId, username } = req.body;
 
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    // Check if the player is in the room
-    if (!room.players.includes(playerId)) {
-      return res.status(400).json({ error: "Player is not in the room" });
+    if (room.players.includes(username)) {
+      room.players = room.players.filter((player) => player !== username);
     }
 
-    // Remove the player from the room
-    room.players = room.players.filter((player) => player !== playerId);
+    if (room.redTeam.includes(username)) {
+      room.redTeam = room.redTeam.filter((player) => player !== username);
+    }
 
-    // Update other game-related logic based on your requirements
+    if (room.blueTeam.includes(username)) {
+      room.blueTeam = room.blueTeam.filter((player) => player !== username);
+    }
 
     await room.save();
-
     return res.status(200).json(room);
-  } catch (error) {
-    console.error("Error leaving room:", error.message);
+  } catch (err) {
+    console.error("Error exiting room:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -351,36 +355,6 @@ const setMap = async (req, res) => {
   }
 };
 
-const checkCard = async (req, res) => {
-  try {
-    const roomId = req.body.roomId;
-    const cardIndex = req.body.index;
-
-    const room = await Room.findOne({ id: roomId });
-    if (!room) {
-      return res.status(404).json({ error: "Room not found" });
-    }
-
-    const map = room.map;
-
-    const checkInMap = (colorMap) => {
-      let tempColor = "";
-      colorMap.forEach((color) => {
-        if (map[cardIndex].props.className.includes(color)) {
-          tempColor = color;
-        }
-      });
-      return tempColor;
-    };
-
-    const cardsColor = checkInMap(["red", "blue", "black", "neutral"]);
-    return res.status(200).json({ color: cardsColor });
-  } catch (error) {
-    console.error("Error checking card:", error.message);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 const nextRound = async (req, res) => {
   try {
     const roomId = req.body.roomId;
@@ -461,7 +435,7 @@ const setWordsToGuess = async (req, res) => {
 
     room.wordsToGuess = wordsToGuess;
 
-    if(room.wordsToGuess === 0){
+    if (room.wordsToGuess === 0) {
       room.currentWord = "";
       room.currentWordCount = 0;
     }
@@ -495,27 +469,58 @@ const updateRevealedCards = async (req, res) => {
   }
 };
 
-const setScore = async (req,res) => {
-  try{
+const setScore = async (req, res) => {
+  try {
     const roomId = req.body.roomId;
     const team = req.body.team;
     const score = req.body.score;
 
     const room = await Room.findOne({ id: roomId });
-    if(!room){
-      return res.status(404).json({error: "Room not found"});
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
     }
 
-    if(team === "red"){
+    if (team === "red") {
       room.redScore = score;
-    }
-    else if(team === "blue"){
+    } else if (team === "blue") {
       room.blueScore = score;
     }
 
     await room.save();
     return res.status(200);
-  }catch(err){
+  } catch (err) {
+    console.error("Error setting score:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const setUsersScore = async (req, res) => {
+  try {
+    const { roomId, winnigTeam, scoreToAdd } = req.body;
+
+    const room = await Room.findOne({ id: roomId }).exec();
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    winnigTeam.forEach(async (winner) => {
+      const user = await User.findOne({ username: winner }).exec();
+      if (!user) {
+        return res.status(401).json({ error: "Username was not found" });
+      }
+
+      const updatedScore = user.score + scoreToAdd;
+      user.score = updatedScore;
+      await user.save();
+    });
+
+    room.usersScoreWasSet = true;
+
+    await room.save();
+    return res
+      .status(200)
+      .json({ message: "Winning team score updated successfully" });
+  } catch (error) {
     console.error("Error setting score:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -527,10 +532,10 @@ module.exports = {
   getPlayers,
   createRoom,
   joinRoom,
+  leaveRoom,
   setStatus,
   setWinner,
   playTurn,
-  leaveRoom,
   endGame,
   deleteRoom,
   resetRoom,
@@ -538,11 +543,11 @@ module.exports = {
   setTurn,
   setMap,
   setTeamPlayers,
-  checkCard,
   nextRound,
   nextTurn,
   setOperatorsWord,
   setWordsToGuess,
   updateRevealedCards,
-  setScore
+  setScore,
+  setUsersScore,
 };

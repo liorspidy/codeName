@@ -10,7 +10,7 @@ import { useState } from "react";
 import InfoModal from "../../UI/modals/InfoModal";
 import ChatModal from "../../UI/modals/ChatModal";
 
-const Header = ({roomName , roomId}) => {
+const Header = ({ roomName, roomId, isConnected }) => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -76,8 +76,15 @@ const Header = ({roomName , roomId}) => {
         {/* </Toolbar> */}
       </div>
       <div className={classes.middleSection}>
+        <div className={classes.content}>
         <h1 className={classes.roomName}>{roomName}</h1>
         <p className={classes.roomId}>{roomId}</p>
+        </div>
+        <span
+          className={`${classes.isConnected} ${
+            isConnected ? classes.active : classes.inactive
+          }`}
+        ></span>
       </div>
       <div className={classes.leftSection}>
         <div

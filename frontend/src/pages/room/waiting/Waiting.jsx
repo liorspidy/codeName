@@ -5,28 +5,33 @@ import SyncAltRoundedIcon from "@mui/icons-material/SyncAltRounded";
 import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import TeamBuilder from "./TeamBuilder";
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Button from "../../../UI/button/Button";
+import { useNavigate } from "react-router-dom";
+import LeaveRoomModal from "../../../UI/modals/LeaveRoomModal";
 
-const Waiting = ({roomDetails}) => {
+const Waiting = ({
+  roomDetails,
+  playerDetails,
+  socket,
+  redTeamPlayers,
+  setRedTeamPlayers,
+  blueTeamPlayers,
+  setBlueTeamPlayers,
+  setTeamPlayersInDb,
+}) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [players, setPlayers] = useState([]);
   const [readyButtonText, setReadyButtonText] = useState("אני מוכן");
-  const [redTeamPlayers, setRedTeamPlayers] = useState([]);
-  const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
   const [teamsChanged, setTeamsChanged] = useState(false);
-  const [roomReady , setRoomReady] = useState(true);
-
-  const playerDetails = sessionStorage.getItem("token")
-    ? jwtDecode(sessionStorage.getItem("token"))
-    : null;
-
+  const [inRoom, setInRoom] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [leaveRoomShown, setLeaveRoomShown] = useState(false);
 
   const { roomId } = useParams();
+  const navigate = useNavigate();
 
   // Toggle playerTitle between "מפעיל" and "סוכן"
   const activatorListHandler = () => {
@@ -61,7 +66,9 @@ const Waiting = ({roomDetails}) => {
     setTeamsChanged(true);
   };
 
-  const readyButtonHandler = () => {};
+  const readyButtonHandler = () => {
+    navigate(`/room/${roomId}/game`);
+  };
 
   // Switch teams on button click
   const switchTeamsHandler = () => {
@@ -69,19 +76,59 @@ const Waiting = ({roomDetails}) => {
     const isOnBlueTeam = blueTeamPlayers.includes(playerDetails.name);
 
     if (isOnRedTeam) {
-      setRedTeamPlayers(
-        redTeamPlayers.filter((player) => player !== playerDetails.name)
+      const tempRedTeamPlayers = redTeamPlayers.filter(
+        (player) => player !== playerDetails.name
       );
-      setBlueTeamPlayers([...blueTeamPlayers, playerDetails.name]);
+      const tempBlueTeamPlayers = [...blueTeamPlayers, playerDetails.name];
+      setRedTeamPlayers(tempRedTeamPlayers);
+      setBlueTeamPlayers(tempBlueTeamPlayers);
+      socket.emit(
+        "switchTeams",
+        roomId,
+        tempRedTeamPlayers,
+        tempBlueTeamPlayers
+      );
+      setTeamPlayersInDb(tempRedTeamPlayers, tempBlueTeamPlayers);
     } else if (isOnBlueTeam) {
-      setBlueTeamPlayers(
-        blueTeamPlayers.filter((player) => player !== playerDetails.name)
+      const tempRedTeamPlayers = [...redTeamPlayers, playerDetails.name];
+      const tempBlueTeamPlayers = blueTeamPlayers.filter(
+        (player) => player !== playerDetails.name
       );
-      setRedTeamPlayers([...redTeamPlayers, playerDetails.name]);
+      setRedTeamPlayers(tempRedTeamPlayers);
+      setBlueTeamPlayers(tempBlueTeamPlayers);
+      socket.emit(
+        "switchTeams",
+        roomId,
+        tempRedTeamPlayers,
+        tempBlueTeamPlayers
+      );
+      setTeamPlayersInDb(tempRedTeamPlayers, tempBlueTeamPlayers);
     }
-
     setTeamsChanged(true);
   };
+
+  useEffect(() => {
+    // Listen for socket event to update player list
+    socket.on(
+      "updatingPlayers",
+      (updatedPlayers, updatedRedTeam, updatedBlueTeam) => {
+        setPlayers(updatedPlayers);
+        setRedTeamPlayers(updatedRedTeam);
+        setBlueTeamPlayers(updatedBlueTeam);
+        setTeamsChanged(true);
+      }
+    );
+
+    socket.on("switchingTeams", (redTeam, blueTeam) => {
+      setRedTeamPlayers(redTeam);
+      setBlueTeamPlayers(blueTeam);
+    });
+
+    return () => {
+      socket.off("updatingPlayers");
+      socket.off("switchingTeams");
+    };
+  }, []);
 
   // Set players on room details change
   useEffect(() => {
@@ -90,92 +137,38 @@ const Waiting = ({roomDetails}) => {
     }
   }, [roomDetails]);
 
-  // Set teams on players change
-  useEffect(() => {
-    if (players.length > 0 && roomDetails) {
-      const tempRedTeamPlayers = [...roomDetails.redTeam];
-      const tempBlueTeamPlayers = [...roomDetails.blueTeam];
-
-      let teamPosition = 0;
-
-      players.forEach((player, index) => {
-        if (roomDetails.redTeam.includes(player)) {
-          // Player already in the red team
-        } else if (roomDetails.blueTeam.includes(player)) {
-          // Player already in the blue team
-        } else {
-          if (index % 2 === 0) {
-            // Even index, assign to team with fewer members
-            if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
-              tempRedTeamPlayers.push(player);
-            } else {
-              tempBlueTeamPlayers.push(player);
-            }
-          } else {
-            // Odd index, assign to the opposite team of the last assignment
-            if (teamPosition === 1) {
-              tempBlueTeamPlayers.push(player);
-            } else if (teamPosition === 2) {
-              tempRedTeamPlayers.push(player);
-            } else {
-              // If no last assignment, assign to team with fewer members
-              if (tempRedTeamPlayers.length <= tempBlueTeamPlayers.length) {
-                tempRedTeamPlayers.push(player);
-              } else {
-                tempBlueTeamPlayers.push(player);
-              }
-            }
-            teamPosition = 0;
-          }
-        }
-      });
-
-      setRedTeamPlayers(tempRedTeamPlayers);
-      setBlueTeamPlayers(tempBlueTeamPlayers);
-      setTeamsChanged(true);
-    }
-  }, [players, roomDetails]);
-
-  // Set teams in db
-  const setTeamPlayersInDb = async () => {
-    try {
-      await axios.post(
-        `http://localhost:4000/room/${roomId}/setTeamPlayers`,
-        {
-          roomId,
-          redTeamPlayers,
-          blueTeamPlayers,
-        }
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const checkWaitingRoomReady = () => {
-    if(redTeamPlayers.length === 0 || blueTeamPlayers.length === 0){
-      return true;
-    }
-    return false;
-  }
-
-  // Set teams in db on teams change
   useEffect(() => {
     if (teamsChanged) {
-      setTeamPlayersInDb();
       setTeamsChanged(false);
-      setRoomReady(checkWaitingRoomReady());
+      if (players.includes(playerDetails.name)) {
+        setInRoom(true);
+        sessionStorage.setItem("lastRoomId", roomId);
+      }
     }
   }, [teamsChanged]);
 
+  const leaveRoomModalHandler = () => {
+    setModalOpen(true);
+    setLeaveRoomShown(true);
+  };
+
   return (
     <div className={classes.waitingRoom}>
+      {modalOpen && (
+        <LeaveRoomModal
+          setModalOpen={setModalOpen}
+          setModalShown={setLeaveRoomShown}
+          modalShown={leaveRoomShown}
+          roomDetails={roomDetails}
+          socket={socket}
+        />
+      )}
       <h1 className={classes.title}>
         ממתין לשחקנים.<span className={classes.waiting2}>.</span>
         <span className={classes.waiting3}>.</span>
       </h1>
 
-      <div className={classes.action_buttons}>
+      <div className={classes.actionButtons}>
         <Button classname={classes.iconButton} onclick={switchTeamsHandler}>
           <SyncAltRoundedIcon />
         </Button>
@@ -188,17 +181,36 @@ const Waiting = ({roomDetails}) => {
       <div className={classes.groups}>
         <TeamBuilder
           teamPlayers={redTeamPlayers}
+          playerDetails={playerDetails}
           mainClass={classes.redGroup}
         />
         <TeamBuilder
           teamPlayers={blueTeamPlayers}
+          playerDetails={playerDetails}
           mainClass={classes.blueGroup}
         />
       </div>
 
-      <Link to={`/room/${roomId}/game`} className={classes.readyButton}>
-        <Button onclick={readyButtonHandler} disabled={roomReady}>{readyButtonText}</Button>
-      </Link>
+      <div className={classes.bottomButtons}>
+        <Button
+          className={classes.readyButton}
+          onclick={readyButtonHandler}
+          disabled={
+            !inRoom ||
+            !(redTeamPlayers.length >= 2 && blueTeamPlayers.length >= 2)
+          }
+        >
+          {readyButtonText}
+        </Button>
+        {inRoom && (
+          <Button
+            classname={classes.leaveRoomButton}
+            onclick={leaveRoomModalHandler}
+          >
+            עזוב חדר
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

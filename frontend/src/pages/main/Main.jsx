@@ -10,6 +10,7 @@ import CreateUserModal from "../../UI/modals/CreateUserModal";
 import Button from "../../UI/button/Button";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Main = ({ logedInPlayer, setLogedInPlayer }) => {
   const [createRoomModalShown, setCreateRoomModalShown] = useState(false);
@@ -20,6 +21,10 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
   const [shortName, setShortName] = useState("");
   const [isDetailsClicked, setIsDetailsClicked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [backButton, setBackButton] = useState(false);
+
+  let navigate = useNavigate();
+
 
   const openCreateRoomModal = () => {
     setCreateRoomModalShown(true);
@@ -58,6 +63,10 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
 
         setShortName(tokenDetails.name.substring(0, 3).toUpperCase());
       }
+
+      if(sessionStorage.getItem("lastRoomId") !== null){
+        setBackButton(true);
+      }
     }
   }, [logedInPlayer]);
 
@@ -70,6 +79,10 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
     if(isDetailsClicked){
       setIsDetailsClicked(false);
     }
+  };
+
+  const goBackToLastRoom = () => {
+    navigate(`/room/${sessionStorage.getItem("lastRoomId")}`);
   };
 
   return (
@@ -142,6 +155,11 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
           <Button onclick={openJoinRoomModal}>
             <span>הצטרף לחדר</span>
           </Button>
+          {backButton && (
+            <Button classname={classes.secondaryButton} onclick={goBackToLastRoom}>
+              <span>חזור לחדר</span>
+            </Button>
+          )}
         </div>
       )}
       {logedInPlayer && (

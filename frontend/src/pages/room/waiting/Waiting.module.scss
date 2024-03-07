@@ -7,10 +7,6 @@
   padding: 1rem;
   padding-bottom: 3rem;
   flex: 1;
-
-  .readyButton {
-    scale: 1.25;
-  }
 }
 
 .title {
@@ -24,29 +20,9 @@
   .waiting3 {
     animation: wait3 1s step-end infinite;
   }
-
-  @keyframes wait2 {
-    0% {
-      opacity: 0;
-    }
-    30%,
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes wait3 {
-    0% {
-      opacity: 0;
-    }
-    60%,
-    100% {
-      opacity: 1;
-    }
-  }
 }
 
-.action_buttons {
+.actionButtons {
   gap: 1rem;
   display: flex;
 
@@ -88,6 +64,11 @@
       overflow: hidden;
       padding-inline: 0.5em;
       font-weight: bold;
+      border-radius: 5px;
+
+      &.myPlayer {
+        border: 2px solid rgb(255 127 31);
+      }
     }
 
     img {
@@ -106,13 +87,6 @@
       background-color: rgb(182, 15, 15);
       flex-direction: row-reverse;
     }
-    .playersList {
-      .playerItem {
-        &::after {
-          right: 1dvw;
-        }
-      }
-    }
   }
 
   .blueGroup {
@@ -127,12 +101,16 @@
         transform: scaleX(-1);
       }
     }
+  }
 
-    ul {
-      li {
-        &::after {
-          left: 1dvw;
-        }
+  .playersList {
+    .playerItem {
+      &::after {
+        right: 1dvw;
+      }
+
+      &.myPlayer {
+        border: 2px solid rgb(255 127 31);
       }
     }
   }
@@ -173,5 +151,34 @@
         margin-bottom: 0px;
       }
     }
+  }
+}
+
+.bottomButtons {
+  gap: 1rem;
+  display: flex;
+
+  .leaveRoomButton {
+    background-color: rgb(182, 15, 15);
+  }
+}
+
+@keyframes wait2 {
+  0% {
+    opacity: 0;
+  }
+  30%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes wait3 {
+  0% {
+    opacity: 0;
+  }
+  60%,
+  100% {
+    opacity: 1;
   }
 }

@@ -209,6 +209,23 @@
     }
   }
 
+
+  .leaveRoomModal{
+    p{
+      color: red;
+      text-align: center;
+    }
+    .leaveRoomButtons{
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+
+      .cancel{
+        background-color: #000e70;
+      }
+    }
+  }
   .infoModal {
     color: black;
 
@@ -271,7 +288,6 @@
         color: #008ed5;
       }
     }
-
   }
 
   .chatModal {

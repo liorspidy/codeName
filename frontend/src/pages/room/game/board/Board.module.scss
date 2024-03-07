@@ -329,12 +329,14 @@
           background-repeat: no-repeat;
           background-position: center;
           background-size: 8dvw;
-        }
 
+        }
+        
         &.neutral {
           background-color: rgb(243, 220, 193);
           box-shadow: inset 0 0 5px rgb(171 129 81);
         }
+
       }
     }
 

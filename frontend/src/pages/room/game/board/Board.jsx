@@ -36,6 +36,7 @@ const Board = (props) => {
     setRedGroupCounter,
     blueGroupCounter,
     setBlueGroupCounter,
+    setMyDetails
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -44,7 +45,6 @@ const Board = (props) => {
   const [newWordSetted, setNewWordSetted] = useState(false);
   const [wordLocked, setWordLocked] = useState(false);
   const [minimap, setMinimap] = useState([]);
-
   const [timer, setTimer] = useState(30);
   const [timerStarts, setTimerStarts] = useState(false);
   const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
@@ -82,6 +82,7 @@ const Board = (props) => {
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         resetOperatorsWord={resetOperatorsWord}
         minimap={minimap}
+        setMyDetails={setMyDetails}
       />
     ));
 
