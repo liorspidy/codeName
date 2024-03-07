@@ -23,7 +23,8 @@ const Waiting = ({
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [players, setPlayers] = useState([]);
-  const [readyButtonText, setReadyButtonText] = useState("אני מוכן");
+  const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [readyButton, setReadyButton] = useState(false);
   const [teamsChanged, setTeamsChanged] = useState(false);
   const [inRoom, setInRoom] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -37,20 +38,20 @@ const Waiting = ({
     setPlayerTitle(playerTitle === "מפעיל" ? "סוכן" : "מפעיל");
 
     // Determine teamLocation based on player's presence in redTeamPlayers
-    const teamLocation = redTeamPlayers.includes(playerDetails.name)
+    const teamLocation = redTeamPlayers.find((p) => p.name === currentPlayer?.name)
       ? "red"
       : "blue";
 
     // Switch the role of the player in the specified team (red or blue)
     const switchRole = (rootTeam) => {
       const tempTeam = [...rootTeam];
-      const playerIndex = tempTeam.indexOf(playerDetails.name);
+      const playerIndex = tempTeam.findIndex((player) => player.name === currentPlayer?.name);
       tempTeam.splice(playerIndex, 1);
 
       // Move the player to the opposite position in the team
       playerIndex === 0
-        ? tempTeam.push(playerDetails.name)
-        : tempTeam.unshift(playerDetails.name);
+        ? tempTeam.push(currentPlayer)
+        : tempTeam.unshift(currentPlayer);
 
       return tempTeam;
     };
@@ -58,6 +59,7 @@ const Waiting = ({
     // Update the appropriate team (red or blue) with the switched roles
     if (teamLocation === "red") {
       const updatedRedTeamPlayers = switchRole(redTeamPlayers);
+      setTeamPlayersInDb(updatedRedTeamPlayers, blueTeamPlayers);
       socket.emit(
         "playerSwitchedRole",
         roomId,
@@ -67,6 +69,7 @@ const Waiting = ({
       );
     } else if (teamLocation === "blue") {
       const updatedBlueTeamPlayers = switchRole(blueTeamPlayers);
+      setTeamPlayersInDb(redTeamPlayers, updatedBlueTeamPlayers);
       socket.emit(
         "playerSwitchedRole",
         roomId,
@@ -81,19 +84,31 @@ const Waiting = ({
   };
 
   const readyButtonHandler = () => {
-    navigate(`/room/${roomId}/game`);
+    // navigate(`/room/${roomId}/game`);
+    setReadyButton(!readyButton);
+    updatePlayerReady(playerDetails.name, !readyButton);
+  };
+
+  const updatePlayerReady = (playerName, ready) => {
+    const tempPlayers = [...players];
+    const playerIndex = tempPlayers.findIndex(
+      (player) => player.name === playerName
+    );
+    tempPlayers[playerIndex].ready = ready;
+    setPlayers(tempPlayers);
+    socket.emit("playerReady", roomId, playerDetails.name, tempPlayers);
   };
 
   // Switch teams on button click
   const switchTeamsHandler = () => {
-    const isOnRedTeam = redTeamPlayers.includes(playerDetails.name);
-    const isOnBlueTeam = blueTeamPlayers.includes(playerDetails.name);
+    const isOnRedTeam = redTeamPlayers.find((player) => player.name === currentPlayer?.name);
+    const isOnBlueTeam = blueTeamPlayers.find((player) => player.name === currentPlayer?.name);
 
     if (isOnRedTeam) {
       const tempRedTeamPlayers = redTeamPlayers.filter(
-        (player) => player !== playerDetails.name
+        (player) => player.name !== currentPlayer?.name
       );
-      const tempBlueTeamPlayers = [...blueTeamPlayers, playerDetails.name];
+      const tempBlueTeamPlayers = [...blueTeamPlayers, currentPlayer];
       setRedTeamPlayers(tempRedTeamPlayers);
       setBlueTeamPlayers(tempBlueTeamPlayers);
       socket.emit(
@@ -104,9 +119,9 @@ const Waiting = ({
       );
       setTeamPlayersInDb(tempRedTeamPlayers, tempBlueTeamPlayers);
     } else if (isOnBlueTeam) {
-      const tempRedTeamPlayers = [...redTeamPlayers, playerDetails.name];
+      const tempRedTeamPlayers = [...redTeamPlayers, currentPlayer];
       const tempBlueTeamPlayers = blueTeamPlayers.filter(
-        (player) => player !== playerDetails.name
+        (player) => player.name !== currentPlayer?.name
       );
       setRedTeamPlayers(tempRedTeamPlayers);
       setBlueTeamPlayers(tempBlueTeamPlayers);
@@ -124,23 +139,30 @@ const Waiting = ({
   useEffect(() => {
     // Listen for socket event to update player list
     socket.on(
-      "updatingPlayers",
+      "updatingPlayersAndTeams",
       (updatedPlayers, updatedRedTeam, updatedBlueTeam) => {
         setPlayers(updatedPlayers);
         setRedTeamPlayers(updatedRedTeam);
         setBlueTeamPlayers(updatedBlueTeam);
         setTeamsChanged(true);
       }
-    );
-
-    socket.on("updatingTeams", (redTeam, blueTeam) => {
-      setRedTeamPlayers(redTeam);
-      setBlueTeamPlayers(blueTeam);
-    });
+      );
+      
+      socket.on("updatingTeams", (redTeam, blueTeam) => {
+        setRedTeamPlayers(redTeam);
+        setBlueTeamPlayers(blueTeam);
+        setTeamsChanged(true);
+      });
+      
+      socket.on("updatingReadyPlayers", (players) => {
+        setPlayers(players);
+        setTeamsChanged(true);
+      });
 
     return () => {
       socket.off("updatingPlayers");
       socket.off("updatingTeams");
+      socket.off("updatingReadyPlayers");
     };
   }, []);
 
@@ -154,12 +176,18 @@ const Waiting = ({
   useEffect(() => {
     if (teamsChanged) {
       setTeamsChanged(false);
-      if (players.includes(playerDetails.name)) {
+      if (players.some((player) => player.name === playerDetails.name)) {
         setInRoom(true);
         sessionStorage.setItem("lastRoomId", roomId);
       }
     }
   }, [teamsChanged]);
+
+  useEffect(() => {
+    if(players.length > 0){
+      setCurrentPlayer(players.find((player) => player.name === playerDetails.name));
+    }
+  },[players])
 
   const leaveRoomModalHandler = () => {
     setModalOpen(true);
@@ -214,7 +242,7 @@ const Waiting = ({
             !(redTeamPlayers?.length >= 2 && blueTeamPlayers?.length >= 2)
           }
         >
-          {readyButtonText}
+          {!readyButton ? "אני מוכן" : "צריך לשנות"}
         </Button>
         {inRoom && (
           <Button

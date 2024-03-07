@@ -5,11 +5,11 @@ import classes from "./Waiting.module.scss";
 import { motion } from "framer-motion";
 
 const TeamBuilder = (props) => {
-  const { mainClass, teamPlayers, playerDetails} = props;
+  const { mainClass, teamPlayers, playerDetails } = props;
   const [captain, setCaptain] = useState(null);
 
   useEffect(() => {
-    if(teamPlayers){
+    if (teamPlayers) {
       setCaptain(teamPlayers[0]);
     }
   }, [teamPlayers]);
@@ -19,11 +19,13 @@ const TeamBuilder = (props) => {
       return (
         <motion.li
           key={index}
-          className={`${classes.playerItem} ${playerDetails.name === player ? classes.myPlayer : ""}`}
+          className={`${classes.playerItem} ${
+            playerDetails.name === player.name ? classes.myPlayer : ""
+          }`}
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
         >
-          {player}
+          {player.name}
         </motion.li>
       );
     } else {
@@ -38,7 +40,13 @@ const TeamBuilder = (props) => {
         whileTap={{ scale: 0.9 }}
         whileHover={{ scale: 1.1 }}
       >
-        <p className={`${classes.activatorName} ${playerDetails.name === captain ? classes.myPlayer : ""}`}>{captain}</p>
+        <p
+          className={`${classes.activatorName} ${
+            playerDetails.name === captain?.name ? classes.myPlayer : ""
+          }`}
+        >
+          {captain?.name}
+        </p>
       </motion.div>
       <ul className={classes.playersList}>{players}</ul>
     </div>

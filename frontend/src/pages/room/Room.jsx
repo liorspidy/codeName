@@ -47,9 +47,9 @@ const Room = (props) => {
       let teamPosition = 0; // 0 = no last assignment, 1 = red, 2 = blue
 
       roomDetails.players.forEach((player, index) => {
-        if (roomDetails.redTeam.includes(player)) {
+        if (roomDetails.redTeam.find((p) => p.name === player.name)) {
           // Player already in the red team
-        } else if (roomDetails.blueTeam.includes(player)) {
+        } else if (roomDetails.blueTeam.find((p)=> p.name === player.name)) {
           // Player already in the blue team
         } else {
           if (index % 2 === 0) {

@@ -126,7 +126,7 @@ const createRoom = async (req, res) => {
       id: String(randomId),
       name,
       createdBy,
-      players: [createdBy],
+      players: [{name: createdBy, ready: false , pickedCard: false}],
       redTeam: [],
       redScore: 0,
       blueTeam: [],
@@ -166,8 +166,8 @@ const joinRoom = async (req, res) => {
     // Check if the room is full
 
     if (room.players.length < 8) {
-      if (!room.players.includes(playerName)) {
-        room.players.push(playerName);
+      if (!room.players.some((player) => player.name === playerName)) {
+        room.players.push({name: playerName, ready: false , pickedCard: false});
       }
     } else {
       return res.status(405).json({ error: "Room is full" });
@@ -191,8 +191,8 @@ const leaveRoom = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    if (room.players.includes(username)) {
-      room.players = room.players.filter((player) => player !== username);
+    if (room.players.some(player => player.name === username)) {
+      room.players = room.players.filter((player) => player.name !== username);
     }
 
     if (room.redTeam.includes(username)) {
