@@ -4,6 +4,7 @@ const roomSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     name: { type: String, required: true},
     createdBy: { type: String, required: true },
+    lastTimePlayed: { type: Date, default: null },
     players: { type: Array,default: [] },
     redTeam: { type: Array, default: [] },
     redScore: { type: Number, default: 8 },

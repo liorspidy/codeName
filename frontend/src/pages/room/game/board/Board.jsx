@@ -36,7 +36,9 @@ const Board = (props) => {
     setRedGroupCounter,
     blueGroupCounter,
     setBlueGroupCounter,
-    setMyDetails
+    setMyDetails,
+    minimap,
+    socket,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -44,7 +46,6 @@ const Board = (props) => {
   const [currentCard, setCurrentCard] = useState(null);
   const [newWordSetted, setNewWordSetted] = useState(false);
   const [wordLocked, setWordLocked] = useState(false);
-  const [minimap, setMinimap] = useState([]);
   const [timer, setTimer] = useState(30);
   const [timerStarts, setTimerStarts] = useState(false);
   const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
@@ -199,7 +200,6 @@ const Board = (props) => {
         leadGroupColor={leadGroupColor}
         currentGroupColor={currentGroupColor}
         roomDetails={roomDetails}
-        setMinimap={setMinimap}
         minimap={minimap}
       />
       <UpperBoardZone
@@ -227,6 +227,7 @@ const Board = (props) => {
         switchColorGroup={switchColorGroup}
         roomDetails={roomDetails}
         setNextRound={setNextRound}
+        socket={socket}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -249,6 +250,7 @@ const Board = (props) => {
         gameOver={gameOver}
         switchColorGroup={switchColorGroup}
         resetOperatorsWord={resetOperatorsWord}
+        socket={socket}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

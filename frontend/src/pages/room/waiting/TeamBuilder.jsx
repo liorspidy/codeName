@@ -5,12 +5,15 @@ import classes from "./Waiting.module.scss";
 import { motion } from "framer-motion";
 
 const TeamBuilder = (props) => {
-  const { mainClass, teamPlayers, playerDetails } = props;
+  const { mainClass, teamPlayers, playerDetails, setReadyButton } = props;
   const [captain, setCaptain] = useState(null);
 
   useEffect(() => {
     if (teamPlayers) {
       setCaptain(teamPlayers[0]);
+      if (teamPlayers.find((player) => player.name === playerDetails.name)?.ready) {
+        setReadyButton(true);
+      }
     }
   }, [teamPlayers]);
 

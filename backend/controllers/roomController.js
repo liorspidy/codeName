@@ -22,10 +22,10 @@ const getRoom = async (req, res) => {
     }
 
     // If the room is found, return it as a response
-    res.status(200).json(room);
+    return res.status(200).json(room);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    console.error("Error getting room:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -95,7 +95,6 @@ const playTurn = async (req, res) => {
     // Add logic to handle a player's turn
 
     await room.save();
-
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error playing turn:", error.message);
@@ -126,7 +125,8 @@ const createRoom = async (req, res) => {
       id: String(randomId),
       name,
       createdBy,
-      players: [{name: createdBy, ready: false , pickedCard: false}],
+      lastTimePlayed: null,
+      players: [{ name: createdBy, ready: false, pickedCard: false }],
       redTeam: [],
       redScore: 0,
       blueTeam: [],
@@ -145,13 +145,39 @@ const createRoom = async (req, res) => {
     });
 
     await newRoom.save();
-
     return res.status(201).json(newRoom);
   } catch (error) {
     console.error("Error creating room:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const updateTimer = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const team = req.body.team;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    if (!room[team].some(player => player.pickedCard === true)) {
+      room.lastTimePlayed = new Date.now();
+    }
+
+    if(room[team].filter((player)=>player.pickedCard === false).length === 1){
+      room.lastTimePlayed = null;
+    }
+
+    await room.save();
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error updating timer:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 const joinRoom = async (req, res) => {
   try {
@@ -167,14 +193,17 @@ const joinRoom = async (req, res) => {
 
     if (room.players.length < 8) {
       if (!room.players.some((player) => player.name === playerName)) {
-        room.players.push({name: playerName, ready: false , pickedCard: false});
+        room.players.push({
+          name: playerName,
+          ready: false,
+          pickedCard: false,
+        });
       }
     } else {
       return res.status(405).json({ error: "Room is full" });
     }
 
     await room.save();
-
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error joining room:", error.message);
@@ -191,16 +220,18 @@ const leaveRoom = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    if (room.players.some(player => player.name === username)) {
+    if (room.players.some((player) => player.name === username)) {
       room.players = room.players.filter((player) => player.name !== username);
     }
 
-    if (room.redTeam.includes(username)) {
-      room.redTeam = room.redTeam.filter((player) => player !== username);
+    if (room.redTeam.find((player) => player.name === username)) {
+      room.redTeam = room.redTeam.filter((player) => player.name !== username);
     }
 
-    if (room.blueTeam.includes(username)) {
-      room.blueTeam = room.blueTeam.filter((player) => player !== username);
+    if (room.blueTeam.find((player) => player.name === username)) {
+      room.blueTeam = room.blueTeam.filter(
+        (player) => player.name !== username
+      );
     }
 
     await room.save();
@@ -223,7 +254,6 @@ const endGame = async (req, res) => {
     // Add logic to end the game
 
     await room.save();
-
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error ending game:", error.message);
@@ -243,7 +273,6 @@ const deleteRoom = async (req, res) => {
     // Add logic to handle deleting the room
 
     await room.remove();
-
     return res.status(200).json({ message: "Room deleted successfully" });
   } catch (error) {
     console.error("Error deleting room:", error.message);
@@ -263,7 +292,6 @@ const resetRoom = async (req, res) => {
     // Add logic to reset the room state
 
     await room.save();
-
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error resetting room:", error.message);
@@ -284,7 +312,6 @@ const setCards = async (req, res) => {
     room.cards = cards;
 
     await room.save();
-
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error setting cards:", error.message);
@@ -305,10 +332,34 @@ const setTurn = async (req, res) => {
     room.turn = turn;
 
     await room.save();
-
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error setting cards:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const setPlayers = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const players = req.body.players;
+    const redTeam = req.body.redTeamPlayers;
+    const blueTeam = req.body.blueTeamPlayers;
+
+    const room = await Room.findOne({ id: roomId });
+
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    
+    room.players = players;
+    room.redTeam = redTeam;
+    room.blueTeam = blueTeam;
+
+    await room.save();
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error setting team players:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -336,6 +387,46 @@ const setTeamPlayers = async (req, res) => {
   }
 };
 
+const setPlayerNotReady = async (req, res) => {
+  try {
+    const roomId = req.body.roomId;
+    const playerName = req.body.playerName;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    const playerIndex = room.players.findIndex(
+      (player) => player.name === playerName
+    );
+
+    if (playerIndex !== -1) {
+      room.players[playerIndex].ready = false;
+    }
+
+    const redTeamIndex = room.redTeam.findIndex(
+      (player) => player.name === playerName
+    );
+    if (redTeamIndex === -1) {
+      const blueTeamIndex = room.blueTeam.findIndex(
+        (player) => player.name === playerName
+      );
+      if (blueTeamIndex !== -1) {
+        room.blueTeam[blueTeamIndex].ready = false;
+      }
+    } else {
+      room.redTeam[redTeamIndex].ready = false;
+    }
+
+    await room.save();
+    return res.status(200).json(room);
+  } catch (error) {
+    console.error("Error setting player not ready:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const setMap = async (req, res) => {
   try {
     const roomId = req.body.roomId;
@@ -347,6 +438,7 @@ const setMap = async (req, res) => {
     }
 
     room.map = map;
+
     await room.save();
     return res.status(200).json(room);
   } catch (error) {
@@ -475,6 +567,8 @@ const setScore = async (req, res) => {
     const team = req.body.team;
     const score = req.body.score;
 
+    console.log("setting score...");
+
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
@@ -486,7 +580,9 @@ const setScore = async (req, res) => {
       room.blueScore = score;
     }
 
+    
     await room.save();
+    console.log("score set");
     return res.status(200);
   } catch (err) {
     console.error("Error setting score:", error.message);
@@ -532,6 +628,7 @@ module.exports = {
   getPlayers,
   createRoom,
   joinRoom,
+  updateTimer,
   leaveRoom,
   setStatus,
   setWinner,
@@ -542,7 +639,9 @@ module.exports = {
   setCards,
   setTurn,
   setMap,
+  setPlayers,
   setTeamPlayers,
+  setPlayerNotReady,
   nextRound,
   nextTurn,
   setOperatorsWord,

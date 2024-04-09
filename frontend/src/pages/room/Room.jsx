@@ -10,11 +10,20 @@ import { jwtDecode } from "jwt-decode";
 
 const Room = (props) => {
   const [roomName, setRoomName] = useState("");
-  const [roomDetails, setRoomDetails] = useState(null);
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
 
-  const { socket, isConnected } = props;
+  const {
+    socket,
+    isConnected,
+    setPlayersInDb,
+    setIsGoingBack,
+    setUniqueRandomWords,
+    setRandomLeadGroupColor,
+    roomDetails,
+    setRoomDetails,
+    setMinimap,
+  } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
@@ -39,7 +48,7 @@ const Room = (props) => {
     }
   };
 
-  const updatePlayers = (roomDetails) => {
+  const updatePlayers = async (roomDetails) => {
     if (roomDetails.players.length > 0 && roomDetails) {
       const tempRedTeamPlayers = [...roomDetails.redTeam];
       const tempBlueTeamPlayers = [...roomDetails.blueTeam];
@@ -49,7 +58,7 @@ const Room = (props) => {
       roomDetails.players.forEach((player, index) => {
         if (roomDetails.redTeam.find((p) => p.name === player.name)) {
           // Player already in the red team
-        } else if (roomDetails.blueTeam.find((p)=> p.name === player.name)) {
+        } else if (roomDetails.blueTeam.find((p) => p.name === player.name)) {
           // Player already in the blue team
         } else {
           if (index % 2 === 0) {
@@ -80,22 +89,23 @@ const Room = (props) => {
 
       setRedTeamPlayers(tempRedTeamPlayers);
       setBlueTeamPlayers(tempBlueTeamPlayers);
-      setTeamPlayersInDb(tempRedTeamPlayers, tempBlueTeamPlayers);
+      await setTeamPlayersInDb(tempRedTeamPlayers, tempBlueTeamPlayers);
     }
   };
-
 
   // Set teams in db
   const setTeamPlayersInDb = async (tempRed, tempBlue) => {
     try {
-      const response = await axios.post(`http://localhost:4000/room/${roomId}/setTeamPlayers`, {
-        roomId,
-        redTeamPlayers: tempRed,
-        blueTeamPlayers: tempBlue,
-      });
+      const response = await axios.post(
+        `http://localhost:4000/room/${roomId}/setTeamPlayers`,
+        {
+          roomId,
+          redTeamPlayers: tempRed,
+          blueTeamPlayers: tempBlue,
+        }
+      );
       const room = response.data;
       socket.emit("joinRoom", room, playerDetails.name);
-      console.log("Teams updated in db");
     } catch (error) {
       console.log(error);
     }
@@ -113,7 +123,16 @@ const Room = (props) => {
 
   return (
     <div className={classes.room}>
-      <Header roomName={roomName} roomId={roomId} isConnected={isConnected} />
+      <Header
+        roomName={roomName}
+        roomId={roomId}
+        isConnected={isConnected}
+        playerDetails={playerDetails}
+        socket={socket}
+        setPlayersInDb={setPlayersInDb}
+        setIsGoingBack={setIsGoingBack}
+        roomDetails={roomDetails}
+      />
       <Waiting
         roomDetails={roomDetails}
         playerDetails={playerDetails}
@@ -122,7 +141,12 @@ const Room = (props) => {
         setBlueTeamPlayers={setBlueTeamPlayers}
         redTeamPlayers={redTeamPlayers}
         setRedTeamPlayers={setRedTeamPlayers}
+        setPlayersInDb={setPlayersInDb}
         setTeamPlayersInDb={setTeamPlayersInDb}
+        setUniqueRandomWords={setUniqueRandomWords}
+        setRandomLeadGroupColor={setRandomLeadGroupColor}
+        setRoomDetails={setRoomDetails}
+        setMinimap={setMinimap}
       />
     </div>
   );

@@ -19,7 +19,12 @@ const Waiting = ({
   setRedTeamPlayers,
   blueTeamPlayers,
   setBlueTeamPlayers,
+  setPlayersInDb,
   setTeamPlayersInDb,
+  setRandomLeadGroupColor,
+  setUniqueRandomWords,
+  setRoomDetails,
+  setMinimap,
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [players, setPlayers] = useState([]);
@@ -90,49 +95,59 @@ const Waiting = ({
   const readyButtonHandler = () => {
     setReadyButton(!readyButton);
     updatePlayerReady(playerDetails.name, !readyButton);
+
+    if (!readyButton && roomDetails.status === "playing") {
+      navigate(`/room/${roomId}/game`);
+    }
   };
 
+  // updatePlayerReady updates the player's ready status in the room
   const updatePlayerReady = (playerName, ready) => {
+    const tempPlayers = [...players];
+    const playerIndex = tempPlayers.findIndex(
+      (player) => player.name === playerName
+    );
+    tempPlayers[playerIndex].ready = ready;
+    let finalRedTeamPlayers = redTeamPlayers;
+    let finalBlueTeamPlayers = blueTeamPlayers;
+
     const isOnRedTeam = redTeamPlayers.find(
       (player) => player.name === currentPlayer?.name
     );
     const isOnBlueTeam = blueTeamPlayers.find(
       (player) => player.name === currentPlayer?.name
     );
-    const tempPlayers = [...players];
-    const playerIndex = tempPlayers.findIndex(
-      (player) => player.name === playerName
-    );
-    tempPlayers[playerIndex].ready = ready;
     if (isOnRedTeam) {
       const index = redTeamPlayers.findIndex(
         (player) => player.name === playerName
       );
       const tempRedTeamPlayers = [...redTeamPlayers];
       tempRedTeamPlayers[index].ready = ready;
-      socket.emit(
-        "playerReady",
-        roomId,
-        playerDetails.name,
-        tempPlayers,
-        tempRedTeamPlayers,
-        blueTeamPlayers
-      );
+      finalRedTeamPlayers = tempRedTeamPlayers;
     } else if (isOnBlueTeam) {
       const index = blueTeamPlayers.findIndex(
         (player) => player.name === playerName
       );
       const tempBlueTeamPlayers = [...blueTeamPlayers];
       tempBlueTeamPlayers[index].ready = ready;
-      socket.emit(
-        "playerReady",
+      finalBlueTeamPlayers = tempBlueTeamPlayers;
+    }
+    if (players.some((player) => !player.ready)) {
+      setPlayersInDb(
         roomId,
-        playerDetails.name,
         tempPlayers,
-        redTeamPlayers,
-        tempBlueTeamPlayers
+        finalRedTeamPlayers,
+        finalBlueTeamPlayers
       );
     }
+    socket.emit(
+      "playerReady",
+      roomId,
+      playerDetails.name,
+      tempPlayers,
+      finalRedTeamPlayers,
+      finalBlueTeamPlayers
+    );
   };
 
   // Switch teams on button click
@@ -194,17 +209,22 @@ const Waiting = ({
       setTeamsChanged(true);
     });
 
-    socket.on("updatingReadyPlayers", (readyPlayers) => {
-      console.log("updatingReadyPlayers");
-      if(!readyPlayers.some((player) => !player.ready)){
+    socket.on(
+      "updatingReadyPlayers",
+      (room, uniqueRandomWords, randomLeadGroupColor, tempMinimap) => {
+        setRoomDetails(room);
+        setUniqueRandomWords(uniqueRandomWords);
+        setRandomLeadGroupColor(randomLeadGroupColor);
+        setMinimap(tempMinimap);
         navigate(`/room/${roomId}/game`);
       }
-    });
+    );
 
     return () => {
       socket.off("updatingPlayers");
       socket.off("updatingTeams");
       socket.off("updatingReadyPlayers");
+      socket.off("updatingPlayersAndTeams");
     };
   }, []);
 
@@ -269,11 +289,13 @@ const Waiting = ({
           teamPlayers={redTeamPlayers}
           playerDetails={playerDetails}
           mainClass={classes.redGroup}
+          setReadyButton={setReadyButton}
         />
         <TeamBuilder
           teamPlayers={blueTeamPlayers}
           playerDetails={playerDetails}
           mainClass={classes.blueGroup}
+          setReadyButton={setReadyButton}
         />
       </div>
 

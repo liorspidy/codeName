@@ -18,6 +18,7 @@ const OperatorsModal = (props) => {
     setCurrentOperatorsWordCount,
     setCurrentOperatorsWord,
     setWordsToGuess,
+    socket,
   } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
@@ -71,12 +72,15 @@ const OperatorsModal = (props) => {
 
   const setWordInDb = async () => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setOperatorsWord`, {
-        roomId,
-        word: wordValue,
-        count: wordsCountValue,
-        wordsToGuess: wordsCountValue + 1
-      });
+      await axios.post(
+        `http://localhost:4000/room/${roomId}/setOperatorsWord`,
+        {
+          roomId,
+          word: wordValue,
+          count: wordsCountValue,
+          wordsToGuess: wordsCountValue + 1,
+        }
+      );
     } catch (err) {
       console.log(err);
     }
@@ -84,8 +88,9 @@ const OperatorsModal = (props) => {
 
   const submitWordHandler = () => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
-      setCurrentOperatorsWordCount(wordsCountValue);
-      setCurrentOperatorsWord(wordValue);
+      // setCurrentOperatorsWordCount(wordsCountValue);
+      // setCurrentOperatorsWord(wordValue);
+      socket.emit("operatorsWordSet",roomId, wordValue, wordsCountValue);
       setWordsToGuess(wordsCountValue + 1);
       setWordInDb();
       closeBackdrop();

@@ -6,20 +6,62 @@ import InfoIcon from "@mui/icons-material/Info";
 import IconButton from "@mui/material/IconButton";
 import ChatIcon from "@mui/icons-material/Chat";
 import Menu from "./menu/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InfoModal from "../../UI/modals/InfoModal";
 import ChatModal from "../../UI/modals/ChatModal";
+import axios from "axios";
 
-const Header = ({ roomName, roomId, isConnected }) => {
+const Header = ({
+  roomName,
+  roomId,
+  isConnected,
+  playerDetails,
+  setPlayersInDb,
+  setIsGoingBack,
+  roomDetails
+}) => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isGame, setIsGame] = useState(false);
   const [notificationsNumber, setNotificationsNumber] = useState(1);
+
+  useEffect(() => {
+    if (playerDetails) {
+      const url = window.location.href;
+      url.includes("game") ? setIsGame(true) : setIsGame(false);
+    }
+  }, [playerDetails]);
 
   let navigate = useNavigate();
 
   const goBackHandler = () => {
-    navigate(-1);
+    if (isGame) {
+      setPlayerNotReady(playerDetails.name);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  // Set teams in db
+  const setPlayerNotReady = async (name) => {
+    try {
+      setIsGoingBack(true);
+      console.log("setting player not ready");
+      const response = await axios.post(
+        `http://localhost:4000/room/${roomId}/setPlayerNotReady`,
+        {
+          roomId,
+          playerName: name,
+        }
+      );
+      const room = response.data;
+      await setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam);
+      setIsGoingBack(false);
+      navigate(-1);
+    } catch (error) {
+      console.error("An error occurred while setting player not ready:", error);
+    }
   };
 
   const infoHandler = () => {
@@ -39,6 +81,7 @@ const Header = ({ roomName, roomId, isConnected }) => {
           setModalOpen={setModalOpen}
           setModalShown={setOpenInfo}
           modalShown={openInfo}
+          roomDetails={roomDetails}
         />
       )}
       {modalOpen && (
@@ -77,8 +120,8 @@ const Header = ({ roomName, roomId, isConnected }) => {
       </div>
       <div className={classes.middleSection}>
         <div className={classes.content}>
-        <h1 className={classes.roomName}>{roomName}</h1>
-        <p className={classes.roomId}>{roomId}</p>
+          <h1 className={classes.roomName}>{roomName}</h1>
+          <p className={classes.roomId}>{roomId}</p>
         </div>
         <span
           className={`${classes.isConnected} ${

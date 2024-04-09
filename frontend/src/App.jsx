@@ -6,12 +6,18 @@ import Game from "./pages/room/game/Game";
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:4000");
+import axios from "axios";
 
 function App() {
   const [logedInPlayer, setLogedInPlayer] = useState(
     sessionStorage.getItem("token") ? true : false
   );
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isGoingBack, setIsGoingBack] = useState(false);
+  const [uniqueRandomWords, setUniqueRandomWords] = useState([]);
+  const [randomLeadGroupColor, setRandomLeadGroupColor] = useState("");
+  const [roomDetails, setRoomDetails] = useState(null);
+  const [minimap, setMinimap] = useState([]);
 
   useEffect(() => {
     const handleConnectionChange = () => {
@@ -21,6 +27,20 @@ function App() {
     socket.on("connect", handleConnectionChange);
     socket.on("disconnect", handleConnectionChange);
   }, []);
+
+  // Set players and teams in db
+  const setPlayersInDb = async (roomId, tempPlayers, tempRed, tempBlue) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setPlayers`, {
+        roomId,
+        players: tempPlayers,
+        redTeamPlayers: tempRed,
+        blueTeamPlayers: tempBlue,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Routes>
@@ -38,11 +58,37 @@ function App() {
           <Route path="/room" element={<NotFound />} />
           <Route
             path="/room/:roomId"
-            element={<Room socket={socket} isConnected={isConnected} />}
+            element={
+              <Room
+                socket={socket}
+                isConnected={isConnected}
+                setPlayersInDb={setPlayersInDb}
+                setIsGoingBack={setIsGoingBack}
+                setUniqueRandomWords={setUniqueRandomWords}
+                setRandomLeadGroupColor={setRandomLeadGroupColor}
+                setRoomDetails={setRoomDetails}
+                roomDetails={roomDetails}
+                setMinimap={setMinimap}
+              />
+            }
           />
           <Route
             path="/room/:roomId/game"
-            element={<Game socket={socket} isConnected={isConnected} />}
+            element={
+              <Game
+                socket={socket}
+                isConnected={isConnected}
+                setPlayersInDb={setPlayersInDb}
+                setIsGoingBack={setIsGoingBack}
+                isGoingBack={isGoingBack}
+                uniqueRandomWords={uniqueRandomWords}
+                randomLeadGroupColor={randomLeadGroupColor}
+                roomDetails={roomDetails}
+                setRoomDetails={setRoomDetails}
+                minimap={minimap}
+                setMinimap={setMinimap}
+              />
+            }
           />
         </>
       ) : (

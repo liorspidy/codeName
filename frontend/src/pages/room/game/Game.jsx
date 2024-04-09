@@ -4,16 +4,15 @@ import { useEffect, useState } from "react";
 import Header from "../../../components/header/Header";
 import classes from "./Game.module.scss";
 import Board from "./board/Board";
-import wordsList from "../../../words.json";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../../UI/loader/Loader";
 
 const Game = (props) => {
   const [roomName, setRoomName] = useState("");
   const [pickedRandomWords, setPickedRandomWords] = useState([]);
-  const [roomDetails, setRoomDetails] = useState(null);
   const [myDetails, setMyDetails] = useState(null);
   const [currentGroupColor, setCurrentGroupColor] = useState("red");
   const [leadGroupColor, setLeadGroupColor] = useState("red");
@@ -37,7 +36,19 @@ const Game = (props) => {
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
 
-    const { socket, isConnected } = props;
+  const {
+    socket,
+    isConnected,
+    setPlayersInDb,
+    setIsGoingBack,
+    isGoingBack,
+    uniqueRandomWords,
+    randomLeadGroupColor,
+    roomDetails,
+    setRoomDetails,
+    minimap,
+    setMinimap,
+  } = props;
 
   const { roomId } = useParams();
   let navigate = useNavigate();
@@ -55,60 +66,6 @@ const Game = (props) => {
     }
   };
 
-  const setCardsAndTurnInDb = async (
-    roomDetails,
-    pickedRandomWords,
-    leadGroupColor
-  ) => {
-    try {
-      // Only set cards in the database if roomDetails is not null and roomDetails.cards is not already full
-      if (roomDetails && roomDetails.cards.length < 25) {
-        const setCardsPromise = axios.post(
-          `http://localhost:4000/room/${roomId}/setCards`,
-          {
-            roomId,
-            cards: pickedRandomWords,
-          }
-        );
-
-        const setTurnPromise = axios.post(
-          `http://localhost:4000/room/${roomId}/setTurn`,
-          {
-            roomId,
-            turn: leadGroupColor,
-          }
-        );
-
-        await Promise.all([setCardsPromise, setTurnPromise]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const setStatusInDb = async (status) => {
-    try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setStatus`, {
-        roomId,
-        status,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const setScoreInDb = async (team, score) => {
-    try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setScore`, {
-        roomId,
-        team,
-        score,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const setUserScoreInDb = async (winnigTeam) => {
     try {
       await axios.post(`http://localhost:4000/room/${roomId}/setUsersScore`, {
@@ -121,34 +78,26 @@ const Game = (props) => {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => {    
+    socket.on("updatingOperatorsWord", (word, count) => {
+      setCurrentOperatorsWord(word);
+      setCurrentOperatorsWordCount(count);
+    });
 
     return () => {
+      socket.off("updatingOperatorsWord");
+      socket.off("cardLocked");
       socket.off("connect");
       socket.off("disconnect");
     };
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     fetchRoomDetails()
       .then((room) => {
-        // set unique cards
-        const uniqueRandomWords = [];
-
-        while (uniqueRandomWords.length < 25) {
-          const randomWord =
-            wordsList.words[Math.floor(Math.random() * wordsList.words.length)];
-
-          if (!uniqueRandomWords.includes(randomWord)) {
-            uniqueRandomWords.push(randomWord);
-          }
-        }
-
         setPickedRandomWords(
           room.cards.length > 0 ? room.cards : uniqueRandomWords
         );
-
-        const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
 
         if (room.turn === "") {
           setLeadGroupColor(randomLeadGroupColor);
@@ -164,32 +113,23 @@ const Game = (props) => {
         if (room.round === 1 && room.redScore === 0 && room.blueScore === 0) {
           if (randomLeadGroupColor === "red") {
             setRedGroupCounter(9);
-            setScoreInDb("red", 9);
             setBlueGroupCounter(8);
-            setScoreInDb("blue", 8);
           } else if (randomLeadGroupColor === "blue") {
             setBlueGroupCounter(9);
-            setScoreInDb("blue", 9);
             setRedGroupCounter(8);
-            setScoreInDb("red", 8);
           }
         }
 
-        const leadColorToPass =
-          room.turn !== "" ? room.turn : randomLeadGroupColor;
-
-        setCardsAndTurnInDb(room, uniqueRandomWords, leadColorToPass);
-
         const myName = playerDetails.name;
-        const myTeam = room.blueTeam.includes(playerDetails.name)
+        const myTeam = room.blueTeam.find((p) => p.name === playerDetails.name)
           ? "blue"
           : "red";
         const myRole =
           myTeam === "red"
-            ? room.redTeam[0] === myName
+            ? room.redTeam[0].name === myName
               ? "operator"
               : "agent"
-            : room.blueTeam[0] === myName
+            : room.blueTeam[0].name === myName
             ? "operator"
             : "agent";
 
@@ -207,6 +147,7 @@ const Game = (props) => {
         setWordsToGuess(room.wordsToGuess);
         setRevealedCards(room.revealedCards);
         setUsersScoreWasSet(room.usersScoreWasSet);
+        setMinimap(room.map);
 
         if (room.status === "finished") {
           setOpenGameOver(true);
@@ -215,9 +156,6 @@ const Game = (props) => {
           setWinnerGroup(room.winner);
         }
 
-        if (room.status === "waiting") {
-          setStatusInDb("playing");
-        }
       })
       .catch((err) => {
         console.log(err);
@@ -239,7 +177,21 @@ const Game = (props) => {
 
   return (
     <div className={classes.gamePage}>
-      <Header roomName={roomName} roomId={roomId} isConnected={isConnected}/>
+      {isGoingBack && (
+        <div className={classes.loaderContainer}>
+          <Loader />
+        </div>
+      )}
+      <Header
+        roomName={roomName}
+        roomId={roomId}
+        isConnected={isConnected}
+        playerDetails={playerDetails}
+        socket={socket}
+        setPlayersInDb={setPlayersInDb}
+        setIsGoingBack={setIsGoingBack}
+        roomDetails={roomDetails}
+      />
       <Board
         randomWords={pickedRandomWords}
         leadGroupColor={leadGroupColor}
@@ -267,6 +219,8 @@ const Game = (props) => {
         blueGroupCounter={blueGroupCounter}
         setBlueGroupCounter={setBlueGroupCounter}
         setMyDetails={setMyDetails}
+        minimap={minimap}
+        socket={socket}
       />
     </div>
   );

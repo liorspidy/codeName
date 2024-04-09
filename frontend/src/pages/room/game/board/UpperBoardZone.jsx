@@ -29,6 +29,7 @@ const UpperBoardZone = (props) => {
     wordsToGuess,
     switchColorGroup,
     roomDetails,
+    socket,
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
@@ -39,7 +40,7 @@ const UpperBoardZone = (props) => {
       setShowMinimap(true);
     }
   };
-
+  
   useEffect(() => {
     if (timerStarts) {
       // Timer logic
