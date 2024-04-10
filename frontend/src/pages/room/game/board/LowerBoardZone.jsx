@@ -30,6 +30,7 @@ const LowerBoardZone = (props) => {
     gameOver,
     switchColorGroup,
     resetOperatorsWord,
+    roomDetails,
     socket,
   } = props;
 
@@ -78,6 +79,10 @@ const LowerBoardZone = (props) => {
     socket.on("playerLockedCard", (playersPickedCard, playersDetails) => {
       setTimerStarts(true);
     });
+
+    return () => {
+      socket.off("playerLockedCard");
+    };
   }, []);
 
   return (
@@ -92,10 +97,11 @@ const LowerBoardZone = (props) => {
           setNewWordSetted={setNewWordSetted}
           setWordsToGuess={setWordsToGuess}
           socket={socket}
+          roomDetails={roomDetails}
         />
       )}
       <div className={classes.scoreTable}>
-      <div
+        <div
           className={`${classes.group} ${classes.blue} ${
             currentGroupColor === "blue" ? classes.glow : ""
           } ${

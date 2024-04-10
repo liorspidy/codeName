@@ -260,6 +260,7 @@ const Board = (props) => {
         gameOver={gameOver}
         switchColorGroup={switchColorGroup}
         resetOperatorsWord={resetOperatorsWord}
+        roomDetails={roomDetails}
         socket={socket}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />

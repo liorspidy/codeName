@@ -19,6 +19,7 @@ const OperatorsModal = (props) => {
     setCurrentOperatorsWord,
     setWordsToGuess,
     socket,
+    roomDetails
   } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
@@ -90,20 +91,23 @@ const OperatorsModal = (props) => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
       // setCurrentOperatorsWordCount(wordsCountValue);
       // setCurrentOperatorsWord(wordValue);
-      socket.emit("operatorsWordSet", roomId, wordValue, wordsCountValue);
-      setWordsToGuess(wordsCountValue + 1);
-      setWordInDb();
-      closeBackdrop();
+      if (!Object.values(roomDetails.cards).includes(wordValue)) {
+        socket.emit("operatorsWordSet", roomId, wordValue, wordsCountValue);
+        setWordsToGuess(wordsCountValue + 1);
+        setWordInDb();
+        closeBackdrop();
+      } else {
+        setError("לא ניתן להציע מילה שעל הלוח");
+      }
     } else {
       setError("אחד או יותר מהשדות לא מולאו כראוי");
     }
   };
 
   const wordValueChange = (e) => {
-    const newValue = e.target.value.replace(/[^\p{L}\s]/gu, '');
+    const newValue = e.target.value.replace(/[^\p{L}\s]/gu, "");
     setWordValue(newValue);
   };
-  
 
   // if the modal is shown and i press on enter the submitWordHandler will be called
   useEffect(() => {
@@ -136,7 +140,7 @@ const OperatorsModal = (props) => {
       document.removeEventListener("keydown", arrowUpHandler);
       document.removeEventListener("keydown", arrowDownHandler);
     };
-  }, [modalShown, wordValue , wordsCountValue]);
+  }, [modalShown, wordValue, wordsCountValue]);
 
   return (
     <Modal
