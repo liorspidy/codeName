@@ -25,6 +25,8 @@ const Waiting = ({
   setUniqueRandomWords,
   setRoomDetails,
   setMinimap,
+  playersAmountError,
+  setPlayersAmountError
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [players, setPlayers] = useState([]);
@@ -132,14 +134,15 @@ const Waiting = ({
       tempBlueTeamPlayers[index].ready = ready;
       finalBlueTeamPlayers = tempBlueTeamPlayers;
     }
-    if (players.some((player) => !player.ready)) {
+    // if (players.some((player) => !player.ready)) {
+      console.log("setting players in db");
       setPlayersInDb(
         roomId,
         tempPlayers,
         finalRedTeamPlayers,
         finalBlueTeamPlayers
       );
-    }
+    // }
     socket.emit(
       "playerReady",
       roomId,
@@ -217,11 +220,14 @@ const Waiting = ({
         setRandomLeadGroupColor(randomLeadGroupColor);
         setMinimap(tempMinimap);
         navigate(`/room/${roomId}/game`);
+
+        if(room.players.length >= 4){
+          setPlayersAmountError(false);
+        }
       }
     );
 
     return () => {
-      socket.off("updatingPlayers");
       socket.off("updatingTeams");
       socket.off("updatingReadyPlayers");
       socket.off("updatingPlayersAndTeams");

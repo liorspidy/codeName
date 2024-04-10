@@ -17,6 +17,7 @@ function App() {
   const [uniqueRandomWords, setUniqueRandomWords] = useState([]);
   const [randomLeadGroupColor, setRandomLeadGroupColor] = useState("");
   const [roomDetails, setRoomDetails] = useState(null);
+  const [playersAmountError, setPlayersAmountError] = useState(false);
   const [minimap, setMinimap] = useState([]);
 
   useEffect(() => {
@@ -68,6 +69,8 @@ function App() {
                 setRandomLeadGroupColor={setRandomLeadGroupColor}
                 setRoomDetails={setRoomDetails}
                 roomDetails={roomDetails}
+                playersAmountError={playersAmountError}
+                setPlayersAmountError={setPlayersAmountError}
                 setMinimap={setMinimap}
               />
             }
@@ -87,6 +90,8 @@ function App() {
                 setRoomDetails={setRoomDetails}
                 minimap={minimap}
                 setMinimap={setMinimap}
+                playersAmountError={playersAmountError}
+                setPlayersAmountError={setPlayersAmountError}
               />
             }
           />

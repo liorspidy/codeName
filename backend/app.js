@@ -46,8 +46,14 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("playerLeft", (roomDetails, name) => {
+  socket.on("playerLeft", async (roomDetails, name) => {
     console.log(name + " left the room");
+
+    if (roomDetails.players.length === 4) {
+      io.to(roomDetails.id).emit("showPlayersAmountError", name);
+    }
+
+    // Emit updatingPlayersAndTeams event
     io.to(roomDetails.id).emit(
       "updatingPlayersAndTeams",
       roomDetails.players.filter((p) => p !== name),
@@ -60,12 +66,16 @@ io.on("connection", (socket) => {
     "playerReady",
     async (roomId, player, players, redTeam, blueTeam) => {
       console.log(player + " is ready");
+
+      // Check if all players are ready
       if (!players.some((player) => !player.ready)) {
         try {
           const room = await Room.findOne({ id: roomId });
           if (!room) {
-            return res.status(404).json({ message: "Room not found" });
+            throw new Error("Room not found");
           }
+
+          io.to(roomId).emit("playerJoinedToGame", room);
 
           if (
             room &&
@@ -202,7 +212,7 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("updatingOperatorsWord", word, count);
   });
 
-  socket.on("lockCard", async (roomId, pickedCard , myDetails) => {
+  socket.on("lockCard", async (roomId, pickedCard, myDetails) => {
     console.log(myDetails.name + " locked a card");
     try {
       const room = await Room.findOne({ id: roomId });
@@ -210,23 +220,20 @@ io.on("connection", (socket) => {
         return res.status(404).json({ message: "Room not found" });
       }
 
-      if(myDetails.team === "red"){
+      if (myDetails.team === "red") {
         room.redTeam.find((p) => p.name === myDetails.name).pickedCard = true;
         console.log(room.redTeam);
-      }else{
+      } else {
         room.blueTeam.find((p) => p.name === myDetails.name).pickedCard = true;
         console.log(room.blueTeam);
       }
 
       await room.save();
-
     } catch (error) {
       console.error("Error getting room:", error.message);
     }
-    io.to(roomId).emit("playerLockedCard", pickedCard , myDetails);
-  }
-  );
-
+    io.to(roomId).emit("playerLockedCard", pickedCard, myDetails);
+  });
 });
 
 // Connect to MongoDB

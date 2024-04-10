@@ -234,6 +234,10 @@ const leaveRoom = async (req, res) => {
       );
     }
 
+    // if(room.players.length < 4){
+    //   room.status = "waiting";
+    // }
+
     await room.save();
     return res.status(200).json(room);
   } catch (err) {
@@ -289,10 +293,32 @@ const resetRoom = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    // Add logic to reset the room state
+    room.lastTimePlayed = null;
+    room.players.forEach((player) => {
+      player.ready = false;
+    });
+    room.redTeam.forEach((player) => {
+      player.ready = false;
+    });
+    room.blueTeam.forEach((player) => {
+      player.ready = false;
+    });
+    room.redScore = 0;
+    room.blueScore = 0;
+    room.status = "waiting";
+    room.turn = "";
+    room.winner = "";
+    room.cards = [];
+    room.revealedCards = [];
+    room.map = [];
+    room.round = 1;
+    room.currentWord = "";
+    room.currentWordCount = 0;
+    room.wordsToGuess = 0;
+    room.usersScoreWasSet = false;
 
     await room.save();
-    return res.status(200).json(room);
+    return res.status(200);
   } catch (error) {
     console.error("Error resetting room:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });

@@ -8,6 +8,7 @@ import LowerBoardZone from "./LowerBoardZone";
 import GameOverModal from "../../../../UI/modals/GameOverModal";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import PlayersAmountError from "../../../../UI/modals/PlayersAmountError";
 
 const Board = (props) => {
   const {
@@ -39,6 +40,7 @@ const Board = (props) => {
     setMyDetails,
     minimap,
     socket,
+    playersAmountError,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -51,7 +53,6 @@ const Board = (props) => {
   const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
   const [timeRanOut, setTimeRanOut] = useState(false);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
-
 
   const { roomId } = useParams();
 
@@ -88,7 +89,6 @@ const Board = (props) => {
     ));
 
     setCards(tempCards);
-
   }, [currentCard, randomWords, wordLocked]);
 
   const backdropBoardHandler = () => {
@@ -156,12 +156,15 @@ const Board = (props) => {
 
   const resetOperatorsWordInDb = async () => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setOperatorsWord`, {
-        roomId,
-        word: "",
-        count: 0,
-        wordsToGuess: 0
-      });
+      await axios.post(
+        `http://localhost:4000/room/${roomId}/setOperatorsWord`,
+        {
+          roomId,
+          word: "",
+          count: 0,
+          wordsToGuess: 0,
+        }
+      );
     } catch (err) {
       console.log(err);
     }
@@ -202,6 +205,13 @@ const Board = (props) => {
         roomDetails={roomDetails}
         minimap={minimap}
       />
+      {playersAmountError && (
+        <PlayersAmountError
+          setModalOpen={setModalOpen}
+          setModalShown={setOpenGameOver}
+          modalShown={openGameOver}
+        />
+      )}
       <UpperBoardZone
         setShowMinimap={setShowMinimap}
         timer={timer}

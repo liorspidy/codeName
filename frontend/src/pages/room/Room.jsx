@@ -23,6 +23,8 @@ const Room = (props) => {
     roomDetails,
     setRoomDetails,
     setMinimap,
+    playersAmountError,
+    setPlayersAmountError
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -147,6 +149,8 @@ const Room = (props) => {
         setRandomLeadGroupColor={setRandomLeadGroupColor}
         setRoomDetails={setRoomDetails}
         setMinimap={setMinimap}
+        playersAmountError={playersAmountError}
+        setPlayersAmountError={setPlayersAmountError}
       />
     </div>
   );

@@ -71,11 +71,13 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const handleEnterPress = (e) => {
     if (e.key === "Enter") {
-      createUserHandler();
+      createUserHandler(e); // Pass event to createUserHandler
     }
   };
 
-  const createUserHandler = () => {
+  const createUserHandler = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
     const trimmedUsername = usernameValue.trim();
     const trimmedPassword = passwordValue.trim();
 
@@ -180,7 +182,10 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
       backdropShown={backdropShown}
     >
       {!creatingAccount && (
-        <div className={classes.createUserModal}>
+        <form
+          className={classes.createUserModal}
+          onSubmit={createUserHandler} // Added onSubmit handler to the form
+        >
           <h2>הזן את פרטי ההרשמה</h2>
           <input
             className={classes.fullNameInput}
@@ -214,6 +219,7 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
               onChange={setPasswordValueHandler}
               onKeyDown={handleEnterPress}
               placeholder="סיסמה"
+              autoComplete="off" // Added autoComplete attribute to disable autocomplete
             />
             <span onClick={changePasswordType}>
               {!passwordType && <VisibilityIcon sx={{ color: "black" }} />}
@@ -269,10 +275,13 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
             </ul>
           </div>
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <Button classname={classes.actionButton} onclick={createUserHandler}>
+          <Button
+            classname={classes.actionButton}
+            type="submit"
+          >
             <span>צור חשבון</span>
           </Button>
-        </div>
+        </form>
       )}
       {creatingAccount && (
         <div className={classes.logInModal}>

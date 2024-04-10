@@ -48,6 +48,8 @@ const Game = (props) => {
     setRoomDetails,
     minimap,
     setMinimap,
+    playersAmountError,
+    setPlayersAmountError
   } = props;
 
   const { roomId } = useParams();
@@ -78,19 +80,35 @@ const Game = (props) => {
     }
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     socket.on("updatingOperatorsWord", (word, count) => {
+      console.log("Operators word updated");
       setCurrentOperatorsWord(word);
       setCurrentOperatorsWordCount(count);
     });
 
+    socket.on("showPlayersAmountError", (name) => {
+      if (name !== playerDetails.name) {
+        setPlayersAmountError(true);
+      }
+    });
+
+    socket.on(
+      "playerJoinedToGame",
+      (room) => {
+        if(room.players.length >= 4){
+          setPlayersAmountError(false);
+        }
+      }
+    );
+
     return () => {
       socket.off("updatingOperatorsWord");
-      socket.off("cardLocked");
+      socket.off("kickPlayer");
       socket.off("connect");
       socket.off("disconnect");
     };
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     fetchRoomDetails()
@@ -149,13 +167,16 @@ const Game = (props) => {
         setUsersScoreWasSet(room.usersScoreWasSet);
         setMinimap(room.map);
 
+        if (room.players.length < 4) {
+          setPlayersAmountError(true);
+        }
+
         if (room.status === "finished") {
           setOpenGameOver(true);
           setGameOver(true);
           setModalOpen(true);
           setWinnerGroup(room.winner);
         }
-
       })
       .catch((err) => {
         console.log(err);
@@ -221,6 +242,7 @@ const Game = (props) => {
         setMyDetails={setMyDetails}
         minimap={minimap}
         socket={socket}
+        playersAmountError={playersAmountError}
       />
     </div>
   );
