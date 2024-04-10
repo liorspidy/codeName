@@ -100,8 +100,10 @@ const OperatorsModal = (props) => {
   };
 
   const wordValueChange = (e) => {
-    setWordValue(e.target.value);
+    const newValue = e.target.value.replace(/[^\p{L}\s]/gu, '');
+    setWordValue(newValue);
   };
+  
 
   // if the modal is shown and i press on enter the submitWordHandler will be called
   useEffect(() => {
@@ -134,7 +136,7 @@ const OperatorsModal = (props) => {
       document.removeEventListener("keydown", arrowUpHandler);
       document.removeEventListener("keydown", arrowDownHandler);
     };
-  }, [modalShown]);
+  }, [modalShown, wordValue , wordsCountValue]);
 
   return (
     <Modal
@@ -154,6 +156,7 @@ const OperatorsModal = (props) => {
               placeholder="הצע מילה"
               value={wordValue}
               onChange={wordValueChange}
+              tabIndex="0"
             />
           </div>
           <div className={classes.wordsToFind}>
