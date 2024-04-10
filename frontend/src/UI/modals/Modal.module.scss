@@ -98,6 +98,7 @@
     padding: 0.5em;
     color: black;
     width: 100%;
+    direction: rtl;
 
     &:focus-visible {
       outline: 2px solid #646cff;
@@ -544,7 +545,7 @@
       margin-bottom: 0;
       text-align: center;
       padding: 0.75rem;
-      direction: ltr;
+      direction: rtl;
     }
   }
 

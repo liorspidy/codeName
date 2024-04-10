@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { useCallback } from "react";
 import classes from "./Modal.module.scss";
@@ -90,7 +90,7 @@ const OperatorsModal = (props) => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
       // setCurrentOperatorsWordCount(wordsCountValue);
       // setCurrentOperatorsWord(wordValue);
-      socket.emit("operatorsWordSet",roomId, wordValue, wordsCountValue);
+      socket.emit("operatorsWordSet", roomId, wordValue, wordsCountValue);
       setWordsToGuess(wordsCountValue + 1);
       setWordInDb();
       closeBackdrop();
@@ -102,6 +102,39 @@ const OperatorsModal = (props) => {
   const wordValueChange = (e) => {
     setWordValue(e.target.value);
   };
+
+  // if the modal is shown and i press on enter the submitWordHandler will be called
+  useEffect(() => {
+    const keyDownHandler = (e) => {
+      if (e.key === "Enter") {
+        submitWordHandler();
+      }
+    };
+
+    const arrowUpHandler = (e) => {
+      if (e.key === "ArrowUp") {
+        moreWordsHandler();
+      }
+    };
+
+    const arrowDownHandler = (e) => {
+      if (e.key === "ArrowDown") {
+        lessWordsHandler();
+      }
+    };
+
+    if (modalShown) {
+      document.addEventListener("keydown", keyDownHandler);
+      document.addEventListener("keydown", arrowUpHandler);
+      document.addEventListener("keydown", arrowDownHandler);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", keyDownHandler);
+      document.removeEventListener("keydown", arrowUpHandler);
+      document.removeEventListener("keydown", arrowDownHandler);
+    };
+  }, [modalShown]);
 
   return (
     <Modal
