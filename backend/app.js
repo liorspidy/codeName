@@ -212,8 +212,8 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("updatingOperatorsWord", word, count);
   });
 
-  socket.on("lockCard", async (roomId, myDetails, tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers) => {
-    io.to(roomId).emit("updateTimerPlayingGroup", myDetails ,tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers );
+  socket.on("lockCard", async (roomId, myDetails, tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers , roomDetails) => {
+    io.to(roomId).emit("updateTimerPlayingGroup", myDetails ,tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers , roomDetails );
   });
 });
 

@@ -112,13 +112,15 @@ const Board = (props) => {
         playersDetails,
         tempPlayers,
         finalRedTeamPlayers,
-        finalBlueTeamPlayers
+        finalBlueTeamPlayers,
+        tempRoomDetails
       ) => {
         if (myDetails) {
           console.log("Timer started for all");
           setPlayers(tempPlayers);
           setRedTeamPlayers(finalRedTeamPlayers);
           setBlueTeamPlayers(finalBlueTeamPlayers);
+          setRoomDetails(tempRoomDetails);
 
           if (
             playersDetails.team === myDetails.team &&
@@ -306,11 +308,8 @@ const Board = (props) => {
         setRoomDetails={setRoomDetails}
         socket={socket}
         players={players}
-        setPlayers={setPlayers}
         redTeamPlayers={redTeamPlayers}
-        setRedTeamPlayers={setRedTeamPlayers}
         blueTeamPlayers={blueTeamPlayers}
-        setBlueTeamPlayers={setBlueTeamPlayers}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

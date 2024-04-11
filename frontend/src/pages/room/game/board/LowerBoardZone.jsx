@@ -33,11 +33,8 @@ const LowerBoardZone = (props) => {
     setRoomDetails,
     roomDetails,
     players,
-    setPlayers,
     redTeamPlayers,
-    setRedTeamPlayers,
     blueTeamPlayers,
-    setBlueTeamPlayers,
     socket,
   } = props;
 
@@ -61,14 +58,14 @@ const LowerBoardZone = (props) => {
           blueTeam: finalBlueTeamPlayers,
         }
       );
-      setRoomDetails(res.data);
       socket.emit(
         "lockCard",
         roomId,
         myDetails,
         tempPlayers,
         finalRedTeamPlayers,
-        finalBlueTeamPlayers
+        finalBlueTeamPlayers,
+        res.data
       );
     } catch (error) {
       console.error("Error updating timer in db:", error.message);
