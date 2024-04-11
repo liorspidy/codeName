@@ -155,20 +155,40 @@ const createRoom = async (req, res) => {
 const updateTimer = async (req, res) => {
   try {
     const roomId = req.body.roomId;
-    const team = req.body.team;
+    const myDetails = req.body.myDetails;
+    const players = req.body.players;
+    const redTeam = req.body.redTeam; 
+    const blueTeam = req.body.blueTeam;
+    const team = myDetails.team + "Team";
 
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-
-    if (!room[team].some(player => player.pickedCard === true)) {
-      room.lastTimePlayed = new Date.now();
+    
+    if (room.lastTimePlayed !== null) {
+      // Check if all players have picked a card or i reconsidered the card then reset the timer
+      if (
+        // if all players have picked a card or only one player has not picked a card and it's me then reset the timer
+        !room[team].some((player) => player.pickedCard === false) ||
+        (room[team].filter((player) => player.pickedCard === true).length ===
+          1 &&
+          room[team].find(
+            (player) =>
+              player.pickedCard === true && player.name === myDetails.name
+          ) !== undefined)
+      ) {
+        room.lastTimePlayed = null;
+      }
+    } else {
+      const time = new Date();
+      room.lastTimePlayed = time.getTime();
     }
+  
+    room.players = players;
+    room.redTeam = redTeam;
+    room.blueTeam = blueTeam;
 
-    if(room[team].filter((player)=>player.pickedCard === false).length === 1){
-      room.lastTimePlayed = null;
-    }
 
     await room.save();
     return res.status(200).json(room);
@@ -177,7 +197,6 @@ const updateTimer = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 const joinRoom = async (req, res) => {
   try {
@@ -377,7 +396,7 @@ const setPlayers = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-    
+
     room.players = players;
     room.redTeam = redTeam;
     room.blueTeam = blueTeam;
@@ -606,7 +625,6 @@ const setScore = async (req, res) => {
       room.blueScore = score;
     }
 
-    
     await room.save();
     console.log("score set");
     return res.status(200);

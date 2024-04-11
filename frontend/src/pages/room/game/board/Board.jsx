@@ -15,6 +15,7 @@ const Board = (props) => {
     randomWords,
     leadGroupColor,
     roomDetails,
+    setRoomDetails,
     myDetails,
     currentGroupColor,
     setCurrentGroupColor,
@@ -33,6 +34,12 @@ const Board = (props) => {
     setWinnerGroup,
     modalOpen,
     setModalOpen,
+    players,
+    setPlayers,
+    redTeamPlayers,
+    setRedTeamPlayers,
+    blueTeamPlayers,
+    setBlueTeamPlayers,
     redGroupCounter,
     setRedGroupCounter,
     blueGroupCounter,
@@ -41,6 +48,8 @@ const Board = (props) => {
     minimap,
     socket,
     playersAmountError,
+    setTimerStarts,
+    timerStarts,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -49,7 +58,6 @@ const Board = (props) => {
   const [newWordSetted, setNewWordSetted] = useState(false);
   const [wordLocked, setWordLocked] = useState(false);
   const [timer, setTimer] = useState(30);
-  const [timerStarts, setTimerStarts] = useState(false);
   const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
   const [timeRanOut, setTimeRanOut] = useState(false);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
@@ -91,24 +99,45 @@ const Board = (props) => {
     setCards(tempCards);
   }, [currentCard, randomWords, wordLocked]);
 
-  const backdropBoardHandler = () => {
-    if (!wordLocked) {
-      setCurrentCard(null);
-      setShowMinimap(false);
-    }
-  };
-
-  const restartClock = () => {
-    setTimerStarts(false);
-    setTimeIsRunningOut(false);
-    setTimer(30);
-  };
-
   useEffect(() => {
     if (myDetails) {
       setRole(myDetails.role);
     }
   }, [myDetails]);
+
+  useEffect(() => {
+    socket.on(
+      "updateTimerPlayingGroup",
+      (
+        playersDetails,
+        tempPlayers,
+        finalRedTeamPlayers,
+        finalBlueTeamPlayers
+      ) => {
+        if (myDetails) {
+          console.log("Timer started for all");
+          setPlayers(tempPlayers);
+          setRedTeamPlayers(finalRedTeamPlayers);
+          setBlueTeamPlayers(finalBlueTeamPlayers);
+
+          if (
+            playersDetails.team === myDetails.team &&
+            playersDetails.name !== myDetails.name
+          ) {
+            if (!timerStarts) {
+              setTimerStarts(true);
+            } else {
+              restartClock();
+            }
+          }
+        }
+      }
+    );
+
+    return () => {
+      socket.off("updateTimerPlayingGroup");
+    };
+  }, [timerStarts, myDetails]);
 
   useEffect(() => {
     if (blueGroupCounter === 0) {
@@ -179,6 +208,19 @@ const Board = (props) => {
   const setNextRound = () => {
     setWordLocked(false);
     setNextRoundInDB();
+  };
+
+  const backdropBoardHandler = () => {
+    if (!wordLocked) {
+      setCurrentCard(null);
+      setShowMinimap(false);
+    }
+  };
+
+  const restartClock = () => {
+    setTimerStarts(false);
+    setTimeIsRunningOut(false);
+    setTimer(30);
   };
 
   return (
@@ -261,7 +303,14 @@ const Board = (props) => {
         switchColorGroup={switchColorGroup}
         resetOperatorsWord={resetOperatorsWord}
         roomDetails={roomDetails}
+        setRoomDetails={setRoomDetails}
         socket={socket}
+        players={players}
+        setPlayers={setPlayers}
+        redTeamPlayers={redTeamPlayers}
+        setRedTeamPlayers={setRedTeamPlayers}
+        blueTeamPlayers={blueTeamPlayers}
+        setBlueTeamPlayers={setBlueTeamPlayers}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

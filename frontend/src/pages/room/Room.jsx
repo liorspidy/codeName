@@ -10,8 +10,6 @@ import { jwtDecode } from "jwt-decode";
 
 const Room = (props) => {
   const [roomName, setRoomName] = useState("");
-  const [redTeamPlayers, setRedTeamPlayers] = useState([]);
-  const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
 
   const {
     socket,
@@ -24,7 +22,13 @@ const Room = (props) => {
     setRoomDetails,
     setMinimap,
     playersAmountError,
-    setPlayersAmountError
+    setPlayersAmountError,
+    players,
+    setPlayers,
+    setRedTeamPlayers,
+    redTeamPlayers,
+    setBlueTeamPlayers,
+    blueTeamPlayers,
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -143,6 +147,8 @@ const Room = (props) => {
         setBlueTeamPlayers={setBlueTeamPlayers}
         redTeamPlayers={redTeamPlayers}
         setRedTeamPlayers={setRedTeamPlayers}
+        players={players}
+        setPlayers={setPlayers}
         setPlayersInDb={setPlayersInDb}
         setTeamPlayersInDb={setTeamPlayersInDb}
         setUniqueRandomWords={setUniqueRandomWords}

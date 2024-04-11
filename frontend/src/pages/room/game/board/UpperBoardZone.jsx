@@ -29,7 +29,6 @@ const UpperBoardZone = (props) => {
     wordsToGuess,
     switchColorGroup,
     roomDetails,
-    socket,
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
@@ -40,36 +39,44 @@ const UpperBoardZone = (props) => {
       setShowMinimap(true);
     }
   };
-  
+
   useEffect(() => {
-    if (timerStarts) {
-      // Timer logic
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => {
-          if (prevTimer === 11) {
-            setTimeIsRunningOut(true);
+    if (!timerStarts) return;
+
+    const calculateTimeLeft = () => {
+      const currentTime = Date.now();
+      const lastTimePlayed = new Date(roomDetails.lastTimePlayed).getTime();
+      const timeDifference = currentTime - lastTimePlayed;
+      return lastTimePlayed ? Math.floor((30000 - timeDifference) / 1000) : 30;
+    };
+
+    const initialTimeLeft = calculateTimeLeft();
+    setTimer(initialTimeLeft);
+
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => {
+        const timeLeftInSeconds = prevTimer - 1;
+        if (timeLeftInSeconds === 11) {
+          setTimeIsRunningOut(true);
+        }
+        if (timeLeftInSeconds === 0) {
+          clearInterval(interval);
+          restartClock();
+          setTimeRanOut(true);
+          setNextRound();
+
+          if (wordsToGuess === 0) {
+            switchColorGroup();
+            setCurrentOperatorsWord("");
+            setCurrentOperatorsWordCount(0);
           }
-          if (prevTimer === 1) {
-            clearInterval(interval);
-            restartClock();
-            setTimeRanOut(true);
-            setNextRound();
+        }
+        return Math.max(0, timeLeftInSeconds); // Ensure timer doesn't go negative
+      });
+    }, 1000);
 
-            if (wordsToGuess === 0) {
-              switchColorGroup();
-              setCurrentOperatorsWord("");
-              setCurrentOperatorsWordCount(0);
-            }
-
-            return 0;
-          }
-          return prevTimer - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [timerStarts]);
+    return () => clearInterval(interval);
+  }, [timerStarts, roomDetails]);
 
   const reportWordHandler = () => {
     if (currentOperatorsWord !== "") {

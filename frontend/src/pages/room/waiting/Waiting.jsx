@@ -25,11 +25,12 @@ const Waiting = ({
   setUniqueRandomWords,
   setRoomDetails,
   setMinimap,
+  players,
+  setPlayers,
   playersAmountError,
   setPlayersAmountError
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
-  const [players, setPlayers] = useState([]);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [readyButton, setReadyButton] = useState(false);
   const [teamsChanged, setTeamsChanged] = useState(false);

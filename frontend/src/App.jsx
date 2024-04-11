@@ -19,6 +19,9 @@ function App() {
   const [roomDetails, setRoomDetails] = useState(null);
   const [playersAmountError, setPlayersAmountError] = useState(false);
   const [minimap, setMinimap] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [redTeamPlayers, setRedTeamPlayers] = useState([]);
+  const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
 
   useEffect(() => {
     const handleConnectionChange = () => {
@@ -72,6 +75,12 @@ function App() {
                 playersAmountError={playersAmountError}
                 setPlayersAmountError={setPlayersAmountError}
                 setMinimap={setMinimap}
+                setPlayers={setPlayers}
+                players={players}
+                setRedTeamPlayers={setRedTeamPlayers}
+                redTeamPlayers={redTeamPlayers}
+                setBlueTeamPlayers={setBlueTeamPlayers}
+                blueTeamPlayers={blueTeamPlayers}
               />
             }
           />
@@ -92,6 +101,12 @@ function App() {
                 setMinimap={setMinimap}
                 playersAmountError={playersAmountError}
                 setPlayersAmountError={setPlayersAmountError}
+                setPlayers={setPlayers}
+                players={players}
+                setRedTeamPlayers={setRedTeamPlayers}
+                redTeamPlayers={redTeamPlayers}
+                setBlueTeamPlayers={setBlueTeamPlayers}
+                blueTeamPlayers={blueTeamPlayers}
               />
             }
           />

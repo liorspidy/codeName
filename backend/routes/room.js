@@ -27,5 +27,6 @@ router.post('/:id/leaveRoom', roomController.leaveRoom);
 router.post('/:id/end', roomController.endGame);
 router.post('/:id/delete', roomController.deleteRoom);
 router.post('/:id/reset', roomController.resetRoom);
+router.post('/:id/updateTimer', roomController.updateTimer);
 
 module.exports = router;

@@ -212,27 +212,8 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("updatingOperatorsWord", word, count);
   });
 
-  socket.on("lockCard", async (roomId, pickedCard, myDetails) => {
-    console.log(myDetails.name + " locked a card");
-    try {
-      const room = await Room.findOne({ id: roomId });
-      if (!room) {
-        return res.status(404).json({ message: "Room not found" });
-      }
-
-      if (myDetails.team === "red") {
-        room.redTeam.find((p) => p.name === myDetails.name).pickedCard = true;
-        console.log(room.redTeam);
-      } else {
-        room.blueTeam.find((p) => p.name === myDetails.name).pickedCard = true;
-        console.log(room.blueTeam);
-      }
-
-      await room.save();
-    } catch (error) {
-      console.error("Error getting room:", error.message);
-    }
-    io.to(roomId).emit("playerLockedCard", pickedCard, myDetails);
+  socket.on("lockCard", async (roomId, myDetails, tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers) => {
+    io.to(roomId).emit("updateTimerPlayingGroup", myDetails ,tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers );
   });
 });
 

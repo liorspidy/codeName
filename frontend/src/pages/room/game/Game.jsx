@@ -25,6 +25,8 @@ const Game = (props) => {
   const [winnerGroup, setWinnerGroup] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [usersScoreWasSet, setUsersScoreWasSet] = useState(false);
+  const [timerStarts, setTimerStarts] = useState(false);
+
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
   );
@@ -49,7 +51,13 @@ const Game = (props) => {
     minimap,
     setMinimap,
     playersAmountError,
-    setPlayersAmountError
+    setPlayersAmountError,
+    players,
+    setPlayers,
+    redTeamPlayers,
+    setRedTeamPlayers,
+    blueTeamPlayers,
+    setBlueTeamPlayers,
   } = props;
 
   const { roomId } = useParams();
@@ -93,18 +101,16 @@ const Game = (props) => {
       }
     });
 
-    socket.on(
-      "playerJoinedToGame",
-      (room) => {
-        if(room.players.length >= 4){
-          setPlayersAmountError(false);
-        }
+    socket.on("playerJoinedToGame", (room) => {
+      if (room.players.length >= 4) {
+        setPlayersAmountError(false);
       }
-    );
-
+    });
+    
     return () => {
       socket.off("updatingOperatorsWord");
       socket.off("kickPlayer");
+      socket.off("startTimerForAll");
       socket.off("connect");
       socket.off("disconnect");
     };
@@ -157,6 +163,10 @@ const Game = (props) => {
           role: myRole,
           cardRevealed: 0,
         };
+
+        setPlayers(room.players);
+        setRedTeamPlayers(room.redTeam);
+        setBlueTeamPlayers(room.blueTeam);
         setRoomDetails(room);
         setRoomName(room.name);
         setMyDetails(fullPlayerDetails);
@@ -217,6 +227,7 @@ const Game = (props) => {
         randomWords={pickedRandomWords}
         leadGroupColor={leadGroupColor}
         roomDetails={roomDetails}
+        setRoomDetails={setRoomDetails}
         myDetails={myDetails}
         setCurrentGroupColor={setCurrentGroupColor}
         currentGroupColor={currentGroupColor}
@@ -243,6 +254,14 @@ const Game = (props) => {
         minimap={minimap}
         socket={socket}
         playersAmountError={playersAmountError}
+        setTimerStarts={setTimerStarts}
+        timerStarts={timerStarts}
+        players={players}
+        setPlayers={setPlayers}
+        redTeamPlayers={redTeamPlayers}
+        setRedTeamPlayers={setRedTeamPlayers}
+        blueTeamPlayers={blueTeamPlayers}
+        setBlueTeamPlayers={setBlueTeamPlayers}
       />
     </div>
   );

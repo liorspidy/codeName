@@ -78,7 +78,6 @@ const InfoModal = ({
 
   useEffect(() => {
     if (roomDetails) {
-      console.log(roomDetails)
       setRedTeamPlayers(roomDetails.redTeam);
       setBlueTeamPlayers(roomDetails.blueTeam);
     }

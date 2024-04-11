@@ -2,7 +2,7 @@
 import classes from "./Board.module.scss";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import OperatorsModal from "../../../../UI/modals/OperatorsModal";
 import Button from "../../../../UI/button/Button";
 import { useParams } from "react-router-dom";
@@ -30,7 +30,14 @@ const LowerBoardZone = (props) => {
     gameOver,
     switchColorGroup,
     resetOperatorsWord,
+    setRoomDetails,
     roomDetails,
+    players,
+    setPlayers,
+    redTeamPlayers,
+    setRedTeamPlayers,
+    blueTeamPlayers,
+    setBlueTeamPlayers,
     socket,
   } = props;
 
@@ -38,22 +45,76 @@ const LowerBoardZone = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { roomId } = useParams();
 
-  const updateTimerInDb = async () => {
+  const updateTimerInDb = async (
+    tempPlayers,
+    finalRedTeamPlayers,
+    finalBlueTeamPlayers
+  ) => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/updateTimer`, {
+      const res = await axios.post(
+        `http://localhost:4000/room/${roomId}/updateTimer`,
+        {
+          roomId,
+          myDetails: myDetails,
+          players: tempPlayers,
+          redTeam: finalRedTeamPlayers,
+          blueTeam: finalBlueTeamPlayers,
+        }
+      );
+      setRoomDetails(res.data);
+      socket.emit(
+        "lockCard",
         roomId,
-        team: myDetails.team,
-      });
+        myDetails,
+        tempPlayers,
+        finalRedTeamPlayers,
+        finalBlueTeamPlayers
+      );
     } catch (error) {
       console.error("Error updating timer in db:", error.message);
     }
   };
 
+  // Switch the pickedCard state for the player
+  const switchPickedCardStateForMe = () => {
+    const tempPlayers = [...players];
+    const playerIndex = tempPlayers.findIndex(
+      (player) => player.name === myDetails.name
+    );
+    tempPlayers[playerIndex].pickedCard = !tempPlayers[playerIndex].pickedCard;
+    let finalRedTeamPlayers = redTeamPlayers;
+    let finalBlueTeamPlayers = blueTeamPlayers;
+
+    const isOnRedTeam = redTeamPlayers.find(
+      (player) => player.name === myDetails.name
+    );
+    const isOnBlueTeam = blueTeamPlayers.find(
+      (player) => player.name === myDetails.name
+    );
+    if (isOnRedTeam) {
+      const index = redTeamPlayers.findIndex(
+        (player) => player.name === myDetails.name
+      );
+      const tempRedTeamPlayers = [...redTeamPlayers];
+      tempRedTeamPlayers[index].pickedCard =
+        !tempRedTeamPlayers[index].pickedCard;
+      finalRedTeamPlayers = tempRedTeamPlayers;
+    } else if (isOnBlueTeam) {
+      const index = blueTeamPlayers.findIndex(
+        (player) => player.name === myDetails.name
+      );
+      const tempBlueTeamPlayers = [...blueTeamPlayers];
+      tempBlueTeamPlayers[index].pickedCard =
+        !tempBlueTeamPlayers[index].pickedCard;
+      finalBlueTeamPlayers = tempBlueTeamPlayers;
+    }
+    updateTimerInDb(tempPlayers, finalRedTeamPlayers, finalBlueTeamPlayers);
+  };
+
   const lockWordHandler = () => {
     if (currentCard !== null) {
       setWordLocked((prevState) => !prevState);
-      updateTimerInDb();
-      socket.emit("lockCard", roomId, currentCard, myDetails);
+      switchPickedCardStateForMe();
       if (!wordLocked) {
         setTimerStarts(true);
       } else {
@@ -74,16 +135,6 @@ const LowerBoardZone = (props) => {
     switchColorGroup();
     resetOperatorsWord();
   };
-
-  useEffect(() => {
-    socket.on("playerLockedCard", (playersPickedCard, playersDetails) => {
-      setTimerStarts(true);
-    });
-
-    return () => {
-      socket.off("playerLockedCard");
-    };
-  }, []);
 
   return (
     <div className={classes.lowerBoardZone}>
