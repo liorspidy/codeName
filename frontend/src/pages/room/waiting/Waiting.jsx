@@ -234,7 +234,7 @@ const Waiting = ({
       socket.off("updatingReadyPlayers");
       socket.off("updatingPlayersAndTeams");
     };
-  }, []);
+  }, [socket]);
 
   // Set players on room details change
   useEffect(() => {

@@ -2,7 +2,7 @@
 import classes from "./Board.module.scss";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OperatorsModal from "../../../../UI/modals/OperatorsModal";
 import Button from "../../../../UI/button/Button";
 import { useParams } from "react-router-dom";
@@ -41,6 +41,7 @@ const LowerBoardZone = (props) => {
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [groupMembersLength, setGroupMembersLength] = useState(2);
   const { roomId } = useParams();
 
   const updateTimerInDb = async (
@@ -109,13 +110,20 @@ const LowerBoardZone = (props) => {
     updateTimerInDb(tempPlayers, finalRedTeamPlayers, finalBlueTeamPlayers);
   };
 
-  const lockWordHandler = () => {
-    if (currentCard !== null) {
-      setWordLocked((prevState) => !prevState);
-      const groupMembersLength =
+  useEffect(() => {
+    if (myDetails && redTeamPlayers.length > 0 && blueTeamPlayers.length > 0) {
+      const tempGroupMembersLength =
         myDetails.team === "red"
           ? redTeamPlayers.length - 1
           : blueTeamPlayers.length - 1;
+
+      setGroupMembersLength(tempGroupMembersLength);
+    }
+  }, [redTeamPlayers, blueTeamPlayers, myDetails]);
+
+  const lockWordHandler = () => {
+    if (currentCard !== null) {
+      setWordLocked((prevState) => !prevState);
       if (groupMembersLength > 1) {
         if (!wordLocked) {
           switchPickedCardStateForMe();
@@ -124,7 +132,7 @@ const LowerBoardZone = (props) => {
           restartClock();
         }
       } else {
-        console.log("You are the only player in your team");
+        console.log("Group members length is less than 2");
         setTimeRanOut(true);
       }
     } else {

@@ -29,15 +29,10 @@ const UpperBoardZone = (props) => {
     wordsToGuess,
     switchColorGroup,
     roomDetails,
-    redTeamPlayers,
-    blueTeamPlayers,
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [groupMembersLength, setGroupMembersLength] = useState(2);
-  const [calculatedGroupMembersLength, setCalculatedGroupMembersLength] =
-    useState(false);
 
   const minimapHandler = () => {
     if (role !== "agent") {
@@ -46,75 +41,49 @@ const UpperBoardZone = (props) => {
   };
 
   useEffect(() => {
-    if (myDetails && redTeamPlayers.length > 0 && blueTeamPlayers.length > 0) {
-      const tempGroupMembersLength =
-        myDetails.team === "red"
-          ? redTeamPlayers.length - 1
-          : blueTeamPlayers.length - 1;
+    // if timer starts
+    if (timerStarts) {
+      const calculateTimeLeft = () => {
+        const currentTime = Date.now();
+        const lastTimePlayed = new Date(roomDetails.lastTimePlayed).getTime();
+        const timeDifference = currentTime - lastTimePlayed;
+        return lastTimePlayed
+          ? Math.floor((30000 - timeDifference) / 1000)
+          : 30;
+      };
 
-      setGroupMembersLength(tempGroupMembersLength);
-      setCalculatedGroupMembersLength(true);
-    }
-  }, [redTeamPlayers, blueTeamPlayers, myDetails]);
+      // Set initial time left
+      const initialTimeLeft = calculateTimeLeft();
+      setTimer(initialTimeLeft);
 
-  useEffect(() => {
-    // if groupMembersLength is calculated
-    if (calculatedGroupMembersLength) {
-      // if timer starts and lastTimePlayed exists and groupMembersLength is more than 1
-      if (timerStarts && roomDetails.lastTimePlayed && groupMembersLength > 1) {
-        const calculateTimeLeft = () => {
-          const currentTime = Date.now();
-          const lastTimePlayed = new Date(roomDetails.lastTimePlayed).getTime();
-          const timeDifference = currentTime - lastTimePlayed;
-          return lastTimePlayed
-            ? Math.floor((30000 - timeDifference) / 1000)
-            : 30;
-        };
+      // Start the timer
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          const timeLeftInSeconds = prevTimer - 1;
+          if (timeLeftInSeconds === 11) {
+            setTimeIsRunningOut(true);
+          }
+          // If timer reaches 0
+          if (timeLeftInSeconds === 0) {
+            clearInterval(interval);
+            restartClock();
+            setTimeRanOut(true);
+            setNextRound();
 
-        // Set initial time left
-        const initialTimeLeft = calculateTimeLeft();
-        setTimer(initialTimeLeft);
-
-        // Start the timer
-        const interval = setInterval(() => {
-          setTimer((prevTimer) => {
-            const timeLeftInSeconds = prevTimer - 1;
-            if (timeLeftInSeconds === 11) {
-              setTimeIsRunningOut(true);
+            // If all words are guessed
+            if (wordsToGuess === 0) {
+              switchColorGroup();
+              setCurrentOperatorsWord("");
+              setCurrentOperatorsWordCount(0);
             }
-            // If timer reaches 0
-            if (timeLeftInSeconds === 0) {
-              clearInterval(interval);
-              restartClock();
-              setTimeRanOut(true);
-              if (myDetails.role === "operator") {
-                setNextRound();
-              }
+          }
+          return Math.max(0, timeLeftInSeconds); // Ensure timer doesn't go negative
+        });
+      }, 1000);
 
-              // If all words are guessed
-              if (wordsToGuess === 0) {
-                switchColorGroup();
-                setCurrentOperatorsWord("");
-                setCurrentOperatorsWordCount(0);
-              }
-            }
-            return Math.max(0, timeLeftInSeconds); // Ensure timer doesn't go negative
-          });
-        }, 1000);
-
-        return () => clearInterval(interval);
-      } else {
-        // if timer is not started or lastTimePlayed doesn't exist or groupMembersLength is less than 2
-        setNextRound();
-      }
+      return () => clearInterval(interval);
     }
-  }, [
-    timerStarts,
-    roomDetails,
-    calculatedGroupMembersLength,
-    groupMembersLength,
-    myDetails,
-  ]);
+  }, [timerStarts , roomDetails]);
 
   const reportWordHandler = () => {
     if (currentOperatorsWord !== "") {

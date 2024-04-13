@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import classes from "../Board.module.scss";
@@ -30,6 +31,12 @@ const Card = (props) => {
     resetOperatorsWord,
     minimap,
     setMyDetails,
+    socket,
+    flippingCard,
+    setFlippingCard,
+    recentlyPlayedPlayer,
+    setNextRound,
+    setRecentlyPlayedPlayer,
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
@@ -110,24 +117,30 @@ const Card = (props) => {
 
   const finishTurn = () => {
     setWordsToGuess(0);
-    setWordsToGuessCountInDb(0);
+    if (myDetails.name === recentlyPlayedPlayer.name) {
+      setWordsToGuessCountInDb(0);
+    }
     switchColorGroup();
     resetOperatorsWord();
   };
 
   const checkIfItsMyCard = (myteam) => {
     // if the card is from my team
-    if (myDetails.team === myteam) {
-      setMyDetails((prev) => {
-        return { ...prev, cardRevealed: prev.cardRevealed + 1 };
-      });
-      // bonus word was guessed
-      if (wordsToGuess === 1) {
-        finishTurn();
-        // regular word was guessed
-      } else {
-        setWordsToGuess((prev) => prev - 1);
-        setWordsToGuessCountInDb(wordsToGuess - 1);
+    if (recentlyPlayedPlayer.team === myteam) {
+      if (myDetails.name === recentlyPlayedPlayer.name) {
+        setMyDetails((prev) => {
+          return { ...prev, cardRevealed: prev.cardRevealed + 1 };
+        });
+        // bonus word was guessed
+        if (wordsToGuess === 1) {
+          finishTurn();
+          // regular word was guessed
+        } else {
+          setWordsToGuess((prev) => prev - 1);
+          if (myDetails.name === recentlyPlayedPlayer.name) {
+            setWordsToGuessCountInDb(wordsToGuess - 1);
+          }
+        }
       }
     } else {
       finishTurn();
@@ -137,7 +150,9 @@ const Card = (props) => {
   const gameOverHandler = (winnerTeam) => {
     setWinnerGroup(winnerTeam);
     if (!gameOver) {
-      setWinnerInDb(winnerTeam);
+      if (myDetails.name === recentlyPlayedPlayer.name) {
+        setWinnerInDb(winnerTeam);
+      }
     }
     setWordsToGuess(0);
     setGameOver(true);
@@ -145,45 +160,78 @@ const Card = (props) => {
     setOpenGameOver(true);
   };
 
-  useEffect(() => {
-    const flipCard = async () => {
-      if (timeRanOut && currentCard?.index === index && !isFlipped) {
-        setIsFlipped(!isFlipped);
-        setTimeRanOut(false);
-        const color = await checkCard();
-        setCardColor(color);
+  const flipCard = async () => {
+    if (currentCard.index === index && !isFlipped) {
+      setFlippingCard(false);
+      setIsFlipped(!isFlipped);
+      const color = await checkCard();
+      setCardColor(color);
+      if (myDetails.name === recentlyPlayedPlayer.name) {
         updateRevealedCardsInDb(color);
+      }
 
-        if (color === "red") {
-          setRedGroupCounter((prev) => prev - 1);
+      if (color === "red") {
+        setRedGroupCounter((prev) => prev - 1);
+        if (myDetails.name === recentlyPlayedPlayer.name) {
           setScoreInDb("red", redGroupCounter - 1);
-          if (redGroupCounter > 1) {
-            checkIfItsMyCard("red");
-          } else {
-            gameOverHandler("red");
-          }
-        } else if (color === "blue") {
-          setBlueGroupCounter((prev) => prev - 1);
+        }
+        if (redGroupCounter > 1) {
+          checkIfItsMyCard("red");
+        } else {
+          gameOverHandler("red");
+        }
+      } else if (color === "blue") {
+        setBlueGroupCounter((prev) => prev - 1);
+        if (myDetails.name === recentlyPlayedPlayer.name) {
           setScoreInDb("blue", blueGroupCounter - 1);
-          if (blueGroupCounter > 1) {
-            checkIfItsMyCard("blue");
-          } else {
-            gameOverHandler("blue");
-          }
-        } else if (color === "black") {
-          if (myDetails.team === "red") {
-            gameOverHandler("blue");
-          } else if (myDetails.team === "blue") {
-            gameOverHandler("red");
-          }
-        } else if (color === "neutral") {
-          finishTurn();
+        }
+        if (blueGroupCounter > 1) {
+          checkIfItsMyCard("blue");
+        } else {
+          gameOverHandler("blue");
+        }
+      } else if (color === "black") {
+        if (myDetails.team === "red") {
+          gameOverHandler("blue");
+        } else if (myDetails.team === "blue") {
+          gameOverHandler("red");
+        }
+      } else if (color === "neutral") {
+        finishTurn();
+      }
+    }
+
+    setRecentlyPlayedPlayer(null);
+    setNextRound();
+  };
+
+  useEffect(() => {
+    if (
+      index !== null &&
+      currentCard !== undefined &&
+      currentCard?.index === index &&
+      !isFlipped
+    ) {
+      if (myDetails && index !== null && word) {
+        if (timeRanOut) {
+          console.log("emmitting flip card");
+          socket.emit("flipCard", myDetails, index, word);
+        }
+        if (flippingCard) {
+          console.log("flippingCard");
+          flipCard();
         }
       }
-    };
-
-    flipCard();
-  }, [timeRanOut]);
+    }
+  }, [
+    timeRanOut,
+    myDetails,
+    index,
+    word,
+    currentCard,
+    isFlipped,
+    flippingCard,
+  ]);
 
   // flip the cards after the timer
   useEffect(() => {

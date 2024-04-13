@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import classes from "./Board.module.scss";
 import Card from "./card/Card";
@@ -60,6 +61,8 @@ const Board = (props) => {
   const [timer, setTimer] = useState(30);
   const [timeIsRunningOut, setTimeIsRunningOut] = useState(false);
   const [timeRanOut, setTimeRanOut] = useState(false);
+  const [flippingCard, setFlippingCard] = useState(false);
+  const [recentlyPlayedPlayer, setRecentlyPlayedPlayer] = useState(null);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
 
   const { roomId } = useParams();
@@ -93,6 +96,12 @@ const Board = (props) => {
         resetOperatorsWord={resetOperatorsWord}
         minimap={minimap}
         setMyDetails={setMyDetails}
+        socket={socket}
+        flippingCard={flippingCard}
+        setFlippingCard={setFlippingCard}
+        recentlyPlayedPlayer={recentlyPlayedPlayer}
+        setNextRound={setNextRound}
+        setRecentlyPlayedPlayer={setRecentlyPlayedPlayer}
       />
     ));
 
@@ -135,10 +144,21 @@ const Board = (props) => {
       }
     );
 
+    socket.on(
+      "flippingCardToAll",
+      (playersDetails, currentCardIndex, currentWord) => {
+        setCurrentCard({ index: currentCardIndex, word: currentWord });
+        setRecentlyPlayedPlayer(playersDetails);
+        setTimeRanOut(false);
+        setFlippingCard(true);
+      }
+    );
+
     return () => {
       socket.off("updateTimerPlayingGroup");
+      socket.off("flippingCardToAll");
     };
-  }, [timerStarts, myDetails]);
+  }, [timerStarts, myDetails, socket]);
 
   useEffect(() => {
     if (blueGroupCounter === 0) {
@@ -208,7 +228,9 @@ const Board = (props) => {
 
   const setNextRound = () => {
     setWordLocked(false);
-    setNextRoundInDB();
+    if (myDetails.name === recentlyPlayedPlayer) {
+      setNextRoundInDB();
+    }
   };
 
   const backdropBoardHandler = () => {
@@ -309,11 +331,10 @@ const Board = (props) => {
         resetOperatorsWord={resetOperatorsWord}
         roomDetails={roomDetails}
         setRoomDetails={setRoomDetails}
-        socket={socket}
         players={players}
         redTeamPlayers={redTeamPlayers}
         blueTeamPlayers={blueTeamPlayers}
-        setNextRound={setNextRound}
+        socket={socket}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>
