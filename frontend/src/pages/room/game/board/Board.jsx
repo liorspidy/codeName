@@ -279,9 +279,11 @@ const Board = (props) => {
         myDetails={myDetails}
         switchColorGroup={switchColorGroup}
         roomDetails={roomDetails}
+        players={players}
+        redTeamPlayers={redTeamPlayers}
+        blueTeamPlayers={blueTeamPlayers}
         setNextRound={setNextRound}
         socket={socket}
-        players={players}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
