@@ -64,6 +64,7 @@ const Board = (props) => {
   const [flippingCard, setFlippingCard] = useState(false);
   const [recentlyPlayedPlayer, setRecentlyPlayedPlayer] = useState(null);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
+  const [lastPlayerSkipped, setLastPlayerSkipped] = useState(false);
 
   const { roomId } = useParams();
 
@@ -154,11 +155,24 @@ const Board = (props) => {
       }
     );
 
+    socket.on("skippingTurn", (playersDetails) => {
+      setRecentlyPlayedPlayer(playersDetails);
+      setLastPlayerSkipped(true);
+    });
+
     return () => {
       socket.off("updateTimerPlayingGroup");
       socket.off("flippingCardToAll");
+      socket.off("skippingTurn");
     };
   }, [timerStarts, myDetails, socket]);
+
+  useEffect(() => {
+    if (recentlyPlayedPlayer !== null && lastPlayerSkipped) {
+      skipTurn();
+      setLastPlayerSkipped(false);
+    }
+  }, [recentlyPlayedPlayer, lastPlayerSkipped]);
 
   useEffect(() => {
     if (blueGroupCounter === 0) {
@@ -194,14 +208,16 @@ const Board = (props) => {
     }
   };
 
-  const switchColorGroup = () => {
+  const switchColorGroup = async () => {
     setWordLocked(false);
     if (currentGroupColor === "red") {
       setCurrentGroupColor("blue");
     } else {
       setCurrentGroupColor("red");
     }
-    setNextTurnInDB();
+    if (myDetails.name === recentlyPlayedPlayer.name) {
+      await setNextTurnInDB();
+    }
   };
 
   const resetOperatorsWordInDb = async () => {
@@ -223,12 +239,14 @@ const Board = (props) => {
   const resetOperatorsWord = () => {
     setCurrentOperatorsWord("");
     setCurrentOperatorsWordCount(0);
-    resetOperatorsWordInDb();
+    if (myDetails.name === recentlyPlayedPlayer.name) {
+      resetOperatorsWordInDb();
+    }
   };
 
   const setNextRound = () => {
     setWordLocked(false);
-    if (myDetails.name === recentlyPlayedPlayer) {
+    if (myDetails.name === recentlyPlayedPlayer.name) {
       setNextRoundInDB();
     }
   };
@@ -244,6 +262,13 @@ const Board = (props) => {
     setTimerStarts(false);
     setTimeIsRunningOut(false);
     setTimer(30);
+  };
+
+  const skipTurn = () => {
+    setWordsToGuess(0);
+    switchColorGroup();
+    resetOperatorsWord();
+    setRecentlyPlayedPlayer(null);
   };
 
   return (
@@ -325,10 +350,9 @@ const Board = (props) => {
         currentGroupColor={currentGroupColor}
         myDetails={myDetails}
         wordsToGuess={wordsToGuess}
+        skipTurn={skipTurn}
         setWordsToGuess={setWordsToGuess}
         gameOver={gameOver}
-        switchColorGroup={switchColorGroup}
-        resetOperatorsWord={resetOperatorsWord}
         roomDetails={roomDetails}
         setRoomDetails={setRoomDetails}
         players={players}

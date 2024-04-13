@@ -131,15 +131,15 @@ const Card = (props) => {
         setMyDetails((prev) => {
           return { ...prev, cardRevealed: prev.cardRevealed + 1 };
         });
-        // bonus word was guessed
-        if (wordsToGuess === 1) {
-          finishTurn();
-          // regular word was guessed
-        } else {
-          setWordsToGuess((prev) => prev - 1);
-          if (myDetails.name === recentlyPlayedPlayer.name) {
-            setWordsToGuessCountInDb(wordsToGuess - 1);
-          }
+      }
+      // bonus word was guessed
+      if (wordsToGuess === 1) {
+        finishTurn();
+        // regular word was guessed
+      } else {
+        setWordsToGuess((prev) => prev - 1);
+        if (myDetails.name === recentlyPlayedPlayer.name) {
+          setWordsToGuessCountInDb(wordsToGuess - 1);
         }
       }
     } else {
@@ -211,14 +211,12 @@ const Card = (props) => {
       currentCard !== undefined &&
       currentCard?.index === index &&
       !isFlipped
-    ) {
+      ) {
       if (myDetails && index !== null && word) {
         if (timeRanOut) {
-          console.log("emmitting flip card");
-          socket.emit("flipCard", myDetails, index, word);
+          socket.emit("flipCard", roomId, myDetails, index, word);
         }
         if (flippingCard) {
-          console.log("flippingCard");
           flipCard();
         }
       }

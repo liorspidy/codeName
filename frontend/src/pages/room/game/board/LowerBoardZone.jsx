@@ -28,8 +28,7 @@ const LowerBoardZone = (props) => {
     wordsToGuess,
     setWordsToGuess,
     gameOver,
-    switchColorGroup,
-    resetOperatorsWord,
+    skipTurn,
     setRoomDetails,
     roomDetails,
     players,
@@ -132,7 +131,6 @@ const LowerBoardZone = (props) => {
           restartClock();
         }
       } else {
-        console.log("Group members length is less than 2");
         setTimeRanOut(true);
       }
     } else {
@@ -146,9 +144,8 @@ const LowerBoardZone = (props) => {
   };
 
   const skipTurnHandler = () => {
-    setWordsToGuess(0);
-    switchColorGroup();
-    resetOperatorsWord();
+    socket.emit("skipTurn", roomId, myDetails);
+    // skipTurn();
   };
 
   return (

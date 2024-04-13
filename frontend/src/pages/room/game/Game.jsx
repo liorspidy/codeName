@@ -72,7 +72,7 @@ const Game = (props) => {
       return room;
     } catch (err) {
       console.log(err);
-      return null;
+      throw new Error("Room not found");
     }
   };
 
@@ -85,14 +85,15 @@ const Game = (props) => {
       });
     } catch (err) {
       console.log(err);
+      throw new Error("Error setting user score");
     }
   };
 
   useEffect(() => {
     socket.on("updatingOperatorsWord", (word, count) => {
-      console.log("Operators word updated");
       setCurrentOperatorsWord(word);
       setCurrentOperatorsWordCount(count);
+      setWordsToGuess(count + 1);
     });
 
     socket.on("showPlayersAmountError", (name) => {

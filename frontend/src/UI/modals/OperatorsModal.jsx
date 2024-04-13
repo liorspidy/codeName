@@ -89,11 +89,11 @@ const OperatorsModal = (props) => {
 
   const submitWordHandler = () => {
     if (wordsCountValue > 0 && wordsCountValue <= 25 && wordValue.length > 0) {
-      // setCurrentOperatorsWordCount(wordsCountValue);
-      // setCurrentOperatorsWord(wordValue);
+      setCurrentOperatorsWord(wordValue);
+      setCurrentOperatorsWordCount(wordsCountValue);
       if (!Object.values(roomDetails.cards).includes(wordValue)) {
         socket.emit("operatorsWordSet", roomId, wordValue, wordsCountValue);
-        setWordsToGuess(wordsCountValue + 1);
+        // setWordsToGuess(wordsCountValue + 1);
         setWordInDb();
         closeBackdrop();
       } else {

@@ -212,13 +212,34 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("updatingOperatorsWord", word, count);
   });
 
-  socket.on("lockCard", (roomId, myDetails, tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers , roomDetails) => {
-    io.to(roomId).emit("updateTimerPlayingGroup", myDetails ,tempPlayers, finalRedTeamPlayers , finalBlueTeamPlayers , roomDetails );
+  socket.on(
+    "lockCard",
+    (
+      roomId,
+      myDetails,
+      tempPlayers,
+      finalRedTeamPlayers,
+      finalBlueTeamPlayers,
+      roomDetails
+    ) => {
+      io.to(roomId).emit(
+        "updateTimerPlayingGroup",
+        myDetails,
+        tempPlayers,
+        finalRedTeamPlayers,
+        finalBlueTeamPlayers,
+        roomDetails
+      );
+    }
+  );
+
+  socket.on("flipCard", (roomId, myDetails, index, word) => {
+    io.to(roomId).emit("flippingCardToAll", myDetails, index, word);
   });
 
-  socket.on("flipCard", (myDetails , index , word) => {
-    io.emit("flippingCardToAll" , myDetails , index , word);
-  })
+  socket.on("skipTurn", (roomId, myDetails) => {
+    io.to(roomId).emit("skippingTurn", myDetails);
+  });
 });
 
 // Connect to MongoDB
