@@ -116,7 +116,6 @@ const Board = (props) => {
         tempRoomDetails
       ) => {
         if (myDetails) {
-          console.log("Timer started for all");
           setPlayers(tempPlayers);
           setRedTeamPlayers(finalRedTeamPlayers);
           setBlueTeamPlayers(finalBlueTeamPlayers);
@@ -282,6 +281,7 @@ const Board = (props) => {
         roomDetails={roomDetails}
         setNextRound={setNextRound}
         socket={socket}
+        players={players}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -292,6 +292,7 @@ const Board = (props) => {
         setTimerStarts={setTimerStarts}
         restartClock={restartClock}
         role={role}
+        setTimeRanOut={setTimeRanOut}
         currentOperatorsWord={currentOperatorsWord}
         currentOperatorsWordCount={currentOperatorsWordCount}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
@@ -310,6 +311,7 @@ const Board = (props) => {
         players={players}
         redTeamPlayers={redTeamPlayers}
         blueTeamPlayers={blueTeamPlayers}
+        setNextRound={setNextRound}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

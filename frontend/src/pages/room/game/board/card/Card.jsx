@@ -42,7 +42,7 @@ const Card = (props) => {
     const checkInMap = (colorMap) => {
       let tempColor = "";
       colorMap.forEach((color) => {
-        if (minimap[index].props.className.includes(color)) {
+        if (minimap[index].props.subclass.includes(color)) {
           tempColor = color;
         }
       });

@@ -45,7 +45,6 @@ const UpperBoardZone = (props) => {
       const calculateTimeLeft = () => {
         const currentTime = Date.now();
         const lastTimePlayed = new Date(roomDetails.lastTimePlayed).getTime();
-        console.log(roomDetails.lastTimePlayed , myDetails.name);
         const timeDifference = currentTime - lastTimePlayed;
         return lastTimePlayed
           ? Math.floor((30000 - timeDifference) / 1000)

@@ -36,6 +36,7 @@ const LowerBoardZone = (props) => {
     redTeamPlayers,
     blueTeamPlayers,
     socket,
+    setTimeRanOut,
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -111,11 +112,20 @@ const LowerBoardZone = (props) => {
   const lockWordHandler = () => {
     if (currentCard !== null) {
       setWordLocked((prevState) => !prevState);
-      switchPickedCardStateForMe();
-      if (!wordLocked) {
-        setTimerStarts(true);
+      const groupMembersLength =
+        myDetails.team === "red"
+          ? redTeamPlayers.length - 1
+          : blueTeamPlayers.length - 1;
+      if (groupMembersLength > 1) {
+        if (!wordLocked) {
+          switchPickedCardStateForMe();
+          setTimerStarts(true);
+        } else {
+          restartClock();
+        }
       } else {
-        restartClock();
+        console.log("You are the only player in your team");
+        setTimeRanOut(true);
       }
     } else {
       restartClock();

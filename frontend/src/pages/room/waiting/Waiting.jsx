@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import Button from "../../../UI/button/Button";
 import { useNavigate } from "react-router-dom";
 import LeaveRoomModal from "../../../UI/modals/LeaveRoomModal";
+import { red } from "@mui/material/colors";
 
 const Waiting = ({
   roomDetails,
@@ -28,7 +29,7 @@ const Waiting = ({
   players,
   setPlayers,
   playersAmountError,
-  setPlayersAmountError
+  setPlayersAmountError,
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -136,13 +137,13 @@ const Waiting = ({
       finalBlueTeamPlayers = tempBlueTeamPlayers;
     }
     // if (players.some((player) => !player.ready)) {
-      console.log("setting players in db");
-      setPlayersInDb(
-        roomId,
-        tempPlayers,
-        finalRedTeamPlayers,
-        finalBlueTeamPlayers
-      );
+    console.log("setting players in db");
+    setPlayersInDb(
+      roomId,
+      tempPlayers,
+      finalRedTeamPlayers,
+      finalBlueTeamPlayers
+    );
     // }
     socket.emit(
       "playerReady",
@@ -222,7 +223,7 @@ const Waiting = ({
         setMinimap(tempMinimap);
         navigate(`/room/${roomId}/game`);
 
-        if(room.players.length >= 4){
+        if (room.players.length >= 4) {
           setPlayersAmountError(false);
         }
       }
@@ -259,6 +260,31 @@ const Waiting = ({
       );
     }
   }, [players]);
+
+  // set ready button based on player's ready status
+  useEffect(() => {
+    if (
+      redTeamPlayers.length > 0 &&
+      blueTeamPlayers.length > 0 &&
+      playerDetails
+    ) {
+      const redIndex = redTeamPlayers.findIndex(
+        (player) => player.name === playerDetails.name
+      );
+      if (redIndex !== -1) {
+        const ready = redTeamPlayers[redIndex].ready;
+        setReadyButton(ready);
+      } else {
+        const ready =
+          blueTeamPlayers[
+            blueTeamPlayers.findIndex(
+              (player) => player.name === playerDetails.name
+            )
+          ].ready;
+        setReadyButton(ready);
+      }
+    }
+  }, [redTeamPlayers, blueTeamPlayers, playerDetails]);
 
   const leaveRoomModalHandler = () => {
     setModalOpen(true);
