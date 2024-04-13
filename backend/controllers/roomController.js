@@ -396,6 +396,11 @@ const setPlayers = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
+    
+    console.log("-----------------");
+    console.log(players);
+    console.log(redTeam);
+    console.log("-----------------");
 
     room.players = players;
     room.redTeam = redTeam;

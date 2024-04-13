@@ -191,9 +191,9 @@ const Card = (props) => {
           gameOverHandler("blue");
         }
       } else if (color === "black") {
-        if (myDetails.team === "red") {
+        if (recentlyPlayedPlayer.team === "red") {
           gameOverHandler("blue");
-        } else if (myDetails.team === "blue") {
+        } else if (recentlyPlayedPlayer.team === "blue") {
           gameOverHandler("red");
         }
       } else if (color === "neutral") {
