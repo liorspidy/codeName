@@ -13,7 +13,6 @@ const Room = (props) => {
 
   const {
     socket,
-    isConnected,
     setPlayersInDb,
     setIsGoingBack,
     setUniqueRandomWords,
@@ -29,6 +28,8 @@ const Room = (props) => {
     redTeamPlayers,
     setBlueTeamPlayers,
     blueTeamPlayers,
+    isConnected,
+    setIsConnected,
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -45,7 +46,7 @@ const Room = (props) => {
       const room = response.data;
       setRoomDetails(room);
       setRoomName(room.name);
-      if (socket.connected && room) {
+      if (socket && socket.connected && room) {
         updatePlayers(room);
       }
     } catch (err) {
@@ -119,9 +120,9 @@ const Room = (props) => {
 
   useEffect(() => {
     getRoomDetails();
-  }, [roomId]);
 
-  useEffect(() => {
+    setIsConnected(socket.connected);
+
     return () => {
       socket.off("joinRoom");
     };

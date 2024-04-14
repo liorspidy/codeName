@@ -16,6 +16,7 @@ const Header = ({
   roomId,
   isConnected,
   playerDetails,
+  socket,
   setPlayersInDb,
   setIsGoingBack,
   roomDetails

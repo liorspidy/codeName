@@ -15,6 +15,7 @@ const getRoom = async (req, res) => {
   const roomId = req.params.id;
 
   try {
+    console.log("Getting room");
     const room = await Room.findOne({ id: roomId });
 
     if (!room) {
@@ -22,6 +23,8 @@ const getRoom = async (req, res) => {
     }
 
     // If the room is found, return it as a response
+
+    console.log("Room found");
     return res.status(200).json(room);
   } catch (error) {
     console.error("Error getting room:", error.message);
@@ -396,11 +399,6 @@ const setPlayers = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-    
-    console.log("-----------------");
-    console.log(players);
-    console.log(redTeam);
-    console.log("-----------------");
 
     room.players = players;
     room.redTeam = redTeam;

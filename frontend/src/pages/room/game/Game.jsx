@@ -41,6 +41,7 @@ const Game = (props) => {
   const {
     socket,
     isConnected,
+    setIsConnected,
     setPlayersInDb,
     setIsGoingBack,
     isGoingBack,
@@ -90,6 +91,10 @@ const Game = (props) => {
   };
 
   useEffect(() => {
+    console.log(socket);
+    console.log(socket.connected);
+    setIsConnected(socket.connected);
+
     socket.on("updatingOperatorsWord", (word, count) => {
       setCurrentOperatorsWord(word);
       setCurrentOperatorsWordCount(count);
@@ -107,13 +112,11 @@ const Game = (props) => {
         setPlayersAmountError(false);
       }
     });
-    
+
     return () => {
       socket.off("updatingOperatorsWord");
-      socket.off("kickPlayer");
-      socket.off("startTimerForAll");
-      socket.off("connect");
-      socket.off("disconnect");
+      socket.off("showPlayersAmountError");
+      socket.off("playerJoinedToGame");
     };
   }, [socket]);
 

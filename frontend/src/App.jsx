@@ -25,11 +25,18 @@ function App() {
 
   useEffect(() => {
     const handleConnectionChange = () => {
-      setIsConnected(socket.connected);
+      console.log("Connection changed");
     };
 
     socket.on("connect", handleConnectionChange);
     socket.on("disconnect", handleConnectionChange);
+
+    console.log(socket.active)
+
+    return () => {
+      socket.off("connect", handleConnectionChange);
+      socket.off("disconnect", handleConnectionChange);
+    };
   }, []);
 
   // Set players and teams in db
@@ -66,6 +73,7 @@ function App() {
               <Room
                 socket={socket}
                 isConnected={isConnected}
+                setIsConnected={setIsConnected}
                 setPlayersInDb={setPlayersInDb}
                 setIsGoingBack={setIsGoingBack}
                 setUniqueRandomWords={setUniqueRandomWords}
@@ -90,6 +98,7 @@ function App() {
               <Game
                 socket={socket}
                 isConnected={isConnected}
+                setIsConnected={setIsConnected}
                 setPlayersInDb={setPlayersInDb}
                 setIsGoingBack={setIsGoingBack}
                 isGoingBack={isGoingBack}

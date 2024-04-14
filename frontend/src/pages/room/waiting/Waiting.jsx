@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 import Button from "../../../UI/button/Button";
 import { useNavigate } from "react-router-dom";
 import LeaveRoomModal from "../../../UI/modals/LeaveRoomModal";
-import { red } from "@mui/material/colors";
 
 const Waiting = ({
   roomDetails,
