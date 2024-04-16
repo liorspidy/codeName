@@ -276,6 +276,8 @@ const Game = (props) => {
         setRedTeamPlayers={setRedTeamPlayers}
         blueTeamPlayers={blueTeamPlayers}
         setBlueTeamPlayers={setBlueTeamPlayers}
+        setPlayersInDb={setPlayersInDb}
+        playerDetails={playerDetails}
       />
     </div>
   );

@@ -158,6 +158,7 @@ const Card = (props) => {
     setGameOver(true);
     setModalOpen(true);
     setOpenGameOver(true);
+    console.log("Game Over");
   };
 
   const flipCard = async () => {

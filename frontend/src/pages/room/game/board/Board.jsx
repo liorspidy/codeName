@@ -51,6 +51,8 @@ const Board = (props) => {
     playersAmountError,
     setTimerStarts,
     timerStarts,
+    setPlayersInDb,
+    playerDetails
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -115,7 +117,7 @@ const Board = (props) => {
     }
   }, [myDetails]);
 
-  useEffect(() => {    
+  useEffect(() => {
     socket.on(
       "updateTimerPlayingGroup",
       (
@@ -285,6 +287,9 @@ const Board = (props) => {
           setModalShown={setOpenGameOver}
           modalShown={openGameOver}
           winnerGroup={winnerGroup}
+          roomId={roomId}
+          playerDetails={playerDetails}
+          setPlayersInDb={setPlayersInDb}
         />
       )}
       <Minimap

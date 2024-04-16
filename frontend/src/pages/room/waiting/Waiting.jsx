@@ -99,7 +99,7 @@ const Waiting = ({
     setReadyButton(!readyButton);
     updatePlayerReady(playerDetails.name, !readyButton);
 
-    if (!readyButton && roomDetails.status === "playing") {
+    if (!readyButton && (roomDetails.status === "playing" || roomDetails.status === "finished")) {
       navigate(`/room/${roomId}/game`);
     }
   };

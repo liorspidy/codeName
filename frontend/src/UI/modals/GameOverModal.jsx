@@ -5,12 +5,16 @@ import { useCallback } from "react";
 import classes from "./Modal.module.scss";
 import Button from "../button/Button";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const GameOverModal = ({
   setModalShown,
   modalShown,
   setModalOpen,
   winnerGroup,
+  roomId,
+  playerDetails,
+  setPlayersInDb
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const navigate = useNavigate();
@@ -44,9 +48,29 @@ const GameOverModal = ({
     setModalShown(false);
   }, [setModalShown, setBackdropShown, setModalOpen]);
 
+    // Set teams in db
+    const setPlayerNotReadyInDb = async (name) => {
+      try {
+        console.log("setting player not ready");
+        const response = await axios.post(
+          `http://localhost:4000/room/${roomId}/setPlayerNotReady`,
+          {
+            roomId,
+            playerName: name,
+          }
+        );
+        const room = response.data;
+        await setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam);
+      } catch (error) {
+        console.error("An error occurred while setting player not ready:", error);
+      }
+    };
+
   const backToLobbyHandler = () => {
+    setPlayerNotReadyInDb(playerDetails.name);
     closeBackdrop();
     navigate("/");
+    sessionStorage.removeItem("lastRoomId");
   };
 
   const winnerGroupName =
