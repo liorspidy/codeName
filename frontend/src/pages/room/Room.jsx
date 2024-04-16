@@ -127,13 +127,11 @@ const Room = (props) => {
 
   useEffect(() => {
     getRoomDetails();
-    console.log(socket.connected);
-    setIsConnected(socket.connected);
+  }, []);
 
-    return () => {
-      socket.off("joinRoom");
-    };
-  }, [socket]);
+  useEffect(() => {
+    setIsConnected(socket.connected);
+  }, [roomName,socket]);
 
   return (
     <div className={classes.room}>
