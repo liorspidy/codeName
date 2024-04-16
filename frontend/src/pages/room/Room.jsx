@@ -7,9 +7,11 @@ import Waiting from "./waiting/Waiting";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import Loader from "../../UI/loader/Loader";
 
 const Room = (props) => {
   const [roomName, setRoomName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     socket,
@@ -40,18 +42,21 @@ const Room = (props) => {
 
   const getRoomDetails = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `http://localhost:4000/room/${roomId}/getRoom`
       );
       const room = response.data;
       setRoomDetails(room);
       setRoomName(room.name);
-      if (socket && socket.connected && room) {
+      if (socket !== null && socket.connected && room) {
         updatePlayers(room);
       }
     } catch (err) {
       console.log(err);
       navigate("/404");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,7 +117,9 @@ const Room = (props) => {
         }
       );
       const room = response.data;
-      socket.emit("joinRoom", room, playerDetails.name);
+      if (socket !== null) {
+        socket.emit("joinRoom", room, playerDetails.name);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -120,7 +127,7 @@ const Room = (props) => {
 
   useEffect(() => {
     getRoomDetails();
-
+    console.log(socket.connected);
     setIsConnected(socket.connected);
 
     return () => {
@@ -130,35 +137,42 @@ const Room = (props) => {
 
   return (
     <div className={classes.room}>
-      <Header
-        roomName={roomName}
-        roomId={roomId}
-        isConnected={isConnected}
-        playerDetails={playerDetails}
-        socket={socket}
-        setPlayersInDb={setPlayersInDb}
-        setIsGoingBack={setIsGoingBack}
-        roomDetails={roomDetails}
-      />
-      <Waiting
-        roomDetails={roomDetails}
-        playerDetails={playerDetails}
-        socket={socket}
-        blueTeamPlayers={blueTeamPlayers}
-        setBlueTeamPlayers={setBlueTeamPlayers}
-        redTeamPlayers={redTeamPlayers}
-        setRedTeamPlayers={setRedTeamPlayers}
-        players={players}
-        setPlayers={setPlayers}
-        setPlayersInDb={setPlayersInDb}
-        setTeamPlayersInDb={setTeamPlayersInDb}
-        setUniqueRandomWords={setUniqueRandomWords}
-        setRandomLeadGroupColor={setRandomLeadGroupColor}
-        setRoomDetails={setRoomDetails}
-        setMinimap={setMinimap}
-        playersAmountError={playersAmountError}
-        setPlayersAmountError={setPlayersAmountError}
-      />
+      {isLoading && (
+        <div className={classes.loaderContainer}>
+          <Loader />
+        </div>
+      )}
+      <>
+        <Header
+          roomName={roomName}
+          roomId={roomId}
+          isConnected={isConnected}
+          playerDetails={playerDetails}
+          socket={socket}
+          setPlayersInDb={setPlayersInDb}
+          setIsGoingBack={setIsGoingBack}
+          roomDetails={roomDetails}
+        />
+        <Waiting
+          roomDetails={roomDetails}
+          playerDetails={playerDetails}
+          socket={socket}
+          blueTeamPlayers={blueTeamPlayers}
+          setBlueTeamPlayers={setBlueTeamPlayers}
+          redTeamPlayers={redTeamPlayers}
+          setRedTeamPlayers={setRedTeamPlayers}
+          players={players}
+          setPlayers={setPlayers}
+          setPlayersInDb={setPlayersInDb}
+          setTeamPlayersInDb={setTeamPlayersInDb}
+          setUniqueRandomWords={setUniqueRandomWords}
+          setRandomLeadGroupColor={setRandomLeadGroupColor}
+          setRoomDetails={setRoomDetails}
+          setMinimap={setMinimap}
+          playersAmountError={playersAmountError}
+          setPlayersAmountError={setPlayersAmountError}
+        />
+      </>
     </div>
   );
 };

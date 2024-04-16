@@ -37,15 +37,11 @@ const Header = ({
   let navigate = useNavigate();
 
   const goBackHandler = () => {
-    if (isGame) {
-      setPlayerNotReady(playerDetails.name);
-    } else {
-      navigate(-1);
-    }
+    setPlayerNotReadyInDb(playerDetails.name);
   };
 
   // Set teams in db
-  const setPlayerNotReady = async (name) => {
+  const setPlayerNotReadyInDb = async (name) => {
     try {
       setIsGoingBack(true);
       console.log("setting player not ready");

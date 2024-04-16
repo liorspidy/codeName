@@ -25,13 +25,10 @@ function App() {
 
   useEffect(() => {
     const handleConnectionChange = () => {
-      console.log("Connection changed");
     };
 
     socket.on("connect", handleConnectionChange);
     socket.on("disconnect", handleConnectionChange);
-
-    console.log(socket.active)
 
     return () => {
       socket.off("connect", handleConnectionChange);

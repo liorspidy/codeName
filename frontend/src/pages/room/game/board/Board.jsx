@@ -115,7 +115,7 @@ const Board = (props) => {
     }
   }, [myDetails]);
 
-  useEffect(() => {
+  useEffect(() => {    
     socket.on(
       "updateTimerPlayingGroup",
       (

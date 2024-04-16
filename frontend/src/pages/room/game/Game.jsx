@@ -26,6 +26,7 @@ const Game = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [usersScoreWasSet, setUsersScoreWasSet] = useState(false);
   const [timerStarts, setTimerStarts] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
@@ -91,9 +92,14 @@ const Game = (props) => {
   };
 
   useEffect(() => {
-    console.log(socket);
-    console.log(socket.connected);
     setIsConnected(socket.connected);
+
+    // if (!socket.connected) {
+    //   navigate(-1);
+    //   setTimeout(() => {
+    //     navigate("/room/" + roomId + "/game");
+    //   }, 200);
+    // } else {
 
     socket.on("updatingOperatorsWord", (word, count) => {
       setCurrentOperatorsWord(word);
@@ -118,7 +124,8 @@ const Game = (props) => {
       socket.off("showPlayersAmountError");
       socket.off("playerJoinedToGame");
     };
-  }, [socket]);
+    // }
+  }, [myDetails,socket]);
 
   useEffect(() => {
     fetchRoomDetails()
@@ -195,6 +202,9 @@ const Game = (props) => {
       .catch((err) => {
         console.log(err);
         navigate("/404");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -212,7 +222,7 @@ const Game = (props) => {
 
   return (
     <div className={classes.gamePage}>
-      {isGoingBack && (
+      {(isLoading || isGoingBack) && (
         <div className={classes.loaderContainer}>
           <Loader />
         </div>
