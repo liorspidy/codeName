@@ -226,6 +226,7 @@ io.on("connection", (socket) => {
       finalBlueTeamPlayers,
       roomDetails
     ) => {
+      console.log(myDetails.name + " locked a card");
       io.to(roomId).emit(
         "updateTimerPlayingGroup",
         myDetails,
@@ -238,10 +239,12 @@ io.on("connection", (socket) => {
   );
 
   socket.on("flipCard", (roomId, myDetails, index, word) => {
+    console.log(myDetails.name + " flipped a card");
     io.to(roomId).emit("flippingCardToAll", myDetails, index, word);
   });
 
   socket.on("skipTurn", (roomId, myDetails) => {
+    console.log(myDetails.name + " skipped their turn");
     io.to(roomId).emit("skippingTurn", myDetails);
   });
 });

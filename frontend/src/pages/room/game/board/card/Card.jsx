@@ -72,6 +72,7 @@ const Card = (props) => {
       );
     } catch (err) {
       console.log(err);
+      throw new Error("Could not update the revealed cards");
     }
   };
 
@@ -83,6 +84,7 @@ const Card = (props) => {
       });
     } catch (err) {
       console.log(err);
+      throw new Error("Could not set the winner");
     }
   };
 
@@ -95,6 +97,7 @@ const Card = (props) => {
       });
     } catch (err) {
       console.log(err);
+      throw new Error("Could not set the score");
     }
   };
 
@@ -165,7 +168,7 @@ const Card = (props) => {
     if (currentCard.index === index && !isFlipped) {
       setFlippingCard(false);
       setIsFlipped(!isFlipped);
-      const color = await checkCard();
+      const color = checkCard();
       setCardColor(color);
       if (myDetails.name === recentlyPlayedPlayer.name) {
         updateRevealedCardsInDb(color);

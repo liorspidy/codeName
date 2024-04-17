@@ -99,7 +99,10 @@ const Waiting = ({
     setReadyButton(!readyButton);
     updatePlayerReady(playerDetails.name, !readyButton);
 
-    if (!readyButton && (roomDetails.status === "playing" || roomDetails.status === "finished")) {
+    if (
+      !readyButton &&
+      (roomDetails.status === "playing" || roomDetails.status === "finished")
+    ) {
       navigate(`/room/${roomId}/game`);
     }
   };
@@ -135,23 +138,23 @@ const Waiting = ({
       tempBlueTeamPlayers[index].ready = ready;
       finalBlueTeamPlayers = tempBlueTeamPlayers;
     }
-    // if (players.some((player) => !player.ready)) {
     console.log("setting players in db");
+
     setPlayersInDb(
       roomId,
       tempPlayers,
       finalRedTeamPlayers,
       finalBlueTeamPlayers
-    );
-    // }
-    socket.emit(
-      "playerReady",
-      roomId,
-      playerDetails.name,
-      tempPlayers,
-      finalRedTeamPlayers,
-      finalBlueTeamPlayers
-    );
+    ).then((response) => {
+      socket.emit(
+        "playerReady",
+        roomId,
+        playerDetails.name,
+        response.players,
+        response.redTeam,
+        response.blueTeam
+      );
+    });
   };
 
   // Switch teams on button click

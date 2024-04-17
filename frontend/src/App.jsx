@@ -24,8 +24,7 @@ function App() {
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
 
   useEffect(() => {
-    const handleConnectionChange = () => {
-    };
+    const handleConnectionChange = () => {};
 
     socket.on("connect", handleConnectionChange);
     socket.on("disconnect", handleConnectionChange);
@@ -37,17 +36,23 @@ function App() {
   }, []);
 
   // Set players and teams in db
-  const setPlayersInDb = async (roomId, tempPlayers, tempRed, tempBlue) => {
-    try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setPlayers`, {
-        roomId,
-        players: tempPlayers,
-        redTeamPlayers: tempRed,
-        blueTeamPlayers: tempBlue,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+  const setPlayersInDb = (roomId, tempPlayers, tempRed, tempBlue) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`http://localhost:4000/room/${roomId}/setPlayers`, {
+          roomId,
+          players: tempPlayers,
+          redTeamPlayers: tempRed,
+          blueTeamPlayers: tempBlue,
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(new Error("Could not set players in db"));
+        });
+    });
   };
 
   return (

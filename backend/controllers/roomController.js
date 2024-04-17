@@ -76,11 +76,12 @@ const setWinner = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-
+    
     room.winner = winner;
     room.status = "finished";
+
     await room.save();
-    return res.status(200);
+    return res.status(200).json(room);
   } catch (error) {
     console.error("Error setting winner:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -277,7 +278,7 @@ const endGame = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    // Add logic to end the game
+
 
     await room.save();
     return res.status(200).json(room);

@@ -49,25 +49,42 @@ const GameOverModal = ({
   }, [setModalShown, setBackdropShown, setModalOpen]);
 
     // Set teams in db
-    const setPlayerNotReadyInDb = async (name) => {
+    const setPlayerNotReadyInDb = async () => {
       try {
         console.log("setting player not ready");
         const response = await axios.post(
           `http://localhost:4000/room/${roomId}/setPlayerNotReady`,
           {
             roomId,
-            playerName: name,
+            playerName: playerDetails.name,
           }
         );
         const room = response.data;
-        await setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam);
+        await setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam).then(() => {
+          console.log("player not ready set")
+        });
       } catch (error) {
         console.error("An error occurred while setting player not ready:", error);
+        throw new Error("Could not set player not ready"); 
+      }
+    };
+
+    const leaveRoomHandler = async () => {
+      try {
+        await axios.post(`http://localhost:4000/room/${roomId}/leaveRoom`, {
+          roomId: roomId,
+          username: playerDetails.name,
+        });  
+        console.log("left room");
+      } catch (error) {
+        console.log(error);
+        throw new Error("Could not leave the room");
       }
     };
 
   const backToLobbyHandler = () => {
-    setPlayerNotReadyInDb(playerDetails.name);
+    setPlayerNotReadyInDb();
+    leaveRoomHandler();
     closeBackdrop();
     navigate("/");
     sessionStorage.removeItem("lastRoomId");

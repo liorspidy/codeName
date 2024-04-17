@@ -53,11 +53,13 @@ const Header = ({
         }
       );
       const room = response.data;
-      await setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam);
-      setIsGoingBack(false);
-      navigate(-1);
+      setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam).then(() => {
+        setIsGoingBack(false);
+        navigate(-1);
+      });
     } catch (error) {
       console.error("An error occurred while setting player not ready:", error);
+      throw new Error("Could not set player not ready in db");
     }
   };
 

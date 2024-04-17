@@ -52,6 +52,12 @@ const Room = (props) => {
       if (socket !== null && socket.connected && room) {
         updatePlayers(room);
       }
+
+      // // If all players are ready, navigate to game
+      // if(!room.players.some((player) => player.ready === false)){
+      //   navigate(`/room/${roomId}/game`);
+      // }
+      
     } catch (err) {
       console.log(err);
       navigate("/404");

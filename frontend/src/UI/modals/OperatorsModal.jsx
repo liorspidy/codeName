@@ -84,6 +84,7 @@ const OperatorsModal = (props) => {
       );
     } catch (err) {
       console.log(err);
+      throw new Error("Error setting operators word");
     }
   };
 
