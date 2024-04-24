@@ -65,6 +65,7 @@
       padding-inline: 0.5em;
       font-weight: bold;
       border-radius: 5px;
+      font-size: min(3.25dvw , 24px);
 
       &.myPlayer {
         border: 2px solid rgb(255 127 31);
@@ -119,6 +120,8 @@
   .playersList {
     .playerItem {
       position: relative;
+      font-size: min(3.25dvw , 24px);
+
       &::after {
         right: 1dvw;
       }

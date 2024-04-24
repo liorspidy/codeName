@@ -557,7 +557,8 @@ const setOperatorsWord = async (req, res) => {
     room.wordsToGuess = wordsToGuess;
 
     await room.save();
-    return res.status(200);
+    return res.status(200).json({ message: "Operator's word set successfully" });
+    
   } catch (error) {
     console.error("Error setting operators word:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });

@@ -94,13 +94,6 @@ const Game = (props) => {
   useEffect(() => {
     setIsConnected(socket.connected);
 
-    // if (!socket.connected) {
-    //   navigate(-1);
-    //   setTimeout(() => {
-    //     navigate("/room/" + roomId + "/game");
-    //   }, 200);
-    // } else {
-
     socket.on("updatingOperatorsWord", (word, count) => {
       setCurrentOperatorsWord(word);
       setCurrentOperatorsWordCount(count);
@@ -125,7 +118,7 @@ const Game = (props) => {
       socket.off("playerJoinedToGame");
     };
     // }
-  }, [myDetails,socket]);
+  }, [socket]);
 
   useEffect(() => {
     fetchRoomDetails()

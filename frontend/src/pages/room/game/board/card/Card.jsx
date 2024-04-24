@@ -207,6 +207,7 @@ const Card = (props) => {
 
     setRecentlyPlayedPlayer(null);
     setNextRound();
+    setCurrentCard(null);
   };
 
   useEffect(() => {

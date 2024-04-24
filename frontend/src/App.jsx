@@ -12,7 +12,7 @@ function App() {
   const [logedInPlayer, setLogedInPlayer] = useState(
     sessionStorage.getItem("token") ? true : false
   );
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isConnected, setIsConnected] = useState(false);
   const [isGoingBack, setIsGoingBack] = useState(false);
   const [uniqueRandomWords, setUniqueRandomWords] = useState([]);
   const [randomLeadGroupColor, setRandomLeadGroupColor] = useState("");
@@ -24,7 +24,8 @@ function App() {
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
 
   useEffect(() => {
-    const handleConnectionChange = () => {};
+    const handleConnectionChange = () => {
+    };
 
     socket.on("connect", handleConnectionChange);
     socket.on("disconnect", handleConnectionChange);
