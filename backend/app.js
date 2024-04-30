@@ -87,56 +87,121 @@ io.on("connection", (socket) => {
             room.redScore === 0 &&
             room.blueScore === 0
           ) {
-            const uniqueRandomWords = [];
+            // const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
+            // const minimapMappingArray =
+            //   randomLeadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
+
+            // const tempMinimap = Array(25)
+            //   .fill()
+            //   .map((_, index) => {
+            //     let randFactor = Math.floor(Math.random() * 4);
+
+            //     // Make sure there are no more than 9 red, 8 blue, 7 neutral, and 1 black
+            //     while (minimapMappingArray[randFactor] === 0) {
+            //       randFactor = Math.floor(Math.random() * 4);
+            //     }
+
+            //     // Decrement the count of the current factor
+            //     if (minimapMappingArray[randFactor] > 0) {
+            //       minimapMappingArray[randFactor]--;
+            //       const color =
+            //         randFactor === 0
+            //           ? "#ec4542"
+            //           : randFactor === 1
+            //           ? "#008ed5"
+            //           : randFactor === 2
+            //           ? "#d1c499"
+            //           : randFactor === 3
+            //           ? "#3d3b3a"
+            //           : "";
+            //       const subclass =
+            //         randFactor === 0
+            //           ? `red`
+            //           : randFactor === 1
+            //           ? `blue`
+            //           : randFactor === 2
+            //           ? `neutral`
+            //           : randFactor === 3
+            //           ? `black`
+            //           : "";
+            //       return {
+            //         type: "div",
+            //         key: index,
+            //         props: {
+            //           subclass: subclass,
+            //           style: { backgroundColor: color },
+            //         },
+            //       };
+            //     }
+            //   });
+
             const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
             const minimapMappingArray =
               randomLeadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
+
+            // Fisher-Yates shuffle algorithm
+            function shuffleArray(array) {
+              for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+              }
+              return array;
+            }
+
+            const cellIndexes = Array.from({ length: 25 }, (_, index) => index);
+
+            const blackCellIndex = cellIndexes.splice(
+              Math.floor(Math.random() * cellIndexes.length),
+              1
+            )[0];
+            minimapMappingArray[3]--;
+
+            const shuffledIndexes = shuffleArray(cellIndexes);
+
+            const redCellsIndexes = shuffledIndexes.splice(0, 8);
+            minimapMappingArray[0] -= redCellsIndexes.length;
+
+            const whiteCellsIndexes = shuffledIndexes.splice(0, 9);
+            minimapMappingArray[2] -= whiteCellsIndexes.length;
+
+            const blueCellsIndexes = shuffledIndexes;
+            minimapMappingArray[1] -= blueCellsIndexes.length;
+
             const tempMinimap = Array(25)
               .fill()
               .map((_, index) => {
-                let randFactor = Math.floor(Math.random() * 4);
+                let subclass = "";
+                let color = "";
 
-                while (minimapMappingArray[randFactor] === 0) {
-                  randFactor = Math.floor(Math.random() * 4);
+                if (index === blackCellIndex) {
+                  subclass = "black";
+                  color = "#3d3b3a";
+                } else if (redCellsIndexes.includes(index)) {
+                  subclass = "red";
+                  color = "#ec4542";
+                } else if (blueCellsIndexes.includes(index)) {
+                  subclass = "blue";
+                  color = "#008ed5";
+                } else if (whiteCellsIndexes.includes(index)) {
+                  subclass = "neutral";
+                  color = "#d1c499";
                 }
 
-                if (minimapMappingArray[randFactor] > 0) {
-                  minimapMappingArray[randFactor]--;
-                  const color =
-                    randFactor === 0
-                      ? "#ec4542"
-                      : randFactor === 1
-                      ? "#008ed5"
-                      : randFactor === 2
-                      ? "#d1c499"
-                      : randFactor === 3
-                      ? "#3d3b3a"
-                      : "";
-                  const subclass =
-                    randFactor === 0
-                      ? `red`
-                      : randFactor === 1
-                      ? `blue`
-                      : randFactor === 2
-                      ? `neutral`
-                      : randFactor === 3
-                      ? `black`
-                      : "";
-                  return {
-                    type: "div",
-                    key: index,
-                    props: {
-                      subclass: subclass,
-                      style: { backgroundColor: color },
-                    },
-                  };
-                }
+                return {
+                  type: "div",
+                  key: index,
+                  props: {
+                    subclass: subclass,
+                    style: { backgroundColor: color },
+                  },
+                };
               });
 
             room.map = tempMinimap;
 
             console.log("Minimap generated");
 
+            const uniqueRandomWords = [];
             while (uniqueRandomWords.length < 25) {
               const randomWord =
                 wordsList.words[
@@ -246,6 +311,11 @@ io.on("connection", (socket) => {
   socket.on("skipTurn", (roomId, myDetails) => {
     console.log(myDetails.name + " skipped their turn");
     io.to(roomId).emit("skippingTurn", myDetails);
+  });
+
+  socket.on("gameOver", (roomId, winner, myDetails) => {
+    console.log("Game over");
+    io.to(roomId).emit("gameOverToAll", winner, myDetails);
   });
 });
 

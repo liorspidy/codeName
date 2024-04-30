@@ -76,18 +76,6 @@ const Card = (props) => {
     }
   };
 
-  const setWinnerInDb = async (winner) => {
-    try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setWinner`, {
-        roomId,
-        winner,
-      });
-    } catch (err) {
-      console.log(err);
-      throw new Error("Could not set the winner");
-    }
-  };
-
   const setScoreInDb = async (team, score) => {
     try {
       await axios.post(`http://localhost:4000/room/${roomId}/setScore`, {
@@ -101,6 +89,19 @@ const Card = (props) => {
     }
   };
 
+  const setWinnerInDb = async (winner) => {
+    try {
+      await axios.post(`http://localhost:4000/room/${roomId}/setWinner`, {
+        roomId,
+        winner,
+      });
+      socket.emit("gameOver", roomId, winner, recentlyPlayedPlayer);
+    } catch (err) {
+      console.log(err);
+      throw new Error("Could not set the winner");
+    }
+  };
+
   const setWordsToGuessCountInDb = async (updatedWordsToGuessCount) => {
     try {
       await axios.post(`http://localhost:4000/room/${roomId}/setWordsToGuess`, {
@@ -109,6 +110,7 @@ const Card = (props) => {
       });
     } catch (err) {
       console.log(err);
+      throw new Error("Could not set the words to guess count");
     }
   };
 
@@ -150,18 +152,16 @@ const Card = (props) => {
     }
   };
 
-  const gameOverHandler = (winnerTeam) => {
+  const gameOverHandler = async (winnerTeam) => {
     setWinnerGroup(winnerTeam);
-    if (!gameOver) {
-      if (myDetails.name === recentlyPlayedPlayer.name) {
-        setWinnerInDb(winnerTeam);
-      }
-    }
     setWordsToGuess(0);
-    setGameOver(true);
     setModalOpen(true);
     setOpenGameOver(true);
-    console.log("Game Over");
+    if (!gameOver) {
+      if (myDetails.name === recentlyPlayedPlayer.name) {
+        await setWinnerInDb(winnerTeam);
+      }
+    }
   };
 
   const flipCard = async () => {
@@ -170,38 +170,38 @@ const Card = (props) => {
       setIsFlipped(!isFlipped);
       const color = checkCard();
       setCardColor(color);
-      if (myDetails.name === recentlyPlayedPlayer.name) {
-        updateRevealedCardsInDb(color);
-      }
 
-      if (color === "red") {
-        setRedGroupCounter((prev) => prev - 1);
-        if (myDetails.name === recentlyPlayedPlayer.name) {
-          setScoreInDb("red", redGroupCounter - 1);
+      if (color === "black") {
+        if (recentlyPlayedPlayer.team === "red") {
+          await gameOverHandler("blue");
+        } else {
+          await gameOverHandler("red");
         }
+      } else if (color === "red") {
+        setRedGroupCounter((prev) => prev - 1);
         if (redGroupCounter > 1) {
           checkIfItsMyCard("red");
         } else {
-          gameOverHandler("red");
+          await gameOverHandler("red");
         }
       } else if (color === "blue") {
         setBlueGroupCounter((prev) => prev - 1);
-        if (myDetails.name === recentlyPlayedPlayer.name) {
-          setScoreInDb("blue", blueGroupCounter - 1);
-        }
         if (blueGroupCounter > 1) {
           checkIfItsMyCard("blue");
         } else {
-          gameOverHandler("blue");
-        }
-      } else if (color === "black") {
-        if (recentlyPlayedPlayer.team === "red") {
-          gameOverHandler("blue");
-        } else if (recentlyPlayedPlayer.team === "blue") {
-          gameOverHandler("red");
+          await gameOverHandler("blue");
         }
       } else if (color === "neutral") {
         finishTurn();
+      }
+
+      if (myDetails.name === recentlyPlayedPlayer.name) {
+        await updateRevealedCardsInDb(color);
+        if (color === "red") {
+          await setScoreInDb("red", redGroupCounter - 1);
+        } else if (color === "blue") {
+          await setScoreInDb("blue", blueGroupCounter - 1);
+        }
       }
     }
 
@@ -216,7 +216,7 @@ const Card = (props) => {
       currentCard !== undefined &&
       currentCard?.index === index &&
       !isFlipped
-      ) {
+    ) {
       if (myDetails && index !== null && word) {
         if (timeRanOut) {
           socket.emit("flipCard", roomId, myDetails, index, word);

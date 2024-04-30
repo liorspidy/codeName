@@ -20,7 +20,7 @@ const roomSchema = new mongoose.Schema({
     currentWord: { type: String, default: '' },
     currentWordCount: { type: Number, default: 0 },
     wordsToGuess: { type: Number, default: 0 },
-    usersScoreWasSet: { type: Boolean, default: false },
+    // usersScoreWasSet: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('Room', roomSchema);

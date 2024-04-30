@@ -1,5 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&family=Jost:wght@200;300;400;500;600;700;800&display=swap");
 
+// .gameBoard {
+//   background-image: url("../../../../images/bg.jpg");
+//   background-repeat: no-repeat;
+//   background-position: top;
+//   background-size: cover;
+// }
+
 .gameBoard {
   flex: 1;
   position: relative;
@@ -56,7 +63,7 @@
 
       .minimapButtonContainer {
         z-index: 10;
-        height: 60%;
+        height: 70%;
         aspect-ratio: 1/1;
         display: flex;
         justify-content: center;
@@ -65,7 +72,6 @@
 
         &.agent {
           filter: brightness(0.5);
-          height: 70%;
         }
 
         .minimapButton {
@@ -129,7 +135,6 @@
         &.starts {
           filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.595))
             brightness(1);
-            
         }
 
         .innerContainer {
@@ -329,14 +334,12 @@
           background-repeat: no-repeat;
           background-position: center;
           background-size: 8dvw;
-
         }
-        
+
         &.neutral {
           background-color: rgb(243, 220, 193);
           box-shadow: inset 0 0 5px rgb(171 129 81);
         }
-
       }
     }
 
@@ -345,7 +348,8 @@
       min-height: 14.2dvw;
       margin: 1rem auto;
       border-radius: 1rem;
-      border: 2px solid #646cff;
+      background-color: #242424;
+      border: 2px solid #282a7c;
       z-index: 10;
       padding: 0.15rem 0.75rem;
       background-color: rgb(0, 0, 0);
@@ -353,11 +357,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      opacity: 0.3;
       transition: opacity 0.3s ease-out;
+      transition: border 0.3s ease-out;
 
       &.cardPicked {
-        opacity: 1;
+        border: 2px solid #646cff;
       }
 
       .currentCard {

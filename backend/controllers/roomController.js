@@ -60,7 +60,7 @@ const setStatus = async (req, res) => {
     room.status = status;
 
     await room.save();
-    return res.status(200);
+    return res.status(200).json({ message: "Status set successfully" });
   } catch (error) {
     console.error("Error starting game:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -81,7 +81,7 @@ const setWinner = async (req, res) => {
     room.status = "finished";
 
     await room.save();
-    return res.status(200).json(room);
+    return res.status(200).json({ message: "Winner set successfully" });
   } catch (error) {
     console.error("Error setting winner:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -145,7 +145,7 @@ const createRoom = async (req, res) => {
       currentWord: "",
       currentWordCount: 0,
       wordsToGuess: 0,
-      usersScoreWasSet: false,
+      // usersScoreWasSet: false,
     });
 
     await newRoom.save();
@@ -338,10 +338,10 @@ const resetRoom = async (req, res) => {
     room.currentWord = "";
     room.currentWordCount = 0;
     room.wordsToGuess = 0;
-    room.usersScoreWasSet = false;
+    // room.usersScoreWasSet = false;
 
     await room.save();
-    return res.status(200);
+    return res.status(200).json({ message: "Room reset successfully" });
   } catch (error) {
     console.error("Error resetting room:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -508,7 +508,7 @@ const nextRound = async (req, res) => {
     room.round = room.round + 1;
 
     await room.save();
-    return res.status(200).json(room);
+    return res.status(200).json({ message: "Next round set successfully" });
   } catch (error) {
     console.error("Error next turn:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -533,7 +533,7 @@ const nextTurn = async (req, res) => {
     }
 
     await room.save();
-    return res.status(200).json(room);
+    return res.status(200).json({ message: "Next turn set successfully" });
   } catch (error) {
     console.error("Error next turn:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -583,7 +583,7 @@ const setWordsToGuess = async (req, res) => {
     }
 
     await room.save();
-    return res.status(200);
+    return res.status(200).json({ message: "Words to guess set successfully" });
   } catch (error) {
     console.error("Error setting operators word:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -592,6 +592,7 @@ const setWordsToGuess = async (req, res) => {
 
 const updateRevealedCards = async (req, res) => {
   try {
+    console.log("Updating revealed cards...");
     const roomId = req.body.roomId;
     const cardIndex = req.body.index;
     const color = req.body.color;
@@ -604,7 +605,8 @@ const updateRevealedCards = async (req, res) => {
 
     room.revealedCards.push({ index: cardIndex, color: color });
     await room.save();
-    return res.status(200).json(room);
+    console.log("Revealed cards updated");
+    return res.status(200).json({ message: "Revealed cards updated successfully" });
   } catch (error) {
     console.error("Error updating revealed cards:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -632,7 +634,7 @@ const setScore = async (req, res) => {
 
     await room.save();
     console.log("score set");
-    return res.status(200);
+    return res.status(200).json({ message: "Score set successfully" });
   } catch (err) {
     console.error("Error setting score:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });

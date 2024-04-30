@@ -24,7 +24,6 @@ const Game = (props) => {
   const [gameOver, setGameOver] = useState(false);
   const [winnerGroup, setWinnerGroup] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [usersScoreWasSet, setUsersScoreWasSet] = useState(false);
   const [timerStarts, setTimerStarts] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -78,18 +77,18 @@ const Game = (props) => {
     }
   };
 
-  const setUserScoreInDb = async (winnigTeam) => {
-    try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setUsersScore`, {
-        roomId,
-        winnigTeam,
-        scoreToAdd: 50,
-      });
-    } catch (err) {
-      console.log(err);
-      throw new Error("Error setting user score");
-    }
-  };
+  // const setUserScoreInDb = async (winnigTeam) => {
+  //   try {
+  //     await axios.post(`http://localhost:4000/room/${roomId}/setUsersScore`, {
+  //       roomId,
+  //       winnigTeam,
+  //       scoreToAdd: 50,
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw new Error("Error setting user score");
+  //   }
+  // };
 
   useEffect(() => {
     setIsConnected(socket.connected);
@@ -110,6 +109,10 @@ const Game = (props) => {
       if (room.players.length >= 4) {
         setPlayersAmountError(false);
       }
+    });
+
+    socket.on("gameOverToAll", (winnerGroup, lastPlayerDetails) => {
+      setGameOver(true);
     });
 
     return () => {
@@ -178,7 +181,6 @@ const Game = (props) => {
         setCurrentOperatorsWordCount(room.currentWordCount);
         setWordsToGuess(room.wordsToGuess);
         setRevealedCards(room.revealedCards);
-        setUsersScoreWasSet(room.usersScoreWasSet);
         setMinimap(room.map);
 
         if (room.players.length < 4) {
@@ -200,18 +202,6 @@ const Game = (props) => {
         setIsLoading(false);
       });
   }, []);
-
-  // Set the user score in the database when the game is over
-  useEffect(() => {
-    if (gameOver && !usersScoreWasSet) {
-      if (winnerGroup === "red") {
-        setUserScoreInDb(roomDetails.redTeam);
-      } else if (winnerGroup === "blue") {
-        setUserScoreInDb(roomDetails.blueTeam);
-      }
-      setUsersScoreWasSet(true);
-    }
-  }, [gameOver]);
 
   return (
     <div className={classes.gamePage}>
@@ -271,6 +261,7 @@ const Game = (props) => {
         setBlueTeamPlayers={setBlueTeamPlayers}
         setPlayersInDb={setPlayersInDb}
         playerDetails={playerDetails}
+        setIsLoading={setIsLoading}
       />
     </div>
   );

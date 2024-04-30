@@ -52,7 +52,8 @@ const Board = (props) => {
     setTimerStarts,
     timerStarts,
     setPlayersInDb,
-    playerDetails
+    playerDetails,
+    setIsLoading
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -196,7 +197,8 @@ const Board = (props) => {
         roomId,
       });
     } catch (err) {
-      console.log(err);
+      console.log("Error setting next round in DB");
+      throw new Error("Error setting next round in DB");
     }
   };
 
@@ -206,7 +208,8 @@ const Board = (props) => {
         roomId,
       });
     } catch (err) {
-      console.log(err);
+      console.log("Error setting next turn in DB");
+      throw new Error("Error setting next turn in DB");
     }
   };
 
@@ -234,22 +237,23 @@ const Board = (props) => {
         }
       );
     } catch (err) {
-      console.log(err);
+      console.log("Error resetting operators word in DB");
+      throw new Error("Error resetting operators word in DB");
     }
   };
 
-  const resetOperatorsWord = () => {
+  const resetOperatorsWord = async () => {
     setCurrentOperatorsWord("");
     setCurrentOperatorsWordCount(0);
     if (myDetails.name === recentlyPlayedPlayer.name) {
-      resetOperatorsWordInDb();
+      await resetOperatorsWordInDb();
     }
   };
 
-  const setNextRound = () => {
+  const setNextRound = async () => {
     setWordLocked(false);
     if (myDetails.name === recentlyPlayedPlayer.name) {
-      setNextRoundInDB();
+      await setNextRoundInDB();
     }
   };
 
@@ -290,6 +294,10 @@ const Board = (props) => {
           roomId={roomId}
           playerDetails={playerDetails}
           setPlayersInDb={setPlayersInDb}
+          setIsLoading={setIsLoading}
+          setRedTeamPlayers={setRedTeamPlayers}
+          setBlueTeamPlayers={setBlueTeamPlayers}
+          setPlayers={setPlayers}
         />
       )}
       <Minimap
@@ -300,7 +308,7 @@ const Board = (props) => {
         roomDetails={roomDetails}
         minimap={minimap}
       />
-      {playersAmountError && (
+      {playersAmountError && !gameOver &&(
         <PlayersAmountError
           setModalOpen={setModalOpen}
           setModalShown={setOpenGameOver}

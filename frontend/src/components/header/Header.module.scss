@@ -7,7 +7,7 @@ header{
 
     .leftSection , .middleSection , .rightSection{
         display: flex;
-        gap: 2dvw;
+        gap: min(2dvw,0.5rem);
         justify-content: center;
         align-items: center;
         flex: 1;
@@ -18,6 +18,8 @@ header{
     }
 
     .middleSection{
+        position: relative;
+        left: -8px;
         
         .content{
             display: flex;
@@ -81,3 +83,7 @@ header{
         }
     }
 }
+
+// @media (min-width: 1024px){
+
+// }

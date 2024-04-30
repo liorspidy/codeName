@@ -9,6 +9,13 @@
   flex: 1;
 }
 
+// .waitingRoom {
+//   background-image: url("../../../images/bg.jpg");
+//   background-repeat: no-repeat;
+//   background-position: top;
+//   background-size: cover;
+// }
+
 .title {
   font-size: 1.8rem;
   margin: 0;
@@ -65,14 +72,14 @@
       padding-inline: 0.5em;
       font-weight: bold;
       border-radius: 5px;
-      font-size: min(3.25dvw , 24px);
+      font-size: min(3.25dvw, 24px);
 
       &.myPlayer {
         border: 2px solid rgb(255 127 31);
       }
 
-      &.ready{
-        &::after{
+      &.ready {
+        &::after {
           content: "";
           position: absolute;
           right: 3dvw;
@@ -120,7 +127,7 @@
   .playersList {
     .playerItem {
       position: relative;
-      font-size: min(3.25dvw , 24px);
+      font-size: min(3.25dvw, 24px);
 
       &::after {
         right: 1dvw;
@@ -130,8 +137,8 @@
         border: 2px solid rgb(255 127 31);
       }
 
-      &.ready{
-        &::after{
+      &.ready {
+        &::after {
           content: "";
           position: absolute;
           right: 3dvw;
@@ -213,3 +220,12 @@
     opacity: 1;
   }
 }
+
+// @media (max-width: 768px) {
+//   .waitingRoom {
+//     background-image: url("../../../images/bg.jpg");
+//     background-repeat: no-repeat;
+//     background-position: top;
+//     background-size: cover;
+//   }
+// }

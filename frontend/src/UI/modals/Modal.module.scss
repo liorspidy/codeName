@@ -612,3 +612,9 @@
     transform: translateY(-3rem);
   }
 }
+
+@media (min-width: 741px){
+  .modal{
+    font-size: 2rem;
+  }
+}
