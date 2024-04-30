@@ -152,6 +152,7 @@ const Board = (props) => {
         action
       ) => {
         if (myDetails) {
+          console.log("updateTimerPlayingGroup");
           setPlayers(tempPlayers);
           setRedTeamPlayers(finalRedTeamPlayers);
           setBlueTeamPlayers(finalBlueTeamPlayers);
@@ -164,6 +165,11 @@ const Board = (props) => {
               setTimerStarts(true);
             } else if (action === "stop") {
               restartClock();
+            } else if (action === "next") {
+              console.log("next");
+              restartClock();
+              setWordLocked(false);
+              setCurrentCard(null);
             }
           }
         }
@@ -180,6 +186,12 @@ const Board = (props) => {
       setLastPlayerSkipped(false);
     }
   }, [recentlyPlayedPlayer, lastPlayerSkipped]);
+
+  useEffect(() => {
+    if(redTeamPlayers.length > 0){
+      console.log(redTeamPlayers);
+    }
+  },[redTeamPlayers])
 
   useEffect(() => {
     if (blueGroupCounter === 0) {

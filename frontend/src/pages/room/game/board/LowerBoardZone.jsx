@@ -107,6 +107,7 @@ const LowerBoardZone = (props) => {
         !tempBlueTeamPlayers[index].pickedCard;
       finalBlueTeamPlayers = tempBlueTeamPlayers;
     }
+
     updateTimerInDb(tempPlayers, finalRedTeamPlayers, finalBlueTeamPlayers);
   };
 

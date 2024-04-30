@@ -127,6 +127,7 @@ const Game = (props) => {
   useEffect(() => {
     fetchRoomDetails()
       .then((room) => {
+        console.log(room);
         setPickedRandomWords(
           room.cards.length > 0 ? room.cards : uniqueRandomWords
         );
