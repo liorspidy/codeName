@@ -119,6 +119,7 @@ const Game = (props) => {
       socket.off("updatingOperatorsWord");
       socket.off("showPlayersAmountError");
       socket.off("playerJoinedToGame");
+      socket.off("gameOverToAll");
     };
     // }
   }, [socket]);

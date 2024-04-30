@@ -66,7 +66,8 @@ const LowerBoardZone = (props) => {
         tempPlayers,
         finalRedTeamPlayers,
         finalBlueTeamPlayers,
-        res.data
+        res.data,
+        wordLocked
       );
     } catch (error) {
       console.error("Error updating timer in db:", error.message);
@@ -124,12 +125,7 @@ const LowerBoardZone = (props) => {
     if (currentCard !== null) {
       setWordLocked((prevState) => !prevState);
       if (groupMembersLength > 1) {
-        if (!wordLocked) {
-          switchPickedCardStateForMe();
-          setTimerStarts(true);
-        } else {
-          restartClock();
-        }
+        switchPickedCardStateForMe();
       } else {
         setTimeRanOut(true);
       }

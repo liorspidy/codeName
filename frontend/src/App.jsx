@@ -35,67 +35,6 @@ function App() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
-  //   const minimapMappingArray =
-  //     randomLeadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
-
-  //   // Fisher-Yates shuffle algorithm
-  //   function shuffleArray(array) {
-  //     for (let i = array.length - 1; i > 0; i--) {
-  //       const j = Math.floor(Math.random() * (i + 1));
-  //       [array[i], array[j]] = [array[j], array[i]];
-  //     }
-  //     return array;
-  //   }
-
-  //   const cellIndexes = Array.from({ length: 25 }, (_, index) => index);
-
-  //   const blackCellIndex = cellIndexes.splice(
-  //     Math.floor(Math.random() * cellIndexes.length),
-  //     1
-  //   )[0];
-  //   minimapMappingArray[3]--;
-
-  //   const shuffledIndexes = shuffleArray(cellIndexes);
-
-  //   const redCellsIndexes = shuffledIndexes.splice(0, 8);
-  //   minimapMappingArray[0] -= redCellsIndexes.length;
-
-  //   const whiteCellsIndexes = shuffledIndexes.splice(0, 9);
-  //   minimapMappingArray[2] -= whiteCellsIndexes.length;
-
-  //   const blueCellsIndexes = shuffledIndexes;
-  //   minimapMappingArray[1] -= blueCellsIndexes.length;
-
-  //   const tempMinimap = Array(25)
-  //     .fill()
-  //     .map((_, index) => {
-  //       let subclass = "";
-  //       let color = "";
-
-  //       if (index === blackCellIndex) {
-  //         subclass = "black";
-  //         color = "#3d3b3a";
-  //       } else if (redCellsIndexes.includes(index)) {
-  //         subclass = "red";
-  //         color = "#ec4542";
-  //       } else if (blueCellsIndexes.includes(index)) {
-  //         subclass = "blue";
-  //         color = "#008ed5";
-  //       } else if (whiteCellsIndexes.includes(index)) {
-  //         subclass = "neutral";
-  //         color = "#d1c499";
-  //       }
-
-  //       return {
-  //         subclass: subclass,
-  //       };
-  //     });
-
-  //   console.log(tempMinimap);
-  // }, []);
-
   // Set players and teams in db
   const setPlayersInDb = (roomId, tempPlayers, tempRed, tempBlue) => {
     return new Promise((resolve, reject) => {

@@ -53,7 +53,7 @@ const Board = (props) => {
     timerStarts,
     setPlayersInDb,
     playerDetails,
-    setIsLoading
+    setIsLoading,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -120,35 +120,6 @@ const Board = (props) => {
 
   useEffect(() => {
     socket.on(
-      "updateTimerPlayingGroup",
-      (
-        playersDetails,
-        tempPlayers,
-        finalRedTeamPlayers,
-        finalBlueTeamPlayers,
-        tempRoomDetails
-      ) => {
-        if (myDetails) {
-          setPlayers(tempPlayers);
-          setRedTeamPlayers(finalRedTeamPlayers);
-          setBlueTeamPlayers(finalBlueTeamPlayers);
-          setRoomDetails(tempRoomDetails);
-
-          if (
-            playersDetails.team === myDetails.team &&
-            playersDetails.name !== myDetails.name
-          ) {
-            if (!timerStarts) {
-              setTimerStarts(true);
-            } else {
-              restartClock();
-            }
-          }
-        }
-      }
-    );
-
-    socket.on(
       "flippingCardToAll",
       (playersDetails, currentCardIndex, currentWord) => {
         setCurrentCard({ index: currentCardIndex, word: currentWord });
@@ -164,11 +135,44 @@ const Board = (props) => {
     });
 
     return () => {
-      socket.off("updateTimerPlayingGroup");
       socket.off("flippingCardToAll");
       socket.off("skippingTurn");
     };
-  }, [timerStarts, myDetails, socket]);
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on(
+      "updateTimerPlayingGroup",
+      (
+        playersDetails,
+        tempPlayers,
+        finalRedTeamPlayers,
+        finalBlueTeamPlayers,
+        tempRoomDetails,
+        action
+      ) => {
+        if (myDetails) {
+          setPlayers(tempPlayers);
+          setRedTeamPlayers(finalRedTeamPlayers);
+          setBlueTeamPlayers(finalBlueTeamPlayers);
+          setRoomDetails(tempRoomDetails);
+
+          // if im in the playing group
+          if (playersDetails.team === myDetails.team) {
+            // if im the only one who picked a card in the playing group
+            if (action === "start") {
+              setTimerStarts(true);
+            } else if (action === "stop") {
+              restartClock();
+            }
+          }
+        }
+      }
+    );
+    return () => {
+      socket.off("updateTimerPlayingGroup");
+    };
+  }, [myDetails, timerStarts]);
 
   useEffect(() => {
     if (recentlyPlayedPlayer !== null && lastPlayerSkipped) {
@@ -308,7 +312,7 @@ const Board = (props) => {
         roomDetails={roomDetails}
         minimap={minimap}
       />
-      {playersAmountError && !gameOver &&(
+      {playersAmountError && !gameOver && (
         <PlayersAmountError
           setModalOpen={setModalOpen}
           setModalShown={setOpenGameOver}

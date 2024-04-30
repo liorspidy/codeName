@@ -289,16 +289,76 @@ io.on("connection", (socket) => {
       tempPlayers,
       finalRedTeamPlayers,
       finalBlueTeamPlayers,
-      roomDetails
+      roomDetails,
+      wordLocked
     ) => {
       console.log(myDetails.name + " locked a card");
+
+      const playingTeam = myDetails.team;
+      let imTheOnlyOnePickedCard = false;
+      let action = "none";
+
+      // remove the first player from each team
+      const tempRedTeam = [...finalRedTeamPlayers].slice(1);
+
+      const tempBlueTeam = [...finalBlueTeamPlayers].slice(1);
+
+      // get the length of the playing group
+      const groupMembersLength =
+        playingTeam === "red" ? tempRedTeam.length : tempBlueTeam.length;
+
+      // get the length of the players who picked a card in the playing group
+      const groupMembersPickedCardLength =
+        playingTeam === "red"
+          ? tempRedTeam.filter((player) => player.pickedCard === true).length
+          : tempBlueTeam.filter((player) => player.pickedCard === true).length;
+
+      // check if im the only one who picked a card in the playing group
+      if (groupMembersPickedCardLength === 1) {
+        if (playingTeam === "red") {
+          imTheOnlyOnePickedCard =
+            tempRedTeam.find((player) => player.pickedCard === true).name ===
+            myDetails.name;
+        } else {
+          imTheOnlyOnePickedCard =
+            tempBlueTeam.find((player) => player.pickedCard === true).name ===
+            myDetails.name;
+        }
+      }
+
+      console.log({
+        name: myDetails.name,
+        playingTeam,
+        wordLocked,
+        groupMembersPickedCardLength,
+        groupMembersLength,
+        imTheOnlyOnePickedCard,
+      });
+
+      if (!wordLocked && groupMembersPickedCardLength === 1) {
+        console.log("action: start");
+        action = "start";
+      } else if (
+        wordLocked &&
+        groupMembersPickedCardLength === 0
+      ) {
+        console.log("action: stop");
+        action = "stop";
+      } else if (groupMembersPickedCardLength === groupMembersLength) {
+        console.log("action: next");
+        action = "next";
+      } else {
+        action = "none";
+      }
+
       io.to(roomId).emit(
         "updateTimerPlayingGroup",
         myDetails,
         tempPlayers,
         finalRedTeamPlayers,
         finalBlueTeamPlayers,
-        roomDetails
+        roomDetails,
+        action
       );
     }
   );
