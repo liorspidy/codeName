@@ -24,10 +24,8 @@ const Waiting = ({
   setRandomLeadGroupColor,
   setUniqueRandomWords,
   setRoomDetails,
-  setMinimap,
   players,
   setPlayers,
-  playersAmountError,
   setPlayersAmountError,
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
@@ -95,57 +93,61 @@ const Waiting = ({
     setTeamsChanged(true);
   };
 
-  const readyButtonHandler = () => {
+  const readyButtonHandler = async () => {
     setReadyButton(!readyButton);
-    updatePlayerReady(playerDetails.name, !readyButton);
-
-    if (
-      !readyButton &&
-      (roomDetails.status === "playing" || roomDetails.status === "finished")
-    ) {
-      navigate(`/room/${roomId}/game`);
+    try {
+      await updatePlayerReady(playerDetails.name, !readyButton);
+      if (
+        !readyButton &&
+        (roomDetails.status === "playing" || roomDetails.status === "finished")
+      ) {
+        navigate(`/room/${roomId}/game`);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   // updatePlayerReady updates the player's ready status in the room
-  const updatePlayerReady = (playerName, ready) => {
-    const tempPlayers = [...players];
-    const playerIndex = tempPlayers.findIndex(
-      (player) => player.name === playerName
-    );
-    tempPlayers[playerIndex].ready = ready;
-    let finalRedTeamPlayers = redTeamPlayers;
-    let finalBlueTeamPlayers = blueTeamPlayers;
-
-    const isOnRedTeam = redTeamPlayers.find(
-      (player) => player.name === currentPlayer?.name
-    );
-    const isOnBlueTeam = blueTeamPlayers.find(
-      (player) => player.name === currentPlayer?.name
-    );
-    if (isOnRedTeam) {
-      const index = redTeamPlayers.findIndex(
+  const updatePlayerReady = async (playerName, ready) => {
+    try {
+      const tempPlayers = [...players];
+      const playerIndex = tempPlayers.findIndex(
         (player) => player.name === playerName
       );
-      const tempRedTeamPlayers = [...redTeamPlayers];
-      tempRedTeamPlayers[index].ready = ready;
-      finalRedTeamPlayers = tempRedTeamPlayers;
-    } else if (isOnBlueTeam) {
-      const index = blueTeamPlayers.findIndex(
-        (player) => player.name === playerName
-      );
-      const tempBlueTeamPlayers = [...blueTeamPlayers];
-      tempBlueTeamPlayers[index].ready = ready;
-      finalBlueTeamPlayers = tempBlueTeamPlayers;
-    }
-    console.log("setting players in db");
+      tempPlayers[playerIndex].ready = ready;
+      let finalRedTeamPlayers = redTeamPlayers;
+      let finalBlueTeamPlayers = blueTeamPlayers;
 
-    setPlayersInDb(
-      roomId,
-      tempPlayers,
-      finalRedTeamPlayers,
-      finalBlueTeamPlayers
-    ).then((response) => {
+      const isOnRedTeam = redTeamPlayers.find(
+        (player) => player.name === currentPlayer?.name
+      );
+      const isOnBlueTeam = blueTeamPlayers.find(
+        (player) => player.name === currentPlayer?.name
+      );
+      if (isOnRedTeam) {
+        const index = redTeamPlayers.findIndex(
+          (player) => player.name === playerName
+        );
+        const tempRedTeamPlayers = [...redTeamPlayers];
+        tempRedTeamPlayers[index].ready = ready;
+        finalRedTeamPlayers = tempRedTeamPlayers;
+      } else if (isOnBlueTeam) {
+        const index = blueTeamPlayers.findIndex(
+          (player) => player.name === playerName
+        );
+        const tempBlueTeamPlayers = [...blueTeamPlayers];
+        tempBlueTeamPlayers[index].ready = ready;
+        finalBlueTeamPlayers = tempBlueTeamPlayers;
+      }
+
+      const response = await setPlayersInDb(
+        roomId,
+        tempPlayers,
+        finalRedTeamPlayers,
+        finalBlueTeamPlayers
+      );
+
       socket.emit(
         "playerReady",
         roomId,
@@ -154,7 +156,10 @@ const Waiting = ({
         response.redTeam,
         response.blueTeam
       );
-    });
+    } catch (error) {
+      console.log(error);
+      throw new Error("Could not set players in db");
+    }
   };
 
   // Switch teams on button click
@@ -218,11 +223,10 @@ const Waiting = ({
 
     socket.on(
       "updatingReadyPlayers",
-      (room, uniqueRandomWords, randomLeadGroupColor, tempMinimap) => {
+      (room, uniqueRandomWords, randomLeadGroupColor) => {
         setRoomDetails(room);
         setUniqueRandomWords(uniqueRandomWords);
         setRandomLeadGroupColor(randomLeadGroupColor);
-        setMinimap(tempMinimap);
         navigate(`/room/${roomId}/game`);
 
         if (room.players.length >= 4) {

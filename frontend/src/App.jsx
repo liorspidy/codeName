@@ -18,7 +18,6 @@ function App() {
   const [randomLeadGroupColor, setRandomLeadGroupColor] = useState("");
   const [roomDetails, setRoomDetails] = useState(null);
   const [playersAmountError, setPlayersAmountError] = useState(false);
-  const [minimap, setMinimap] = useState([]);
   const [players, setPlayers] = useState([]);
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
@@ -82,9 +81,7 @@ function App() {
                 setRandomLeadGroupColor={setRandomLeadGroupColor}
                 setRoomDetails={setRoomDetails}
                 roomDetails={roomDetails}
-                playersAmountError={playersAmountError}
                 setPlayersAmountError={setPlayersAmountError}
-                setMinimap={setMinimap}
                 setPlayers={setPlayers}
                 players={players}
                 setRedTeamPlayers={setRedTeamPlayers}
@@ -108,8 +105,6 @@ function App() {
                 randomLeadGroupColor={randomLeadGroupColor}
                 roomDetails={roomDetails}
                 setRoomDetails={setRoomDetails}
-                minimap={minimap}
-                setMinimap={setMinimap}
                 playersAmountError={playersAmountError}
                 setPlayersAmountError={setPlayersAmountError}
                 setPlayers={setPlayers}

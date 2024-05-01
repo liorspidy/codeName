@@ -13,13 +13,11 @@ const Card = (props) => {
     setCurrentCard,
     currentCard,
     timeRanOut,
-    setTimeRanOut,
     redGroupCounter,
     setRedGroupCounter,
     blueGroupCounter,
     setBlueGroupCounter,
     gameOver,
-    setGameOver,
     setModalOpen,
     setOpenGameOver,
     setWinnerGroup,
@@ -29,7 +27,7 @@ const Card = (props) => {
     switchColorGroup,
     revealedCards,
     resetOperatorsWord,
-    minimap,
+    roomDetails,
     setMyDetails,
     socket,
     flippingCard,
@@ -49,7 +47,7 @@ const Card = (props) => {
     const checkInMap = (colorMap) => {
       let tempColor = "";
       colorMap.forEach((color) => {
-        if (minimap[index].props.subclass.includes(color)) {
+        if (roomDetails.minimap[index].props.subclass.includes(color)) {
           tempColor = color;
         }
       });

@@ -6,7 +6,6 @@ import classes from "./Minimap.module.scss";
 // import axios from "axios";
 
 const Minimap = ({
-  minimap,
   showMinimap,
   setShowMinimap,
   leadGroupColor,

@@ -247,8 +247,7 @@ io.on("connection", (socket) => {
               "updatingReadyPlayers",
               room,
               uniqueRandomWords,
-              randomLeadGroupColor,
-              tempMinimap
+              randomLeadGroupColor
             );
           }
         } catch (error) {

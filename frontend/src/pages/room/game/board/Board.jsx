@@ -46,7 +46,6 @@ const Board = (props) => {
     blueGroupCounter,
     setBlueGroupCounter,
     setMyDetails,
-    minimap,
     socket,
     playersAmountError,
     setTimerStarts,
@@ -81,12 +80,10 @@ const Board = (props) => {
         currentCard={currentCard}
         setCurrentCard={setCurrentCard}
         timeRanOut={timeRanOut}
-        setTimeRanOut={setTimeRanOut}
         redGroupCounter={redGroupCounter}
         setRedGroupCounter={setRedGroupCounter}
         blueGroupCounter={blueGroupCounter}
         setBlueGroupCounter={setBlueGroupCounter}
-        setGameOver={setGameOver}
         setModalOpen={setModalOpen}
         setOpenGameOver={setOpenGameOver}
         setWinnerGroup={setWinnerGroup}
@@ -98,7 +95,6 @@ const Board = (props) => {
         setCurrentOperatorsWord={setCurrentOperatorsWord}
         setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
         resetOperatorsWord={resetOperatorsWord}
-        minimap={minimap}
         setMyDetails={setMyDetails}
         socket={socket}
         flippingCard={flippingCard}
@@ -106,6 +102,7 @@ const Board = (props) => {
         recentlyPlayedPlayer={recentlyPlayedPlayer}
         setNextRound={setNextRound}
         setRecentlyPlayedPlayer={setRecentlyPlayedPlayer}
+        roomDetails={roomDetails}
       />
     ));
 
@@ -187,11 +184,11 @@ const Board = (props) => {
     }
   }, [recentlyPlayedPlayer, lastPlayerSkipped]);
 
-  useEffect(() => {
-    if(redTeamPlayers.length > 0){
-      console.log(redTeamPlayers);
-    }
-  },[redTeamPlayers])
+  // useEffect(() => {
+  //   if(redTeamPlayers.length > 0){
+  //     console.log(redTeamPlayers);
+  //   }
+  // },[redTeamPlayers])
 
   useEffect(() => {
     if (blueGroupCounter === 0) {
@@ -322,7 +319,6 @@ const Board = (props) => {
         leadGroupColor={leadGroupColor}
         currentGroupColor={currentGroupColor}
         roomDetails={roomDetails}
-        minimap={minimap}
       />
       {playersAmountError && !gameOver && (
         <PlayersAmountError

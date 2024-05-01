@@ -49,8 +49,6 @@ const Game = (props) => {
     randomLeadGroupColor,
     roomDetails,
     setRoomDetails,
-    minimap,
-    setMinimap,
     playersAmountError,
     setPlayersAmountError,
     players,
@@ -70,6 +68,7 @@ const Game = (props) => {
         `http://localhost:4000/room/${roomId}/getRoom`
       );
       const room = response.data;
+      console.log(room);
       return room;
     } catch (err) {
       console.log(err);
@@ -125,85 +124,96 @@ const Game = (props) => {
   }, [socket]);
 
   useEffect(() => {
-    fetchRoomDetails()
-      .then((room) => {
-        console.log(room);
-        setPickedRandomWords(
-          room.cards.length > 0 ? room.cards : uniqueRandomWords
-        );
+    // if (minimap.length > 0) {
+      fetchRoomDetails()
+        .then((room) => {
+          console.log(room);
+          setPickedRandomWords(
+            room.cards.length > 0 ? room.cards : uniqueRandomWords
+          );
 
-        if (room.turn === "") {
-          setLeadGroupColor(randomLeadGroupColor);
-          setCurrentGroupColor(randomLeadGroupColor);
-        } else {
-          setLeadGroupColor(room.turn);
-          setCurrentGroupColor(room.turn);
-        }
-
-        setRedGroupCounter(room.redScore);
-        setBlueGroupCounter(room.blueScore);
-
-        if (room.round === 1 && room.redScore === 0 && room.blueScore === 0) {
-          if (randomLeadGroupColor === "red") {
-            setRedGroupCounter(9);
-            setBlueGroupCounter(8);
-          } else if (randomLeadGroupColor === "blue") {
-            setBlueGroupCounter(9);
-            setRedGroupCounter(8);
+          if (room.turn === "") {
+            setLeadGroupColor(randomLeadGroupColor);
+            setCurrentGroupColor(randomLeadGroupColor);
+          } else {
+            setLeadGroupColor(room.turn);
+            setCurrentGroupColor(room.turn);
           }
-        }
 
-        const myName = playerDetails.name;
-        const myTeam = room.blueTeam.find((p) => p.name === playerDetails.name)
-          ? "blue"
-          : "red";
-        const myRole =
-          myTeam === "red"
-            ? room.redTeam[0].name === myName
+          setRedGroupCounter(room.redScore);
+          setBlueGroupCounter(room.blueScore);
+
+          if (room.round === 1 && room.redScore === 0 && room.blueScore === 0) {
+            if (randomLeadGroupColor === "red") {
+              setRedGroupCounter(9);
+              setBlueGroupCounter(8);
+            } else if (randomLeadGroupColor === "blue") {
+              setBlueGroupCounter(9);
+              setRedGroupCounter(8);
+            }
+          }
+
+          const myName = playerDetails.name;
+          const myTeam = room.blueTeam.find(
+            (p) => p.name === playerDetails.name
+          )
+            ? "blue"
+            : "red";
+          const myRole =
+            myTeam === "red"
+              ? room.redTeam[0].name === myName
+                ? "operator"
+                : "agent"
+              : room.blueTeam[0].name === myName
               ? "operator"
-              : "agent"
-            : room.blueTeam[0].name === myName
-            ? "operator"
-            : "agent";
+              : "agent";
 
-        const fullPlayerDetails = {
-          name: myName,
-          team: myTeam,
-          role: myRole,
-          cardRevealed: 0,
-        };
+          const fullPlayerDetails = {
+            name: myName,
+            team: myTeam,
+            role: myRole,
+            cardRevealed: 0,
+          };
 
-        setPlayers(room.players);
-        setRedTeamPlayers(room.redTeam);
-        setBlueTeamPlayers(room.blueTeam);
-        setRoomDetails(room);
-        setRoomName(room.name);
-        setMyDetails(fullPlayerDetails);
-        setCurrentOperatorsWord(room.currentWord);
-        setCurrentOperatorsWordCount(room.currentWordCount);
-        setWordsToGuess(room.wordsToGuess);
-        setRevealedCards(room.revealedCards);
-        setMinimap(room.map);
+          setPlayers(room.players);
+          setRedTeamPlayers(room.redTeam);
+          setBlueTeamPlayers(room.blueTeam);
+          setRoomDetails(room);
+          setRoomName(room.name);
+          setMyDetails(fullPlayerDetails);
+          setCurrentOperatorsWord(room.currentWord);
+          setCurrentOperatorsWordCount(room.currentWordCount);
+          setWordsToGuess(room.wordsToGuess);
+          setRevealedCards(room.revealedCards);
 
-        if (room.players.length < 4) {
-          setPlayersAmountError(true);
-        }
+          if (room.players.length < 4) {
+            setPlayersAmountError(true);
+          }
 
-        if (room.status === "finished") {
-          setOpenGameOver(true);
-          setGameOver(true);
-          setModalOpen(true);
-          setWinnerGroup(room.winner);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        navigate("/404");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+          if (room.status === "finished") {
+            setOpenGameOver(true);
+            setGameOver(true);
+            setModalOpen(true);
+            setWinnerGroup(room.winner);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          navigate("/404");
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    // }
   }, []);
+
+  useEffect(() => {
+    if (redTeamPlayers.length < 2 || blueTeamPlayers.length < 2) {
+      setPlayersAmountError(true);
+    } else if (redTeamPlayers.length >= 2 && blueTeamPlayers.length >= 2) {
+      setPlayersAmountError(false);
+    }
+  }, [redTeamPlayers, blueTeamPlayers]);
 
   return (
     <div className={classes.gamePage}>
@@ -250,7 +260,6 @@ const Game = (props) => {
         blueGroupCounter={blueGroupCounter}
         setBlueGroupCounter={setBlueGroupCounter}
         setMyDetails={setMyDetails}
-        minimap={minimap}
         socket={socket}
         playersAmountError={playersAmountError}
         setTimerStarts={setTimerStarts}

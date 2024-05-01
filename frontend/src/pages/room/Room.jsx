@@ -21,8 +21,6 @@ const Room = (props) => {
     setRandomLeadGroupColor,
     roomDetails,
     setRoomDetails,
-    setMinimap,
-    playersAmountError,
     setPlayersAmountError,
     players,
     setPlayers,
@@ -172,8 +170,6 @@ const Room = (props) => {
           setUniqueRandomWords={setUniqueRandomWords}
           setRandomLeadGroupColor={setRandomLeadGroupColor}
           setRoomDetails={setRoomDetails}
-          setMinimap={setMinimap}
-          playersAmountError={playersAmountError}
           setPlayersAmountError={setPlayersAmountError}
         />
       </>
