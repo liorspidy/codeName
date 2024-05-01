@@ -57,6 +57,8 @@ const Game = (props) => {
     setRedTeamPlayers,
     blueTeamPlayers,
     setBlueTeamPlayers,
+    minimap,
+    setMinimap
   } = props;
 
   const { roomId } = useParams();
@@ -68,7 +70,6 @@ const Game = (props) => {
         `http://localhost:4000/room/${roomId}/getRoom`
       );
       const room = response.data;
-      console.log(room);
       return room;
     } catch (err) {
       console.log(err);
@@ -127,7 +128,6 @@ const Game = (props) => {
     // if (minimap.length > 0) {
       fetchRoomDetails()
         .then((room) => {
-          console.log(room);
           setPickedRandomWords(
             room.cards.length > 0 ? room.cards : uniqueRandomWords
           );
@@ -180,6 +180,7 @@ const Game = (props) => {
           setBlueTeamPlayers(room.blueTeam);
           setRoomDetails(room);
           setRoomName(room.name);
+          setMinimap(room.map);
           setMyDetails(fullPlayerDetails);
           setCurrentOperatorsWord(room.currentWord);
           setCurrentOperatorsWordCount(room.currentWordCount);
@@ -273,6 +274,7 @@ const Game = (props) => {
         setPlayersInDb={setPlayersInDb}
         playerDetails={playerDetails}
         setIsLoading={setIsLoading}
+        minimap={minimap}
       />
     </div>
   );

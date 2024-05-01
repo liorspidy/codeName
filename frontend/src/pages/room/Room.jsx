@@ -171,6 +171,7 @@ const Room = (props) => {
           setRandomLeadGroupColor={setRandomLeadGroupColor}
           setRoomDetails={setRoomDetails}
           setPlayersAmountError={setPlayersAmountError}
+          setIsLoading={setIsLoading}
         />
       </>
     </div>

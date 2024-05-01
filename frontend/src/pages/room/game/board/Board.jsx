@@ -53,6 +53,7 @@ const Board = (props) => {
     setPlayersInDb,
     playerDetails,
     setIsLoading,
+    minimap,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -67,6 +68,7 @@ const Board = (props) => {
   const [recentlyPlayedPlayer, setRecentlyPlayedPlayer] = useState(null);
   const [role, setRole] = useState("agent"); // "operator" or "agent"
   const [lastPlayerSkipped, setLastPlayerSkipped] = useState(false);
+  const [highlitedCards, setHighlitedCards] = useState([]);
 
   const { roomId } = useParams();
 
@@ -102,12 +104,14 @@ const Board = (props) => {
         recentlyPlayedPlayer={recentlyPlayedPlayer}
         setNextRound={setNextRound}
         setRecentlyPlayedPlayer={setRecentlyPlayedPlayer}
-        roomDetails={roomDetails}
+        minimap={minimap}
+        players={players}
+        highlitedCards={highlitedCards}
       />
     ));
 
     setCards(tempCards);
-  }, [currentCard, randomWords, wordLocked]);
+  }, [currentCard, randomWords, wordLocked , highlitedCards]);
 
   useEffect(() => {
     if (myDetails) {
@@ -148,13 +152,28 @@ const Board = (props) => {
         tempRoomDetails,
         action
       ) => {
-        if (myDetails) {
-          console.log("updateTimerPlayingGroup");
-          setPlayers(tempPlayers);
-          setRedTeamPlayers(finalRedTeamPlayers);
-          setBlueTeamPlayers(finalBlueTeamPlayers);
-          setRoomDetails(tempRoomDetails);
+        setPlayers(tempPlayers);
+        setRedTeamPlayers(finalRedTeamPlayers);
+        setBlueTeamPlayers(finalBlueTeamPlayers);
+        setRoomDetails(tempRoomDetails);
 
+        tempPlayers.forEach((player) => {
+          if (player.cardIndex !== -1) {
+            if (!highlitedCards.includes(player.cardIndex)) {
+              setHighlitedCards([...highlitedCards, player.cardIndex]);
+            }
+          }
+        });
+
+        highlitedCards.forEach((cardIndex) => {
+          if (!tempPlayers.find((player) => player.cardIndex === cardIndex)) {
+            setHighlitedCards(
+              highlitedCards.filter((index) => index !== cardIndex)
+            );
+          }
+        });
+
+        if (myDetails) {
           // if im in the playing group
           if (playersDetails.team === myDetails.team) {
             // if im the only one who picked a card in the playing group
@@ -163,7 +182,6 @@ const Board = (props) => {
             } else if (action === "stop") {
               restartClock();
             } else if (action === "next") {
-              console.log("next");
               restartClock();
               setWordLocked(false);
               setCurrentCard(null);
@@ -183,12 +201,6 @@ const Board = (props) => {
       setLastPlayerSkipped(false);
     }
   }, [recentlyPlayedPlayer, lastPlayerSkipped]);
-
-  // useEffect(() => {
-  //   if(redTeamPlayers.length > 0){
-  //     console.log(redTeamPlayers);
-  //   }
-  // },[redTeamPlayers])
 
   useEffect(() => {
     if (blueGroupCounter === 0) {
@@ -363,7 +375,7 @@ const Board = (props) => {
         currentCard={currentCard}
         wordLocked={wordLocked}
         setWordLocked={setWordLocked}
-        setTimerStarts={setTimerStarts}
+        timerStarts={timerStarts}
         restartClock={restartClock}
         role={role}
         setTimeRanOut={setTimeRanOut}
@@ -375,11 +387,9 @@ const Board = (props) => {
         currentGroupColor={currentGroupColor}
         myDetails={myDetails}
         wordsToGuess={wordsToGuess}
-        skipTurn={skipTurn}
         setWordsToGuess={setWordsToGuess}
         gameOver={gameOver}
         roomDetails={roomDetails}
-        setRoomDetails={setRoomDetails}
         players={players}
         redTeamPlayers={redTeamPlayers}
         blueTeamPlayers={blueTeamPlayers}

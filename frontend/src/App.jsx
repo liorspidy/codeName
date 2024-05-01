@@ -17,6 +17,7 @@ function App() {
   const [uniqueRandomWords, setUniqueRandomWords] = useState([]);
   const [randomLeadGroupColor, setRandomLeadGroupColor] = useState("");
   const [roomDetails, setRoomDetails] = useState(null);
+  const [minimap, setMinimap] = useState([]);
   const [playersAmountError, setPlayersAmountError] = useState(false);
   const [players, setPlayers] = useState([]);
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
@@ -113,6 +114,8 @@ function App() {
                 redTeamPlayers={redTeamPlayers}
                 setBlueTeamPlayers={setBlueTeamPlayers}
                 blueTeamPlayers={blueTeamPlayers}
+                setMinimap={setMinimap}
+                minimap={minimap}
               />
             }
           />

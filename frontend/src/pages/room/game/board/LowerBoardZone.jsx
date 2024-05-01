@@ -15,7 +15,7 @@ const LowerBoardZone = (props) => {
     currentCard,
     wordLocked,
     setWordLocked,
-    setTimerStarts,
+    timerStarts,
     restartClock,
     role,
     currentOperatorsWord,
@@ -28,8 +28,6 @@ const LowerBoardZone = (props) => {
     wordsToGuess,
     setWordsToGuess,
     gameOver,
-    skipTurn,
-    setRoomDetails,
     roomDetails,
     players,
     redTeamPlayers,
@@ -54,9 +52,9 @@ const LowerBoardZone = (props) => {
         {
           roomId,
           myDetails: myDetails,
-          players: tempPlayers,
-          redTeam: finalRedTeamPlayers,
-          blueTeam: finalBlueTeamPlayers,
+          tempPlayers: tempPlayers,
+          tempRedTeam: finalRedTeamPlayers,
+          tempBlueTeam: finalBlueTeamPlayers,
         }
       );
       socket.emit(
@@ -76,11 +74,20 @@ const LowerBoardZone = (props) => {
 
   // Switch the pickedCard state for the player
   const switchPickedCardStateForMe = () => {
+    // Switch the pickedCard state in players array
     const tempPlayers = [...players];
     const playerIndex = tempPlayers.findIndex(
       (player) => player.name === myDetails.name
     );
     tempPlayers[playerIndex].pickedCard = !tempPlayers[playerIndex].pickedCard;
+    if (!wordLocked) {
+      tempPlayers[playerIndex].cardIndex = currentCard.index;
+    } else {
+      tempPlayers[playerIndex].cardIndex = -1;
+    }
+
+    // Switch the pickedCard state in redTeamPlayers or blueTeamPlayers array
+
     let finalRedTeamPlayers = redTeamPlayers;
     let finalBlueTeamPlayers = blueTeamPlayers;
 
@@ -97,6 +104,11 @@ const LowerBoardZone = (props) => {
       const tempRedTeamPlayers = [...redTeamPlayers];
       tempRedTeamPlayers[index].pickedCard =
         !tempRedTeamPlayers[index].pickedCard;
+      if (!wordLocked) {
+        tempRedTeamPlayers[index].cardIndex = currentCard.index;
+      } else {
+        tempRedTeamPlayers[index].cardIndex = -1;
+      }
       finalRedTeamPlayers = tempRedTeamPlayers;
     } else if (isOnBlueTeam) {
       const index = blueTeamPlayers.findIndex(
@@ -105,6 +117,11 @@ const LowerBoardZone = (props) => {
       const tempBlueTeamPlayers = [...blueTeamPlayers];
       tempBlueTeamPlayers[index].pickedCard =
         !tempBlueTeamPlayers[index].pickedCard;
+      if (!wordLocked) {
+        tempBlueTeamPlayers[index].cardIndex = currentCard.index;
+      } else {
+        tempBlueTeamPlayers[index].cardIndex = -1;
+      }
       finalBlueTeamPlayers = tempBlueTeamPlayers;
     }
 
@@ -130,7 +147,7 @@ const LowerBoardZone = (props) => {
       } else {
         setTimeRanOut(true);
       }
-    } else {
+    } else if(currentCard === null && !timerStarts) {
       restartClock();
     }
   };
@@ -142,7 +159,6 @@ const LowerBoardZone = (props) => {
 
   const skipTurnHandler = () => {
     socket.emit("skipTurn", roomId, myDetails);
-    // skipTurn();
   };
 
   return (

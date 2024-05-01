@@ -27,6 +27,7 @@ const Waiting = ({
   players,
   setPlayers,
   setPlayersAmountError,
+  setIsLoading,
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -94,6 +95,7 @@ const Waiting = ({
   };
 
   const readyButtonHandler = async () => {
+    setIsLoading(true);
     setReadyButton(!readyButton);
     try {
       await updatePlayerReady(playerDetails.name, !readyButton);
@@ -105,6 +107,8 @@ const Waiting = ({
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

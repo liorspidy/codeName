@@ -291,7 +291,6 @@ io.on("connection", (socket) => {
       roomDetails,
       wordLocked
     ) => {
-      console.log(myDetails.name + " locked a card");
 
       const playingTeam = myDetails.team;
       let imTheOnlyOnePickedCard = false;
@@ -325,26 +324,23 @@ io.on("connection", (socket) => {
         }
       }
 
-      console.log({
-        name: myDetails.name,
-        playingTeam,
-        wordLocked,
-        groupMembersPickedCardLength,
-        groupMembersLength,
-        imTheOnlyOnePickedCard,
-      });
+      // console.log({
+      //   name: myDetails.name,
+      //   playingTeam,
+      //   wordLocked,
+      //   groupMembersPickedCardLength,
+      //   groupMembersLength,
+      //   imTheOnlyOnePickedCard,
+      // });
 
       if (!wordLocked && groupMembersPickedCardLength === 1) {
-        console.log("action: start");
         action = "start";
       } else if (
         wordLocked &&
         groupMembersPickedCardLength === 0
       ) {
-        console.log("action: stop");
         action = "stop";
       } else if (groupMembersPickedCardLength === groupMembersLength) {
-        console.log("action: next");
         action = "next";
       } else {
         action = "none";

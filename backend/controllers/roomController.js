@@ -76,7 +76,7 @@ const setWinner = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-    
+
     room.winner = winner;
     room.status = "finished";
 
@@ -130,7 +130,7 @@ const createRoom = async (req, res) => {
       name,
       createdBy,
       lastTimePlayed: null,
-      players: [{ name: createdBy, ready: false, pickedCard: false }],
+      players: [{ name: createdBy, ready: false, pickedCard: false , cardIndex: -1}],
       redTeam: [],
       redScore: 0,
       blueTeam: [],
@@ -160,39 +160,44 @@ const updateTimer = async (req, res) => {
   try {
     const roomId = req.body.roomId;
     const myDetails = req.body.myDetails;
-    const players = req.body.players;
-    const redTeam = req.body.redTeam; 
-    const blueTeam = req.body.blueTeam;
-    const team = myDetails.team + "Team";
+    const tempPlayers = req.body.tempPlayers;
+    const tempRedTeam = req.body.tempRedTeam;
+    const tempBlueTeam = req.body.tempBlueTeam;
+    const teamName = myDetails.team + "Team";
 
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-    
+
+    const myteam = room[teamName].slice(1);
+
     if (room.lastTimePlayed !== null) {
       // Check if all players have picked a card or i reconsidered the card then reset the timer
       if (
-        // if all players have picked a card or only one player has not picked a card and it's me then reset the timer
-        !room[team].some((player) => player.pickedCard === false) ||
-        (room[team].filter((player) => player.pickedCard === true).length ===
-          1 &&
-          room[team].find(
-            (player) =>
-              player.pickedCard === true && player.name === myDetails.name
-          ) !== undefined)
+        // if all players have picked a card and the last player is the current player or the current player is the only one who hasn't picked a card
+        myteam.filter((player) => player.pickedCard === false).length === 1 &&
+        myteam.find(
+          (player) =>
+            player.pickedCard === false && player.name === myDetails.name
+        ) !== undefined ||
+          myteam.filter((player) => player.pickedCard === true).length === 1 &&
+        myteam.find(
+          (player) =>
+            player.pickedCard === true && player.name === myDetails.name
+        ) !== undefined
       ) {
         room.lastTimePlayed = null;
       }
-    } else {
+    } else if(myteam.filter((player) => player.pickedCard === true).length === 0) {
       const time = new Date();
       room.lastTimePlayed = time.getTime();
     }
-  
-    room.players = players;
-    room.redTeam = redTeam;
-    room.blueTeam = blueTeam;
 
+    // Update the players array with the new pickedCard state
+    room.players = tempPlayers;
+    room.redTeam = tempRedTeam;
+    room.blueTeam = tempBlueTeam;
 
     await room.save();
     return res.status(200).json(room);
@@ -220,6 +225,7 @@ const joinRoom = async (req, res) => {
           name: playerName,
           ready: false,
           pickedCard: false,
+          cardIndex: -1,
         });
       }
     } else {
@@ -277,8 +283,6 @@ const endGame = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
-
-
 
     await room.save();
     return res.status(200).json(room);
@@ -557,8 +561,9 @@ const setOperatorsWord = async (req, res) => {
     room.wordsToGuess = wordsToGuess;
 
     await room.save();
-    return res.status(200).json({ message: "Operator's word set successfully" });
-    
+    return res
+      .status(200)
+      .json({ message: "Operator's word set successfully" });
   } catch (error) {
     console.error("Error setting operators word:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -606,7 +611,9 @@ const updateRevealedCards = async (req, res) => {
     room.revealedCards.push({ index: cardIndex, color: color });
     await room.save();
     console.log("Revealed cards updated");
-    return res.status(200).json({ message: "Revealed cards updated successfully" });
+    return res
+      .status(200)
+      .json({ message: "Revealed cards updated successfully" });
   } catch (error) {
     console.error("Error updating revealed cards:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });

@@ -27,27 +27,30 @@ const Card = (props) => {
     switchColorGroup,
     revealedCards,
     resetOperatorsWord,
-    roomDetails,
     setMyDetails,
     socket,
+    minimap,
     flippingCard,
     setFlippingCard,
     recentlyPlayedPlayer,
     setNextRound,
     setRecentlyPlayedPlayer,
+    players,
+    highlitedCards,
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
   const [cardColor, setCardColor] = useState("neutral");
   const [isPressed, setIsPressed] = useState(false);
   const [showCardInfo, setShowCardInfo] = useState(false);
+  const [highlightedCard, setHighlightedCard] = useState(false);
   const { roomId } = useParams();
 
   const checkCard = () => {
     const checkInMap = (colorMap) => {
       let tempColor = "";
       colorMap.forEach((color) => {
-        if (roomDetails.minimap[index].props.subclass.includes(color)) {
+        if (minimap[index].props.subclass.includes(color)) {
           tempColor = color;
         }
       });
@@ -267,6 +270,15 @@ const Card = (props) => {
     };
   }, [index, isFlipped, revealedCards]);
 
+  useEffect(() => {
+    if (highlitedCards.find((cardIndex) => cardIndex === index) !== undefined) {
+      console.log("highlighted card");
+      setHighlightedCard(true);
+    } else {
+      setHighlightedCard(false);
+    }
+  }, [highlitedCards, recentlyPlayedPlayer, myDetails]);
+
   // useEffect(() => {
   //   let pressTimer;
 
@@ -299,7 +311,9 @@ const Card = (props) => {
       <div
         className={`${classes.cardInfo} ${showCardInfo ? classes.show : ""}`}
       />
-      <div className={classes.cardContent}>
+      <div className={`${classes.cardContent} ${
+        highlightedCard ? `${classes.highlited}` : ""
+      } `}>
         <span className={classes.word}>{word}</span>
       </div>
     </button>
