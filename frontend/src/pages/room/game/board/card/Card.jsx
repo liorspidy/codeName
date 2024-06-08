@@ -277,7 +277,7 @@ const Card = (props) => {
     } else {
       setHighlightedCard(false);
     }
-  }, [highlitedCards, recentlyPlayedPlayer, myDetails]);
+  }, [highlitedCards]);
 
   // useEffect(() => {
   //   let pressTimer;

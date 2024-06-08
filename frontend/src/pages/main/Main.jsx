@@ -144,7 +144,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
 
       <div className={classes.title} onClick={closePlayerDetailsHandler}>
         <h1>
-          שֵׁם <span>קוֹד</span>
+          משחק <span>מילים</span>
         </h1>
       </div>
       {logedInPlayer && (

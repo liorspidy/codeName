@@ -111,7 +111,7 @@ const Board = (props) => {
     ));
 
     setCards(tempCards);
-  }, [currentCard, randomWords, wordLocked , highlitedCards]);
+  }, [currentCard, randomWords, wordLocked, highlitedCards]);
 
   useEffect(() => {
     if (myDetails) {
@@ -194,6 +194,26 @@ const Board = (props) => {
       socket.off("updateTimerPlayingGroup");
     };
   }, [myDetails, timerStarts]);
+
+  useEffect(() => {
+    if (players.length > 0) {
+      players.forEach((player) => {
+        if (player.cardIndex !== -1) {
+          if (!highlitedCards.includes(player.cardIndex)) {
+            setHighlitedCards([...highlitedCards, player.cardIndex]);
+          }
+        }
+      });
+
+      highlitedCards.forEach((cardIndex) => {
+        if (!players.find((player) => player.cardIndex === cardIndex)) {
+          setHighlitedCards(
+            highlitedCards.filter((index) => index !== cardIndex)
+          );
+        }
+      });      
+    }
+  }, [players , highlitedCards]);
 
   useEffect(() => {
     if (recentlyPlayedPlayer !== null && lastPlayerSkipped) {

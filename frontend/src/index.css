@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'migdal';
+  src: url('./assets/fonts/migdal-haemeq/migdalfontwin-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
 #root {
   height: 100%;
 }

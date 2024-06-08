@@ -146,14 +146,16 @@
       display: block;
       width: 100%;
       margin: 0 auto;
-      font-size: 30dvw;
-      line-height: 0.75;
+      font-size: 26dvw;
+      line-height: 1;
       animation: wave 3s ease-in-out infinite;
+      font-family: 'migdal';
+      position: relative;
+      right: -2.5rem;
 
       span {
-        display: block;
-        direction: ltr;
-        animation: wave 4s ease-in-out infinite;
+        position: relative;
+        left: -3.5rem;
       }
     }
 
