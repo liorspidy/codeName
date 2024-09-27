@@ -1,10 +1,23 @@
 .roomListContainer {
   width: 100%;
-  .joinRoomTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    text-align: start;
+
+  .subtitleWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: black;
+
+    .joinRoomTitle {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-align: start;
+    }
+
+    .roomsNumber {
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
   }
   .list {
     padding: 0.25rem;
@@ -17,14 +30,14 @@
     height: calc((4 * 48.5px) + 8px);
 
     .item {
-        list-style: none;
+      list-style: none;
       &:not(:last-child) {
         margin-bottom: 4px;
       }
 
       &:not(.picked) {
-        .joinButton{
-            background-color: white;
+        .joinButton {
+          background-color: white;
         }
       }
 
@@ -69,8 +82,8 @@
       }
 
       &.picked {
-        .joinButton{
-            background-color: #d0e0ff;
+        .joinButton {
+          background-color: #d0e0ff;
         }
       }
     }
