@@ -1,0 +1,78 @@
+.roomListContainer {
+  width: 100%;
+  .joinRoomTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: start;
+  }
+  .list {
+    padding: 0.25rem;
+    margin: 0;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    min-height: 100px;
+    background-color: rgb(228, 226, 226);
+    overflow: auto;
+    height: calc((4 * 48.5px) + 8px);
+
+    .item {
+        list-style: none;
+      &:not(:last-child) {
+        margin-bottom: 4px;
+      }
+
+      &:not(.picked) {
+        .joinButton{
+            background-color: white;
+        }
+      }
+
+      .joinButton {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0.5rem;
+        color: black;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(57, 57, 57, 0.2);
+        font-size: 1.35rem;
+        width: 100%;
+        appearance: none;
+        cursor: pointer;
+        scale: 1;
+        transition: scale 0.1s;
+
+        .name {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 75%;
+          text-align: start;
+        }
+
+        .players {
+          font-weight: 700;
+          direction: ltr;
+
+          &.red {
+            color: red;
+          }
+          &.green {
+            color: green;
+          }
+        }
+
+        &:active {
+          scale: 0.95;
+        }
+      }
+
+      &.picked {
+        .joinButton{
+            background-color: #d0e0ff;
+        }
+      }
+    }
+  }
+}

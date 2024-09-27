@@ -88,6 +88,11 @@
     animation: 0.3s showModal ease-out forwards;
   }
 
+  .title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
   input {
     background-color: white;
     border: none;
@@ -133,6 +138,7 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    width: 100%;
   }
 
   .createRoomModal,

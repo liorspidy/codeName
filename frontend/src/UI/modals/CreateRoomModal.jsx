@@ -105,7 +105,7 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
     >
       {!creatingRoom && (
         <div className={classes.createRoomModal}>
-          <h2>הזן את שם החדר</h2>
+          <h2 className={classes.title}>הזן את שם החדר</h2>
           <input
             type="text"
             value={value}

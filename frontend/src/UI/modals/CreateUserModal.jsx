@@ -186,7 +186,7 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
           className={classes.createUserModal}
           onSubmit={createUserHandler} // Added onSubmit handler to the form
         >
-          <h2>הזן את פרטי ההרשמה</h2>
+          <h2 className={classes.title}>הזן את פרטי ההרשמה</h2>
           <input
             className={classes.fullNameInput}
             type="text"

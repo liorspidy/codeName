@@ -7,8 +7,9 @@ import classes from "./Modal.module.scss";
 import { useNavigate } from "react-router-dom";
 import Loader from "../loader/Loader";
 import axios from "axios";
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import Button from "../button/Button";
+import RoomsList from "./RoomsList";
 
 const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const [backdropShown, setBackdropShown] = useState(false);
@@ -103,7 +104,7 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
     >
       {!joiningRoom && (
         <div className={classes.joinRoomModal}>
-          <h2>הזן את קוד החדר</h2>
+          <h2 className={classes.title}>הזן את קוד החדר</h2>
           <input
             type="text"
             value={value}
@@ -111,6 +112,7 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
             onKeyDown={handleEnterPress}
             placeholder="קוד החדר"
           />
+          <RoomsList setValue={setValue} />
           {!!error.length && <p className={classes.error}>{error}</p>}
           <Button classname={classes.actionButton} onclick={joinRoom}>
             <span>הצטרפות</span>

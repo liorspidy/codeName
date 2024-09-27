@@ -75,7 +75,7 @@ const LeaveRoomModal = ({ setModalShown, modalShown, setModalOpen, roomDetails ,
     >
       {!leavingRoom && (
         <div className={classes.leaveRoomModal}>
-          <h2>האם אתה בטוח שתרצה לעזוב את החדר?</h2>
+          <h2 className={classes.title}>האם אתה בטוח שתרצה לעזוב את החדר?</h2>
           <p>
             <strong>שים לב! פעולה זו תמחק את המשתמש שלך מהחדר לצמיתות.</strong>
           </p>
