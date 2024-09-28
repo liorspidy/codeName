@@ -117,24 +117,30 @@ const createRoom = async (req, res) => {
         .json({ error: "Room name cannot be more than 10 characters" });
     }
 
-    // find the player in other rooms and remove it from there
+    // find the player in other rooms and remove it from there 
+    // if the room is empty and created by the same player then delete the room
+
     const otherRooms = await Room.find({ "players.name": createdBy });
     otherRooms.forEach(async (otherRoom) => {
-      otherRoom.players = otherRoom.players.filter(
-        (player) => player.name !== createdBy
-      );
-      if (otherRoom.redTeam.find((player) => player.name === createdBy)) {
-        otherRoom.redTeam = otherRoom.redTeam.filter(
+      if (otherRoom.players.length === 1 && otherRoom.createdBy === createdBy) {
+        await Room.deleteOne({ id: otherRoom.id });
+      } else {
+        otherRoom.players = otherRoom.players.filter(
           (player) => player.name !== createdBy
         );
-      }
-      if (otherRoom.blueTeam.find((player) => player.name === createdBy)) {
-        otherRoom.blueTeam = otherRoom.blueTeam.filter(
-          (player) => player.name !== createdBy
-        );
-      }
+        if (otherRoom.redTeam.find((player) => player.name === createdBy)) {
+          otherRoom.redTeam = otherRoom.redTeam.filter(
+            (player) => player.name !== createdBy
+          );
+        }
+        if (otherRoom.blueTeam.find((player) => player.name === createdBy)) {
+          otherRoom.blueTeam = otherRoom.blueTeam.filter(
+            (player) => player.name !== createdBy
+          );
+        }
 
-      await otherRoom.save();
+        await otherRoom.save();
+      }
     });
 
     let randomId;
@@ -314,7 +320,7 @@ const leaveRoom = async (req, res) => {
     if (room.status === "finished" && room.players.length === 0) {
       const resetedRoom = resetRoomProcess(room);
       await resetedRoom.save();
-    }else{
+    } else {
       await room.save();
     }
 
