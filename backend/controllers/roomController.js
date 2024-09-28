@@ -123,12 +123,12 @@ const createRoom = async (req, res) => {
       otherRoom.players = otherRoom.players.filter(
         (player) => player.name !== createdBy
       );
-      if(otherRoom.redTeam.find((player) => player.name === createdBy)){
+      if (otherRoom.redTeam.find((player) => player.name === createdBy)) {
         otherRoom.redTeam = otherRoom.redTeam.filter(
           (player) => player.name !== createdBy
         );
       }
-      if(otherRoom.blueTeam.find((player) => player.name === createdBy)){
+      if (otherRoom.blueTeam.find((player) => player.name === createdBy)) {
         otherRoom.blueTeam = otherRoom.blueTeam.filter(
           (player) => player.name !== createdBy
         );
@@ -151,7 +151,9 @@ const createRoom = async (req, res) => {
       name: roomName,
       createdBy,
       lastTimePlayed: null,
-      players: [{ name: createdBy, ready: false, pickedCard: false , cardIndex: -1}],
+      players: [
+        { name: createdBy, ready: false, pickedCard: false, cardIndex: -1 },
+      ],
       redTeam: [],
       redScore: 0,
       blueTeam: [],
@@ -196,20 +198,22 @@ const updateTimer = async (req, res) => {
       // Check if all players have picked a card or i reconsidered the card then reset the timer
       if (
         // if all players have picked a card and the last player is the current player or the current player is the only one who hasn't picked a card
-        myteam.filter((player) => player.pickedCard === false).length === 1 &&
-        myteam.find(
-          (player) =>
-            player.pickedCard === false && player.name === myDetails.name
-        ) !== undefined ||
-          myteam.filter((player) => player.pickedCard === true).length === 1 &&
-        myteam.find(
-          (player) =>
-            player.pickedCard === true && player.name === myDetails.name
-        ) !== undefined
+        (myteam.filter((player) => player.pickedCard === false).length === 1 &&
+          myteam.find(
+            (player) =>
+              player.pickedCard === false && player.name === myDetails.name
+          ) !== undefined) ||
+        (myteam.filter((player) => player.pickedCard === true).length === 1 &&
+          myteam.find(
+            (player) =>
+              player.pickedCard === true && player.name === myDetails.name
+          ) !== undefined)
       ) {
         room.lastTimePlayed = null;
       }
-    } else if(myteam.filter((player) => player.pickedCard === true).length === 0) {
+    } else if (
+      myteam.filter((player) => player.pickedCard === true).length === 0
+    ) {
       const time = new Date();
       room.lastTimePlayed = time.getTime();
     }
@@ -240,21 +244,23 @@ const joinRoom = async (req, res) => {
     // find the player in other rooms and remove it from there
     const otherRooms = await Room.find({ "players.name": playerName });
     otherRooms.forEach(async (otherRoom) => {
-      otherRoom.players = otherRoom.players.filter(
-        (player) => player.name !== playerName
-      );
-      if(otherRoom.redTeam.find((player) => player.name === playerName)){
-        otherRoom.redTeam = otherRoom.redTeam.filter(
+      if (otherRoom.id !== roomId) {
+        otherRoom.players = otherRoom.players.filter(
           (player) => player.name !== playerName
         );
-      }
-      if(otherRoom.blueTeam.find((player) => player.name === playerName)){
-        otherRoom.blueTeam = otherRoom.blueTeam.filter(
-          (player) => player.name !== playerName
-        );
-      }
+        if (otherRoom.redTeam.find((player) => player.name === playerName)) {
+          otherRoom.redTeam = otherRoom.redTeam.filter(
+            (player) => player.name !== playerName
+          );
+        }
+        if (otherRoom.blueTeam.find((player) => player.name === playerName)) {
+          otherRoom.blueTeam = otherRoom.blueTeam.filter(
+            (player) => player.name !== playerName
+          );
+        }
 
-      await otherRoom.save();
+        await otherRoom.save();
+      }
     });
 
     // Check if the room is full
