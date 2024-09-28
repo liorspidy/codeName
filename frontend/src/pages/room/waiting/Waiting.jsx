@@ -28,6 +28,7 @@ const Waiting = ({
   setPlayers,
   setPlayersAmountError,
   setIsLoading,
+  siteUrl
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -310,6 +311,7 @@ const Waiting = ({
           modalShown={leaveRoomShown}
           roomDetails={roomDetails}
           socket={socket}
+          siteUrl={siteUrl}
         />
       )}
       <h1 className={classes.title}>

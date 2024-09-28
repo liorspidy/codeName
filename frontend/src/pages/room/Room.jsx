@@ -30,6 +30,7 @@ const Room = (props) => {
     blueTeamPlayers,
     isConnected,
     setIsConnected,
+    siteUrl
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -42,7 +43,7 @@ const Room = (props) => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:4000/room/${roomId}/getRoom`
+        `${siteUrl}/room/${roomId}/getRoom`
       );
       const room = response.data;
       setRoomDetails(room);
@@ -113,7 +114,7 @@ const Room = (props) => {
   const setTeamPlayersInDb = async (tempRed, tempBlue) => {
     try {
       const response = await axios.post(
-        `http://localhost:4000/room/${roomId}/setTeamPlayers`,
+        `${siteUrl}/room/${roomId}/setTeamPlayers`,
         {
           roomId,
           redTeamPlayers: tempRed,
@@ -154,6 +155,7 @@ const Room = (props) => {
           setPlayersInDb={setPlayersInDb}
           setIsGoingBack={setIsGoingBack}
           roomDetails={roomDetails}
+          siteUrl={siteUrl}
         />
         <Waiting
           roomDetails={roomDetails}
@@ -172,6 +174,7 @@ const Room = (props) => {
           setRoomDetails={setRoomDetails}
           setPlayersAmountError={setPlayersAmountError}
           setIsLoading={setIsLoading}
+          siteUrl={siteUrl}
         />
       </>
     </div>

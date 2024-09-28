@@ -54,6 +54,7 @@ const Board = (props) => {
     playerDetails,
     setIsLoading,
     minimap,
+    siteUrl
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -107,6 +108,7 @@ const Board = (props) => {
         minimap={minimap}
         players={players}
         highlitedCards={highlitedCards}
+        siteUrl={siteUrl}
       />
     ));
 
@@ -238,7 +240,7 @@ const Board = (props) => {
 
   const setNextRoundInDB = async () => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/nextRound`, {
+      await axios.post(`${siteUrl}/room/${roomId}/nextRound`, {
         roomId,
       });
     } catch (err) {
@@ -249,7 +251,7 @@ const Board = (props) => {
 
   const setNextTurnInDB = async () => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/nextTurn`, {
+      await axios.post(`${siteUrl}/room/${roomId}/nextTurn`, {
         roomId,
       });
     } catch (err) {
@@ -273,7 +275,7 @@ const Board = (props) => {
   const resetOperatorsWordInDb = async () => {
     try {
       await axios.post(
-        `http://localhost:4000/room/${roomId}/setOperatorsWord`,
+        `${siteUrl}/room/${roomId}/setOperatorsWord`,
         {
           roomId,
           word: "",
@@ -343,6 +345,7 @@ const Board = (props) => {
           setRedTeamPlayers={setRedTeamPlayers}
           setBlueTeamPlayers={setBlueTeamPlayers}
           setPlayers={setPlayers}
+          siteUrl={siteUrl}
         />
       )}
       <Minimap
@@ -414,6 +417,7 @@ const Board = (props) => {
         redTeamPlayers={redTeamPlayers}
         blueTeamPlayers={blueTeamPlayers}
         socket={socket}
+        siteUrl={siteUrl}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

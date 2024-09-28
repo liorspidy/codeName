@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import classes from "./RoomsList.module.scss";
 
 // eslint-disable-next-line react/prop-types
-const RoomsList = ({ setValue }) => {
+const RoomsList = ({ setValue , siteUrl }) => {
   const [openRooms, setOpenRooms] = useState([]);
   const [pickedRoom, setPickedRoom] = useState(null);
 
   const getOpenRooms = () => {
-    axios.get("http://localhost:4000/room/getRooms").then((response) => {
+    axios.get(`${siteUrl}/room/getRooms`).then((response) => {
       setOpenRooms(response.data);
     });
   };

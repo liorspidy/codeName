@@ -19,7 +19,8 @@ const OperatorsModal = (props) => {
     setCurrentOperatorsWord,
     setWordsToGuess,
     socket,
-    roomDetails
+    roomDetails,
+    siteUrl
   } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
@@ -74,7 +75,7 @@ const OperatorsModal = (props) => {
   const setWordInDb = async () => {
     try {
       await axios.post(
-        `http://localhost:4000/room/${roomId}/setOperatorsWord`,
+        `${siteUrl}/room/${roomId}/setOperatorsWord`,
         {
           roomId,
           word: wordValue,

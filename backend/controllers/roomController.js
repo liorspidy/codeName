@@ -117,7 +117,7 @@ const createRoom = async (req, res) => {
         .json({ error: "Room name cannot be more than 10 characters" });
     }
 
-    // find the player in other rooms and remove it from there 
+    // find the player in other rooms and remove it from there
     // if the room is empty and created by the same player then delete the room
 
     const otherRooms = await Room.find({ "players.name": createdBy });
@@ -140,6 +140,13 @@ const createRoom = async (req, res) => {
         }
 
         await otherRoom.save();
+      }
+    });
+
+    const standbyRooms = await Room.find({ createdBy });
+    standbyRooms.forEach(async (room) => {
+      if (room.players.length === 0) {
+        await Room.deleteOne({ id: room.id });
       }
     });
 

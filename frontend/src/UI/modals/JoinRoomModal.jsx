@@ -11,7 +11,12 @@ import { jwtDecode } from "jwt-decode";
 import Button from "../button/Button";
 import RoomsList from "./RoomsList";
 
-const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
+const JoinRoomModal = ({
+  setModalShown,
+  modalShown,
+  setModalOpen,
+  siteUrl,
+}) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [value, setValue] = useState("");
@@ -71,7 +76,7 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const joiningRoomHandler = async () => {
     console.log("joining room");
     try {
-      await axios.post("http://localhost:4000/room/join", {
+      await axios.post(`${siteUrl}/room/join`, {
         roomId: value,
         playerName: playerDetails.name,
       });
@@ -113,7 +118,7 @@ const JoinRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
             onKeyDown={handleEnterPress}
             placeholder="קוד החדר"
           />
-          <RoomsList setValue={setValue} />
+          <RoomsList setValue={setValue} siteUrl={siteUrl} />
           {!!error.length && <p className={classes.error}>{error}</p>}
           <Button classname={classes.actionButton} onclick={joinRoom}>
             <span>הצטרפות</span>

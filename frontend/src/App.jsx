@@ -6,6 +6,7 @@ import Game from "./pages/room/game/Game";
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:4000");
+// const socket = io("https://wordsplaylfbe.glitch.me");
 import axios from "axios";
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
+  const siteUrl = "http://localhost:4000";
+  // const siteUrl = "https://wordsplaylfbe.glitch.me";
 
   useEffect(() => {
     const handleConnectionChange = () => {};
@@ -39,7 +42,7 @@ function App() {
   const setPlayersInDb = (roomId, tempPlayers, tempRed, tempBlue) => {
     return new Promise((resolve, reject) => {
       axios
-        .post(`http://localhost:4000/room/${roomId}/setPlayers`, {
+        .post(`${siteUrl}/room/${roomId}/setPlayers`, {
           roomId,
           players: tempPlayers,
           redTeamPlayers: tempRed,
@@ -63,6 +66,7 @@ function App() {
           <Main
             setLogedInPlayer={setLogedInPlayer}
             logedInPlayer={logedInPlayer}
+            siteUrl={siteUrl}
           />
         }
       />
@@ -89,6 +93,7 @@ function App() {
                 redTeamPlayers={redTeamPlayers}
                 setBlueTeamPlayers={setBlueTeamPlayers}
                 blueTeamPlayers={blueTeamPlayers}
+                siteUrl={siteUrl}
               />
             }
           />
@@ -116,6 +121,7 @@ function App() {
                 blueTeamPlayers={blueTeamPlayers}
                 setMinimap={setMinimap}
                 minimap={minimap}
+                siteUrl={siteUrl}
               />
             }
           />

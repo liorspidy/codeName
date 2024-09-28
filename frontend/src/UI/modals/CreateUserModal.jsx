@@ -10,7 +10,12 @@ import Loader from "../loader/Loader";
 import axios from "axios";
 import Button from "../button/Button";
 
-const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
+const CreateUserModal = ({
+  setModalShown,
+  modalShown,
+  setModalOpen,
+  siteUrl,
+}) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [usernameValue, setUsernameValue] = useState("");
@@ -133,7 +138,7 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const registerUser = async () => {
     try {
-      await axios.post("http://localhost:4000/auth/register", {
+      await axios.post(`${siteUrl}/auth/register`, {
         username: usernameValue,
         email: emailValue,
         password: passwordValue,
@@ -275,10 +280,7 @@ const CreateUserModal = ({ setModalShown, modalShown, setModalOpen }) => {
             </ul>
           </div>
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <Button
-            classname={classes.actionButton}
-            type="submit"
-          >
+          <Button classname={classes.actionButton} type="submit">
             <span>צור חשבון</span>
           </Button>
         </form>

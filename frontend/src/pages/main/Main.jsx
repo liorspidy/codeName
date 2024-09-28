@@ -12,7 +12,7 @@ import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const Main = ({ logedInPlayer, setLogedInPlayer }) => {
+const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
   const [createRoomModalShown, setCreateRoomModalShown] = useState(false);
   const [joinModalShown, setJoinModalShown] = useState(false);
   const [logInShown, setLogInShown] = useState(false);
@@ -24,7 +24,6 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
   const [backButton, setBackButton] = useState(false);
 
   let navigate = useNavigate();
-
 
   const openCreateRoomModal = () => {
     setCreateRoomModalShown(true);
@@ -64,7 +63,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
         setShortName(tokenDetails.name.substring(0, 3).toUpperCase());
       }
 
-      if(sessionStorage.getItem("lastRoomId") !== null){
+      if (sessionStorage.getItem("lastRoomId") !== null) {
         setBackButton(true);
       }
     }
@@ -76,7 +75,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
   };
 
   const closePlayerDetailsHandler = () => {
-    if(isDetailsClicked){
+    if (isDetailsClicked) {
       setIsDetailsClicked(false);
     }
   };
@@ -92,6 +91,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
           setModalOpen={setModalOpen}
           setModalShown={setCreateRoomModalShown}
           modalShown={createRoomModalShown}
+          siteUrl={siteUrl}
         />
       )}
       {modalOpen && (
@@ -99,6 +99,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
           setModalOpen={setModalOpen}
           setModalShown={setJoinModalShown}
           modalShown={joinModalShown}
+          siteUrl={siteUrl}
         />
       )}
       {modalOpen && (
@@ -107,6 +108,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
           setModalShown={setLogInShown}
           modalShown={logInShown}
           setLogedInPlayer={setLogedInPlayer}
+          siteUrl={siteUrl}
         />
       )}
       {modalOpen && (
@@ -114,26 +116,41 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
           setModalOpen={setModalOpen}
           setModalShown={setCreateUserShown}
           modalShown={createUserShown}
+          siteUrl={siteUrl}
         />
       )}
 
-      <Circles isDetailsClicked={isDetailsClicked} setIsDetailsClicked={setIsDetailsClicked}/>
+      <Circles
+        isDetailsClicked={isDetailsClicked}
+        setIsDetailsClicked={setIsDetailsClicked}
+      />
       {logedInPlayer && (
-        <div className={classes.loggedInDetails} onClick={closePlayerDetailsHandler}>
+        <div
+          className={classes.loggedInDetails}
+          onClick={closePlayerDetailsHandler}
+        >
           <motion.div
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.1 }}
             className={classes.nameContainer}
             onClick={onDetailsClick}
           >
-            <span className={classes.name} style={{ color: playersDetails.color }}>{shortName}</span>
+            <span
+              className={classes.name}
+              style={{ color: playersDetails.color }}
+            >
+              {shortName}
+            </span>
           </motion.div>
           <div
             className={`${classes.dropdown} ${
               isDetailsClicked ? classes.active : ""
             }`}
           >
-            <ul className={classes.detailsList} onClick={closePlayerDetailsHandler}>
+            <ul
+              className={classes.detailsList}
+              onClick={closePlayerDetailsHandler}
+            >
               <li>{playersDetails.nickname}</li>
               <li>{playersDetails.fullName}</li>
               <li>{playersDetails.email}</li>
@@ -156,7 +173,10 @@ const Main = ({ logedInPlayer, setLogedInPlayer }) => {
             <span>הצטרף לחדר</span>
           </Button>
           {backButton && (
-            <Button classname={classes.secondaryButton} onclick={goBackToLastRoom}>
+            <Button
+              classname={classes.secondaryButton}
+              onclick={goBackToLastRoom}
+            >
               <span>חזור לחדר</span>
             </Button>
           )}

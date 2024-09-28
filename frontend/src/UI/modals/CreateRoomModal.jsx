@@ -10,7 +10,12 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Button from "../button/Button";
 
-const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
+const CreateRoomModal = ({
+  setModalShown,
+  modalShown,
+  setModalOpen,
+  siteUrl,
+}) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [value, setValue] = useState("");
@@ -45,7 +50,7 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
 
   const createRoomInDb = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/room/create", {
+      const response = await axios.post(`${siteUrl}/room/create`, {
         roomName: value,
         createdBy: playerDetails.name,
       });

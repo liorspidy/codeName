@@ -58,7 +58,8 @@ const Game = (props) => {
     blueTeamPlayers,
     setBlueTeamPlayers,
     minimap,
-    setMinimap
+    setMinimap,
+    siteUrl
   } = props;
 
   const { roomId } = useParams();
@@ -67,7 +68,7 @@ const Game = (props) => {
   const fetchRoomDetails = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/room/${roomId}/getRoom`
+        `${siteUrl}/room/${roomId}/getRoom`
       );
       const room = response.data;
       return room;
@@ -76,19 +77,6 @@ const Game = (props) => {
       throw new Error("Room not found");
     }
   };
-
-  // const setUserScoreInDb = async (winnigTeam) => {
-  //   try {
-  //     await axios.post(`http://localhost:4000/room/${roomId}/setUsersScore`, {
-  //       roomId,
-  //       winnigTeam,
-  //       scoreToAdd: 50,
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //     throw new Error("Error setting user score");
-  //   }
-  // };
 
   useEffect(() => {
     setIsConnected(socket.connected);
@@ -232,6 +220,7 @@ const Game = (props) => {
         setPlayersInDb={setPlayersInDb}
         setIsGoingBack={setIsGoingBack}
         roomDetails={roomDetails}
+        siteUrl={siteUrl}
       />
       <Board
         randomWords={pickedRandomWords}
@@ -275,6 +264,7 @@ const Game = (props) => {
         playerDetails={playerDetails}
         setIsLoading={setIsLoading}
         minimap={minimap}
+        siteUrl={siteUrl}
       />
     </div>
   );

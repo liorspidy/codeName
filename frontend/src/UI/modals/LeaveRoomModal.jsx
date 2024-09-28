@@ -10,7 +10,14 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Button from "../button/Button";
 
-const LeaveRoomModal = ({ setModalShown, modalShown, setModalOpen, roomDetails , updatePlayers ,socket}) => {
+const LeaveRoomModal = ({
+  setModalShown,
+  modalShown,
+  setModalOpen,
+  roomDetails,
+  socket,
+  siteUrl
+}) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [leavingRoom, setleavingRoom] = useState(false);
@@ -49,10 +56,13 @@ const LeaveRoomModal = ({ setModalShown, modalShown, setModalOpen, roomDetails ,
   const leaveRoomHandler = async () => {
     try {
       setleavingRoom(true);
-      await axios.post(`http://localhost:4000/room/${roomDetails.id}/leaveRoom`, {
-        roomId: roomDetails.id,
-        username: playerDetails.name,
-      });
+      await axios.post(
+        `${siteUrl}/room/${roomDetails.id}/leaveRoom`,
+        {
+          roomId: roomDetails.id,
+          username: playerDetails.name,
+        }
+      );
 
       navigate("/");
       setleavingRoom(false);

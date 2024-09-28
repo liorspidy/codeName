@@ -34,6 +34,7 @@ const LowerBoardZone = (props) => {
     blueTeamPlayers,
     socket,
     setTimeRanOut,
+    siteUrl
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -48,7 +49,7 @@ const LowerBoardZone = (props) => {
   ) => {
     try {
       const res = await axios.post(
-        `http://localhost:4000/room/${roomId}/updateTimer`,
+        `${siteUrl}/room/${roomId}/updateTimer`,
         {
           roomId,
           myDetails: myDetails,
@@ -174,6 +175,7 @@ const LowerBoardZone = (props) => {
           setWordsToGuess={setWordsToGuess}
           socket={socket}
           roomDetails={roomDetails}
+          siteUrl={siteUrl}
         />
       )}
       <div className={classes.scoreTable}>

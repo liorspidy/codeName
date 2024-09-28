@@ -10,7 +10,13 @@ import Loader from "../loader/Loader";
 import axios from "axios";
 import Button from "../button/Button";
 
-const LogInModal = ({ setModalShown, modalShown, setModalOpen , setLogedInPlayer }) => {
+const LogInModal = ({
+  setModalShown,
+  modalShown,
+  setModalOpen,
+  setLogedInPlayer,
+  siteUrl,
+}) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
   const [usernameValue, setUsernameValue] = useState("");
@@ -78,7 +84,7 @@ const LogInModal = ({ setModalShown, modalShown, setModalOpen , setLogedInPlayer
 
   const loginAsUser = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/auth/login", {
+      const response = await axios.post(`${siteUrl}/auth/login`, {
         username: usernameValue,
         password: passwordValue,
       });

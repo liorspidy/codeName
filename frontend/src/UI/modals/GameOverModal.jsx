@@ -18,7 +18,8 @@ const GameOverModal = ({
   setIsLoading,
   setRedTeamPlayers,
   setBlueTeamPlayers,
-  setPlayers
+  setPlayers,
+  siteUrl
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ const GameOverModal = ({
     try {
       console.log("setting player not ready");
       const response = await axios.post(
-        `http://localhost:4000/room/${roomId}/setPlayerNotReady`,
+        `${siteUrl}/room/${roomId}/setPlayerNotReady`,
         {
           roomId,
           playerName: playerDetails.name,
@@ -80,7 +81,7 @@ const GameOverModal = ({
 
   const leaveRoomInDb = async () => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/leaveRoom`, {
+      await axios.post(`${siteUrl}/room/${roomId}/leaveRoom`, {
         roomId: roomId,
         username: playerDetails.name,
       });

@@ -19,7 +19,8 @@ const Header = ({
   socket,
   setPlayersInDb,
   setIsGoingBack,
-  roomDetails
+  roomDetails,
+  siteUrl
 }) => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
@@ -46,7 +47,7 @@ const Header = ({
       setIsGoingBack(true);
       console.log("setting player not ready");
       const response = await axios.post(
-        `http://localhost:4000/room/${roomId}/setPlayerNotReady`,
+        `${siteUrl}/room/${roomId}/setPlayerNotReady`,
         {
           roomId,
           playerName: name,

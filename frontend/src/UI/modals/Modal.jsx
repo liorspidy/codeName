@@ -2,7 +2,6 @@
 import { useCallback } from "react";
 import classes from "./Modal.module.scss";
 import { useEffect } from "react";
-import boom from "../../images/boom.png";
 
 const Modal = ({
   children,

@@ -37,6 +37,7 @@ const Card = (props) => {
     setRecentlyPlayedPlayer,
     players,
     highlitedCards,
+    siteUrl
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
@@ -64,7 +65,7 @@ const Card = (props) => {
   const updateRevealedCardsInDb = async (color) => {
     try {
       await axios.post(
-        `http://localhost:4000/room/${roomId}/updateRevealedCards`,
+        `${siteUrl}/room/${roomId}/updateRevealedCards`,
         {
           roomId,
           color,
@@ -79,7 +80,7 @@ const Card = (props) => {
 
   const setScoreInDb = async (team, score) => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setScore`, {
+      await axios.post(`${siteUrl}/room/${roomId}/setScore`, {
         roomId,
         team,
         score,
@@ -92,7 +93,7 @@ const Card = (props) => {
 
   const setWinnerInDb = async (winner) => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setWinner`, {
+      await axios.post(`${siteUrl}/room/${roomId}/setWinner`, {
         roomId,
         winner,
       });
@@ -105,7 +106,7 @@ const Card = (props) => {
 
   const setWordsToGuessCountInDb = async (updatedWordsToGuessCount) => {
     try {
-      await axios.post(`http://localhost:4000/room/${roomId}/setWordsToGuess`, {
+      await axios.post(`${siteUrl}/room/${roomId}/setWordsToGuess`, {
         roomId,
         wordsToGuess: updatedWordsToGuessCount,
       });
