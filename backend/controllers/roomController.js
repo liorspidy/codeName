@@ -295,6 +295,8 @@ const leaveRoom = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
+    // Remove the player from the room and the teams
+
     if (room.players.some((player) => player.name === username)) {
       room.players = room.players.filter((player) => player.name !== username);
     }
@@ -309,11 +311,13 @@ const leaveRoom = async (req, res) => {
       );
     }
 
-    // if(room.players.length < 4){
-    //   room.status = "waiting";
-    // }
+    if (room.status === "finished" && room.players.length === 0) {
+      const resetedRoom = resetRoomProcess(room);
+      await resetedRoom.save();
+    }else{
+      await room.save();
+    }
 
-    await room.save();
     return res.status(200).json(room);
   } catch (err) {
     console.error("Error exiting room:", error.message);
@@ -366,31 +370,9 @@ const resetRoom = async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
-    room.lastTimePlayed = null;
-    room.players.forEach((player) => {
-      player.ready = false;
-    });
-    room.redTeam.forEach((player) => {
-      player.ready = false;
-    });
-    room.blueTeam.forEach((player) => {
-      player.ready = false;
-    });
-    room.redScore = 0;
-    room.blueScore = 0;
-    room.status = "waiting";
-    room.turn = "";
-    room.winner = "";
-    room.cards = [];
-    room.revealedCards = [];
-    room.map = [];
-    room.round = 1;
-    room.currentWord = "";
-    room.currentWordCount = 0;
-    room.wordsToGuess = 0;
-    // room.usersScoreWasSet = false;
+    const resetedRoom = resetRoomProcess(room);
 
-    await room.save();
+    await resetedRoom.save();
     return res.status(200).json({ message: "Room reset successfully" });
   } catch (error) {
     console.error("Error resetting room:", error.message);
@@ -724,6 +706,33 @@ const setUsersScore = async (req, res) => {
     console.error("Error setting score:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
+};
+
+const resetRoomProcess = (room) => {
+  room.lastTimePlayed = null;
+  room.players.forEach((player) => {
+    player.ready = false;
+  });
+  room.redTeam.forEach((player) => {
+    player.ready = false;
+  });
+  room.blueTeam.forEach((player) => {
+    player.ready = false;
+  });
+  room.redScore = 0;
+  room.blueScore = 0;
+  room.status = "waiting";
+  room.turn = "";
+  room.winner = "";
+  room.cards = [];
+  room.revealedCards = [];
+  room.map = [];
+  room.round = 1;
+  room.currentWord = "";
+  room.currentWordCount = 0;
+  room.wordsToGuess = 0;
+
+  return room;
 };
 
 module.exports = {

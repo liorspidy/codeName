@@ -56,12 +56,34 @@
         scale: 1;
         transition: scale 0.1s;
 
+        &:disabled {
+          filter: brightness(0.8);
+        }
+
         .name {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 75%;
+          width: 70%;
           text-align: start;
+        }
+
+        .status {
+          border-radius: 50%;
+          width: 10px;
+          height: 10px;
+
+          &.playing {
+            background-color: #7da6f8;
+          }
+
+          &.waiting {
+            background-color: #57ed57;
+          }
+
+          &.finished {
+            background-color: #f25d5d;
+          }
         }
 
         .players {

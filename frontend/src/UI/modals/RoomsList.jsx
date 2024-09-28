@@ -23,6 +23,7 @@ const RoomsList = ({ setValue }) => {
   };
 
   const availableRooms = openRooms.map((room) => {
+    const roomStatus = room.status;
     return (
       <li
         className={`${classes.item} ${
@@ -33,8 +34,20 @@ const RoomsList = ({ setValue }) => {
         <button
           onClick={clickHandler.bind(this, room)}
           className={classes.joinButton}
+          disabled={room.players.length === 8}
         >
           <span className={classes.name}>{room.name}</span>
+          <span
+            className={`${classes.status} ${
+              roomStatus === "playing"
+                ? classes.playing
+                : roomStatus === "waiting"
+                ? classes.waiting
+                : roomStatus === "finished"
+                ? classes.finished
+                : ""
+            }`}
+          ></span>
           <span
             className={`${classes.players} 
         ${room.players.length < 8 ? classes.green : classes.red}`}
@@ -49,10 +62,8 @@ const RoomsList = ({ setValue }) => {
   return (
     <div className={classes.roomListContainer}>
       <div className={classes.subtitleWrapper}>
-          <h3 className={classes.joinRoomTitle}>
-            הצטרף לחדר קיים:
-          </h3>
-          <span className={classes.roomsNumber}>({openRooms.length})</span>
+        <h3 className={classes.joinRoomTitle}>הצטרף לחדר קיים:</h3>
+        <span className={classes.roomsNumber}>({openRooms.length})</span>
       </div>
       <ul className={classes.list}>{availableRooms}</ul>
     </div>
