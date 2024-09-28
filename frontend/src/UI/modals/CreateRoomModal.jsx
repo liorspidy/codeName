@@ -46,7 +46,7 @@ const CreateRoomModal = ({ setModalShown, modalShown, setModalOpen }) => {
   const createRoomInDb = async () => {
     try {
       const response = await axios.post("http://localhost:4000/room/create", {
-        name: value,
+        roomName: value,
         createdBy: playerDetails.name,
       });
       closeBackdrop();

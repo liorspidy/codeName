@@ -108,18 +108,39 @@ const playTurn = async (req, res) => {
 
 const createRoom = async (req, res) => {
   try {
-    const { name, createdBy } = req.body;
+    const { roomName, createdBy } = req.body;
 
     // Check if the room name is more than 10 characters
-    if (name.length > 20) {
+    if (roomName.length > 20) {
       return res
         .status(401)
         .json({ error: "Room name cannot be more than 10 characters" });
     }
 
+    // find the player in other rooms and remove it from there
+    const otherRooms = await Room.find({ "players.name": createdBy });
+    otherRooms.forEach(async (otherRoom) => {
+      otherRoom.players = otherRoom.players.filter(
+        (player) => player.name !== createdBy
+      );
+      if(otherRoom.redTeam.find((player) => player.name === createdBy)){
+        otherRoom.redTeam = otherRoom.redTeam.filter(
+          (player) => player.name !== createdBy
+        );
+      }
+      if(otherRoom.blueTeam.find((player) => player.name === createdBy)){
+        otherRoom.blueTeam = otherRoom.blueTeam.filter(
+          (player) => player.name !== createdBy
+        );
+      }
+
+      await otherRoom.save();
+    });
+
     let randomId;
     let room;
 
+    // Generate a random 9-digit room id and check if it already exists in the database
     do {
       randomId = Math.floor(Math.random() * 900000000) + 100000000;
       room = await Room.findOne({ id: String(randomId) });
@@ -127,7 +148,7 @@ const createRoom = async (req, res) => {
 
     const newRoom = new Room({
       id: String(randomId),
-      name,
+      name: roomName,
       createdBy,
       lastTimePlayed: null,
       players: [{ name: createdBy, ready: false, pickedCard: false , cardIndex: -1}],
@@ -145,7 +166,6 @@ const createRoom = async (req, res) => {
       currentWord: "",
       currentWordCount: 0,
       wordsToGuess: 0,
-      // usersScoreWasSet: false,
     });
 
     await newRoom.save();
@@ -216,6 +236,26 @@ const joinRoom = async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: "Room not found" });
     }
+
+    // find the player in other rooms and remove it from there
+    const otherRooms = await Room.find({ "players.name": playerName });
+    otherRooms.forEach(async (otherRoom) => {
+      otherRoom.players = otherRoom.players.filter(
+        (player) => player.name !== playerName
+      );
+      if(otherRoom.redTeam.find((player) => player.name === playerName)){
+        otherRoom.redTeam = otherRoom.redTeam.filter(
+          (player) => player.name !== playerName
+        );
+      }
+      if(otherRoom.blueTeam.find((player) => player.name === playerName)){
+        otherRoom.blueTeam = otherRoom.blueTeam.filter(
+          (player) => player.name !== playerName
+        );
+      }
+
+      await otherRoom.save();
+    });
 
     // Check if the room is full
 
