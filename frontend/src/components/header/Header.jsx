@@ -45,7 +45,6 @@ const Header = ({
   const setPlayerNotReadyInDb = async (name) => {
     try {
       setIsGoingBack(true);
-      console.log("setting player not ready");
       const response = await axios.post(
         `${siteUrl}/room/${roomId}/setPlayerNotReady`,
         {

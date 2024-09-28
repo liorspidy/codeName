@@ -74,7 +74,6 @@ const JoinRoomModal = ({
   }, []);
 
   const joiningRoomHandler = async () => {
-    console.log("joining room");
     try {
       await axios.post(`${siteUrl}/room/join`, {
         roomId: value,

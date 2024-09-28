@@ -273,7 +273,6 @@ const Card = (props) => {
 
   useEffect(() => {
     if (highlitedCards.find((cardIndex) => cardIndex === index) !== undefined) {
-      console.log("highlighted card");
       setHighlightedCard(true);
     } else {
       setHighlightedCard(false);

@@ -1,16 +1,24 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import classes from "./RoomsList.module.scss";
+import Loader from "../loader/Loader";
 
 // eslint-disable-next-line react/prop-types
-const RoomsList = ({ setValue , siteUrl }) => {
+const RoomsList = ({ setValue, siteUrl }) => {
   const [openRooms, setOpenRooms] = useState([]);
   const [pickedRoom, setPickedRoom] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getOpenRooms = () => {
-    axios.get(`${siteUrl}/room/getRooms`).then((response) => {
-      setOpenRooms(response.data);
-    });
+    axios
+      .get(`${siteUrl}/room/getRooms`)
+      .then((response) => {
+        setOpenRooms(response.data);
+        setIsLoading(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
@@ -65,7 +73,15 @@ const RoomsList = ({ setValue , siteUrl }) => {
         <h3 className={classes.joinRoomTitle}>הצטרף לחדר קיים:</h3>
         <span className={classes.roomsNumber}>({openRooms.length})</span>
       </div>
-      <ul className={classes.list}>{availableRooms}</ul>
+      <ul className={classes.list}>
+        {isLoading ? (
+          availableRooms
+        ) : (
+          <div className={classes.loader}>
+            <Loader />
+          </div>
+        )}
+      </ul>
     </div>
   );
 };

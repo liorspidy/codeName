@@ -29,6 +29,13 @@
     overflow: auto;
     height: calc((4 * 48.5px) + 8px);
 
+    .loader{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
     .item {
       list-style: none;
       &:not(:last-child) {
