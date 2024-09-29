@@ -69,7 +69,8 @@
         justify-content: center;
         flex: 1;
         background-color: transparent;
-        width: fit-content;
+        // width: fit-content;
+        width: 4dvw;
 
         &.agent {
           filter: brightness(0.5);

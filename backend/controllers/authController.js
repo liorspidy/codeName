@@ -6,9 +6,12 @@ const register = async (req, res) => {
   try {
     const { username, email, password, fullName } = req.body;
 
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    const lowerCaseUsername = username.toLowerCase();
+
+
+    const existingUser = await User.findOne({ $or: [{ lowerCaseUsername }, { email }] });
     if (existingUser) {
-      if (existingUser.username === username) {
+      if (existingUser.username === lowerCaseUsername) {
         return res
           .status(409)
           .json({ error: "Conflict - Username is already taken" });
@@ -34,7 +37,7 @@ const register = async (req, res) => {
     const randColor = randColorGenerator();
 
     const newUser = new User({
-      username,
+      username: lowerCaseUsername,
       email,
       password: hashedPassword,
       fullName,
