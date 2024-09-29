@@ -5,6 +5,7 @@ const roomController = require('../controllers/roomController');
 router.get('/getRooms', roomController.getRooms);
 router.get('/:id/getRoom', roomController.getRoom);
 router.get('/:id/getPlayers', roomController.getPlayers);
+router.get('/:id/getMessages', roomController.getMessages);
 
 router.post('/create', roomController.createRoom);
 router.post('/join', roomController.joinRoom);
@@ -24,9 +25,9 @@ router.post('/:id/updateRevealedCards', roomController.updateRevealedCards);
 router.post('/:id/setWinner', roomController.setWinner);
 router.post('/:id/setScore', roomController.setScore);
 router.post('/:id/leaveRoom', roomController.leaveRoom);
-router.post('/:id/end', roomController.endGame);
-router.post('/:id/delete', roomController.deleteRoom);
 router.post('/:id/reset', roomController.resetRoom);
 router.post('/:id/updateTimer', roomController.updateTimer);
+router.post('/:id/sendMessage', roomController.sendMessage);
+router.post('/:id/readMessage', roomController.readMessage);
 
 module.exports = router;

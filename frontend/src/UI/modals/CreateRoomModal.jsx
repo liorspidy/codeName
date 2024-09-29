@@ -125,7 +125,7 @@ const CreateRoomModal = ({
         </div>
       )}
       {creatingRoom && (
-        <div className={classes.createRoomModal}>
+        <div className={`${classes.createRoomModal} ${classes.loading}`}>
           <h2>החדר נוצר נא המתן...</h2>
           <Loader />
         </div>

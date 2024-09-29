@@ -34,11 +34,13 @@ const LogInModal = ({
 
   const handleEnterPress = (e) => {
     if (e.key === "Enter") {
-      logInHandler();
+      logInHandler(e);
     }
   };
 
-  const logInHandler = () => {
+  const logInHandler = (e) => {
+    e.preventDefault(); 
+
     if (usernameValue.trim() === "" && passwordValue.trim() === "") {
       setError("יש להזין שם משתמש וסיסמה תקניים");
     } else if (usernameValue.trim() === "") {
@@ -116,7 +118,7 @@ const LogInModal = ({
       backdropShown={backdropShown}
     >
       {!logingIn && (
-        <div className={classes.logInModal}>
+        <form className={classes.logInModal} onSubmit={logInHandler}>
           <h2 className={classes.title}>הזן את פרטי ההתחברות</h2>
           <input
             className={classes.userNameInput}
@@ -141,11 +143,11 @@ const LogInModal = ({
             </span>
           </div>
           {!!error.length && <p className={classes.error}>{error}</p>}
-          <Button classname={classes.actionButton} onclick={logInHandler}>
+          <Button classname={classes.actionButton} type="submit">
             <span>התחברות</span>
           </Button>
           <a href="/forgotPass">שכחתי סיסמה</a>
-        </div>
+        </form>
       )}
       {logingIn && (
         <div className={classes.logInModal}>

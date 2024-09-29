@@ -165,7 +165,7 @@ const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
         </h1>
       </div>
       {logedInPlayer && (
-        <div className={classes.action_buttons}>
+        <div className={classes.actionButtons}>
           <Button onclick={openCreateRoomModal}>
             <span>צור חדר</span>
           </Button>

@@ -125,7 +125,7 @@ const JoinRoomModal = ({
         </div>
       )}
       {joiningRoom && (
-        <div className={classes.joinRoomModal}>
+        <div className={`${classes.joinRoomModal} ${classes.loading}`}>
           <h2>מצטרף לחדר נא המתן...</h2>
           <Loader />
         </div>

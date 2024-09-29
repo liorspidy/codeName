@@ -141,6 +141,8 @@
   .title {
     width: 64dvw;
     z-index: 1;
+    position: relative;
+    top: 2rem;
 
     h1 {
       display: block;
@@ -172,11 +174,15 @@
     }
   }
 
-  .action_buttons {
+  .actionButtons {
     display: flex;
     flex-direction: column;
     width: 50%;
     gap: 1.5rem;
+
+    button {
+      font-weight: 3dvw;
+    }
 
     span {
       font-size: 1.5rem;
@@ -244,7 +250,7 @@
     overflow: hidden;
     gap: 15dvw;
 
-    .action_buttons {
+    .actionButtons {
       width: 20%;
       font-size: 1.5rem;
     }
@@ -264,9 +270,9 @@
     overflow: hidden;
     gap: 8dvw;
 
-    .action_buttons {
+    .actionButtons {
       width: 20%;
-      font-size: 1.5rem;
+      font-size: 1rem;
     }
 
     .title {

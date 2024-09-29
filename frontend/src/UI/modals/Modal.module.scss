@@ -71,7 +71,7 @@
 
 .modal {
   width: min(85%, 25rem);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 15px;
   background-color: rgb(244, 243, 243);
   min-height: 10rem;
@@ -90,7 +90,7 @@
   }
 
   .title {
-    font-size: 7dvw;
+    font-size: 6dvw;
     margin-bottom: 0.5rem;
   }
 
@@ -154,6 +154,10 @@
     input {
       text-align: center;
     }
+  }
+
+  .loading{
+    overflow: visible;
   }
 
   .logInModal,
@@ -398,7 +402,7 @@
 
       &.howToPlay {
         h2 {
-          font-size: 8dvw;
+          font-size: 7dvw;
           margin-top: 0;
           text-decoration: underline;
           text-underline-offset: 0.25rem;
@@ -484,28 +488,57 @@
 
     .chatBox {
       border-radius: 10px;
-      overflow: hidden;
+      flex: 1 0 70dvh;
 
       .chatBoxBody {
-        height: 40dvh;
+        // height: 40dvh;
+        padding: 0;
+        margin: 0;
         overflow: auto;
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.5rem;
         background-color: #d5d5d5;
         box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.15);
         padding-block: 1rem;
+        height: 100%;
+        max-height: 70dvh;
+        padding: 0.75rem;
 
-        .chatBoxBodyChatMessage {
+        .chatMessage {
+          list-style: none;
+          display: flex;
+          gap: 0.25rem;
+          background-color: #656565;
+          flex-direction: column;
+          width: fit-content;
+          padding: 0.25rem 0.5rem;
+          border-radius: 5px;
+          align-items: flex-end;
+
           &.left {
             align-self: flex-end;
           }
-          p {
+
+          &.right {
+            align-self: flex-start;
             background-color: #646cff;
+          }
+
+          .senderName{
+            color: var(--sender-color);
+            display: inline-block;
+            width: fit-content;
+            font-size: 3.5dvw;
+            font-weight: bold;
+          }
+
+          .messageContent {
             color: white;
-            border-radius: 5px;
-            padding: 0.5rem;
-            margin: 0.5rem 1rem;
+            margin: 0;
+            font-size: 4.5dvw;
+            width: 100%;
+            overflow-wrap: anywhere;
           }
         }
       }
@@ -514,6 +547,7 @@
     .chatInput {
       display: flex;
       gap: 2dvw;
+      flex: 1 0 3rem;
 
       input {
         width: 100%;

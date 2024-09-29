@@ -88,6 +88,8 @@ const Header = ({
           setModalOpen={setModalOpen}
           setModalShown={setOpenChat}
           modalShown={openChat}
+          siteUrl={siteUrl}
+          socket={socket}
         />
       )}
       <div className={classes.rightSection}>

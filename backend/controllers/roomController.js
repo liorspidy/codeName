@@ -338,42 +338,6 @@ const leaveRoom = async (req, res) => {
   }
 };
 
-const endGame = async (req, res) => {
-  try {
-    const roomId = req.body.roomId;
-
-    const room = await Room.findOne({ id: roomId });
-    if (!room) {
-      return res.status(404).json({ error: "Room not found" });
-    }
-
-    await room.save();
-    return res.status(200).json(room);
-  } catch (error) {
-    console.error("Error ending game:", error.message);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-const deleteRoom = async (req, res) => {
-  try {
-    const roomId = req.body.roomId;
-
-    const room = await Room.findOne({ id: roomId });
-    if (!room) {
-      return res.status(404).json({ error: "Room not found" });
-    }
-
-    // Add logic to handle deleting the room
-
-    await room.remove();
-    return res.status(200).json({ message: "Room deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting room:", error.message);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 const resetRoom = async (req, res) => {
   try {
     const roomId = req.body.roomId;
@@ -721,6 +685,80 @@ const setUsersScore = async (req, res) => {
   }
 };
 
+const getMessages = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
+    return res.status(200).json(room.messages);
+  } catch (error) {
+    console.error("Error getting messages:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const sendMessage = async (req, res) => {
+  try {
+    const { roomId, content, sender } = req.body;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
+    const date = new Date();
+
+    const newMessage = {
+      creationDate: date,
+      senderNick: sender.name,
+      senderEmail: sender.email,
+      senderFullName: sender.fullName,
+      senderColor: sender.randColor,
+      content,
+      readBy: [],
+    };
+
+    room.messages.push(newMessage);
+    await room.save();
+
+    const savedMessage = room.messages[room.messages.length - 1];
+    return res.status(200).json(savedMessage);
+  } catch (error) {
+    console.error("Error sending message:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+const readMessage = async (req, res) => {
+  try {
+    const { roomId, playerDetails, messageId } = req.body;
+
+    const room = await Room.findOne({ id: roomId });
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
+    const message = room.messages.find((msg) => msg.id === messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    const readingTime = new Date().getTime();
+
+    message.readBy.push({ name: playerDetails.name, readingTime });
+    await room.save();
+    return res.status(200).json({ message: "Message read successfully" });
+  } catch (error) {
+    console.error("Error setting message as read:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const resetRoomProcess = (room) => {
   room.lastTimePlayed = null;
   room.players.forEach((player) => {
@@ -759,8 +797,6 @@ module.exports = {
   setStatus,
   setWinner,
   playTurn,
-  endGame,
-  deleteRoom,
   resetRoom,
   setCards,
   setTurn,
@@ -775,4 +811,7 @@ module.exports = {
   updateRevealedCards,
   setScore,
   setUsersScore,
+  getMessages,
+  sendMessage,
+  readMessage,
 };

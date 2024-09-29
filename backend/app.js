@@ -292,7 +292,6 @@ io.on("connection", (socket) => {
       roomDetails,
       wordLocked
     ) => {
-
       const playingTeam = myDetails.team;
       let imTheOnlyOnePickedCard = false;
       let action = "none";
@@ -336,10 +335,7 @@ io.on("connection", (socket) => {
 
       if (!wordLocked && groupMembersPickedCardLength === 1) {
         action = "start";
-      } else if (
-        wordLocked &&
-        groupMembersPickedCardLength === 0
-      ) {
+      } else if (wordLocked && groupMembersPickedCardLength === 0) {
         action = "stop";
       } else if (groupMembersPickedCardLength === groupMembersLength) {
         action = "next";
@@ -372,6 +368,11 @@ io.on("connection", (socket) => {
   socket.on("gameOver", (roomId, winner, myDetails) => {
     console.log("Game over");
     io.to(roomId).emit("gameOverToAll", winner, myDetails);
+  });
+
+  socket.on("messageSent", (roomId, message , myDetails) => {
+    console.log("Message sent");
+    io.to(roomId).emit("messageReceived", myDetails , message);
   });
 });
 
