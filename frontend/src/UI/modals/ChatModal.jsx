@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import Loader from "../loader/Loader";
 
 const ChatModal = ({
   setModalShown,
@@ -19,6 +20,7 @@ const ChatModal = ({
   const [backdropShown, setBackdropShown] = useState(false);
   const [messageValue, setMessageValue] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
@@ -58,6 +60,7 @@ const ChatModal = ({
     axios.get(`${siteUrl}/room/${roomId}/getMessages`).then((res) => {
       const messages = res.data;
       setMessages(messages);
+      setIsLoading(false);
     });
   }, [roomId, siteUrl]);
 
@@ -130,7 +133,14 @@ const ChatModal = ({
     >
       <div className={classes.chatModal}>
         <div className={classes.chatBox}>
-          <ul className={classes.chatBoxBody}>{parsedMessages}</ul>
+          {isLoading && (
+            <div className={classes.loaderContainer}>
+              <Loader />
+            </div>
+          )}
+          {!isLoading && (
+            <ul className={classes.chatBoxBody}>{parsedMessages}</ul>
+          )}
         </div>
         <div className={classes.chatInput}>
           <IconButton

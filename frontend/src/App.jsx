@@ -5,8 +5,8 @@ import NotFound from "./pages/notFound/NotFound";
 import Game from "./pages/room/game/Game";
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-const socket = io("http://localhost:4000");
-// const socket = io("https://wordsplaylfbe.glitch.me");
+// const socket = io("http://localhost:4000");
+const socket = io("https://wordsplaylfbe.glitch.me");
 import axios from "axios";
 
 function App() {
@@ -23,8 +23,8 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
-  const siteUrl = "http://localhost:4000";
-  // const siteUrl = "https://wordsplaylfbe.glitch.me";
+  // const siteUrl = "http://localhost:4000";
+  const siteUrl = "https://wordsplaylfbe.glitch.me";
 
   useEffect(() => {
     const handleConnectionChange = () => {};
