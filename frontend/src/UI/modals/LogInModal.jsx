@@ -117,7 +117,7 @@ const LogInModal = ({
     >
       {!logingIn && (
         <div className={classes.logInModal}>
-          <h2>הזן את פרטי ההתחברות</h2>
+          <h2 className={classes.title}>הזן את פרטי ההתחברות</h2>
           <input
             className={classes.userNameInput}
             type="text"
