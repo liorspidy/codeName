@@ -29,6 +29,8 @@ const UpperBoardZone = (props) => {
     wordsToGuess,
     switchColorGroup,
     roomDetails,
+    operatorTypes,
+    setOperatorTypes
   } = props;
 
   const [reportWordModalOpen, setReportWordModalOpen] = useState(false);
@@ -83,7 +85,7 @@ const UpperBoardZone = (props) => {
 
       return () => clearInterval(interval);
     }
-  }, [timerStarts , roomDetails]);
+  }, [timerStarts, roomDetails]);
 
   const reportWordHandler = () => {
     if (currentOperatorsWord !== "") {
@@ -132,22 +134,35 @@ const UpperBoardZone = (props) => {
               : ""
           }`}
         >
-          <IconButton
-            onClick={reportWordHandler}
-            aria-label="go back"
-            sx={{
-              backgroundColor: "orange",
-              color: "white",
-              ":hover": { backgroundColor: "#c1861b" },
-              scale: "0.75",
-            }}
-          >
-            <ReportProblemOutlinedIcon />
-          </IconButton>
-          <p className={classes.currentOperatorsWord}>{currentOperatorsWord}</p>
-          <p className={classes.currentOperatorsNumber}>
-            {currentOperatorsWordCount}
-          </p>
+          {!operatorTypes && (
+            <IconButton
+              onClick={reportWordHandler}
+              aria-label="go back"
+              sx={{
+                backgroundColor: "orange",
+                color: "white",
+                ":hover": { backgroundColor: "#c1861b" },
+                scale: "0.75",
+              }}
+            >
+              <ReportProblemOutlinedIcon />
+            </IconButton>
+          )}
+          {!operatorTypes && (
+            <p className={classes.currentOperatorsWord}>
+              {currentOperatorsWord}
+            </p>
+          )}
+          {operatorTypes && (
+            <div className={classes.operatorType}>
+              <p>המפעיל מקליד...</p>
+            </div>
+          )}
+          {!operatorTypes && (
+            <p className={classes.currentOperatorsNumber}>
+              {currentOperatorsWordCount}
+            </p>
+          )}
         </div>
         <div
           className={`${classes.timer} ${timerStarts ? classes.starts : ""}`}

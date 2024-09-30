@@ -16,6 +16,8 @@ const LogInModal = ({
   setModalOpen,
   setLogedInPlayer,
   siteUrl,
+  setIsLoading,
+  isLoading
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
@@ -86,6 +88,7 @@ const LogInModal = ({
 
   const loginAsUser = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.post(`${siteUrl}/auth/login`, {
         username: usernameValue,
         password: passwordValue,
@@ -99,6 +102,8 @@ const LogInModal = ({
         setlogingIn(false);
         setError("אנא בדוק את שם המשתמש והסיסמה שהזנת ונסה שנית");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 

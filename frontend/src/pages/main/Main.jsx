@@ -133,6 +133,7 @@ const Main = ({
           setModalOpen={setModalOpen}
           setModalShown={setCreateUserShown}
           modalShown={createUserShown}
+          setLogedInPlayer={setLogedInPlayer}
           siteUrl={siteUrl}
           isLoading={isLoading}
           setIsLoading={setIsLoading}

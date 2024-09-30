@@ -15,6 +15,9 @@ const CreateUserModal = ({
   modalShown,
   setModalOpen,
   siteUrl,
+  setIsLoading,
+  isLoading,
+  setLogedInPlayer,
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
@@ -138,14 +141,20 @@ const CreateUserModal = ({
 
   const registerUser = async () => {
     try {
-      await axios.post(`${siteUrl}/auth/register`, {
-        username: usernameValue,
-        email: emailValue,
-        password: passwordValue,
-        fullName: fullNameValue,
-      });
-      closeBackdrop();
-      setCreatingAccount(false);
+      setIsLoading(true);
+      await axios
+        .post(`${siteUrl}/auth/register`, {
+          username: usernameValue,
+          email: emailValue,
+          password: passwordValue,
+          fullName: fullNameValue,
+        })
+        .then(() => {
+          setCreatingAccount(false);
+          loginAsUser().then(() => {
+            closeBackdrop();
+          });
+        });
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setCreatingAccount(false);
@@ -158,6 +167,24 @@ const CreateUserModal = ({
       } else {
         setCreatingAccount(false);
         setError("ארעה שגיאה בעת יצירת החשבון. אנא נסה שוב מאוחר יותר.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginAsUser = async () => {
+    try {
+      console.log("loginAsUser");
+      const response = await axios.post(`${siteUrl}/auth/login`, {
+        username: usernameValue,
+        password: passwordValue,
+      });
+      sessionStorage.setItem("token", response.data.token);
+      setLogedInPlayer(true);
+    } catch (error) {
+      if (error.response) {
+        setError("אנא בדוק את שם המשתמש והסיסמה שהזנת ונסה שנית");
       }
     }
   };

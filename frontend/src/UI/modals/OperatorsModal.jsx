@@ -20,7 +20,7 @@ const OperatorsModal = (props) => {
     setWordsToGuess,
     socket,
     roomDetails,
-    siteUrl
+    siteUrl,
   } = props;
   const [backdropShown, setBackdropShown] = useState(false);
   const [wordsCountValue, setWordsCountValue] = useState(1);
@@ -74,15 +74,12 @@ const OperatorsModal = (props) => {
 
   const setWordInDb = async () => {
     try {
-      await axios.post(
-        `${siteUrl}/room/${roomId}/setOperatorsWord`,
-        {
-          roomId,
-          word: wordValue,
-          count: wordsCountValue,
-          wordsToGuess: wordsCountValue + 1,
-        }
-      );
+      await axios.post(`${siteUrl}/room/${roomId}/setOperatorsWord`, {
+        roomId,
+        word: wordValue,
+        count: wordsCountValue,
+        wordsToGuess: wordsCountValue + 1,
+      });
     } catch (err) {
       console.log(err);
       throw new Error("Error setting operators word: " + err.message);
@@ -107,8 +104,9 @@ const OperatorsModal = (props) => {
   };
 
   const wordValueChange = (e) => {
-    const newValue = e.target.value.replace(/[^\p{L}\s]/gu, "");
+    const newValue = e.target.value.replace(/[^\p{L}\s']/gu, "");
     setWordValue(newValue);
+    socket.emit("operatorTyping", roomId);
   };
 
   // if the modal is shown and i press on enter the submitWordHandler will be called

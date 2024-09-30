@@ -5,6 +5,10 @@ import classes from "../Board.module.scss";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+const boom = new Audio("/music/boom.mp3");
+const lose = new Audio("/music/lose.mp3");
+const win = new Audio("/music/win.mp3");
+
 const Card = (props) => {
   const {
     word,
@@ -37,7 +41,8 @@ const Card = (props) => {
     setRecentlyPlayedPlayer,
     players,
     highlitedCards,
-    siteUrl
+    siteUrl,
+    setIsLoading
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
@@ -64,6 +69,7 @@ const Card = (props) => {
 
   const updateRevealedCardsInDb = async (color) => {
     try {
+      setIsLoading(true);
       await axios.post(
         `${siteUrl}/room/${roomId}/updateRevealedCards`,
         {
@@ -75,11 +81,14 @@ const Card = (props) => {
     } catch (err) {
       console.log(err);
       throw new Error("Could not update the revealed cards");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const setScoreInDb = async (team, score) => {
     try {
+      setIsLoading(true);
       await axios.post(`${siteUrl}/room/${roomId}/setScore`, {
         roomId,
         team,
@@ -88,11 +97,14 @@ const Card = (props) => {
     } catch (err) {
       console.log(err);
       throw new Error("Could not set the score");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const setWinnerInDb = async (winner) => {
     try {
+      setIsLoading(true);
       await axios.post(`${siteUrl}/room/${roomId}/setWinner`, {
         roomId,
         winner,
@@ -101,11 +113,14 @@ const Card = (props) => {
     } catch (err) {
       console.log(err);
       throw new Error("Could not set the winner");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const setWordsToGuessCountInDb = async (updatedWordsToGuessCount) => {
     try {
+      setIsLoading(true);
       await axios.post(`${siteUrl}/room/${roomId}/setWordsToGuess`, {
         roomId,
         wordsToGuess: updatedWordsToGuessCount,
@@ -113,6 +128,8 @@ const Card = (props) => {
     } catch (err) {
       console.log(err);
       throw new Error("Could not set the words to guess count");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -132,24 +149,31 @@ const Card = (props) => {
   };
 
   const checkIfItsMyCard = (myteam) => {
-    // if the card is from my team
+    // if the card is from my team and I guessed it correctly
     if (recentlyPlayedPlayer.team === myteam) {
       if (myDetails.name === recentlyPlayedPlayer.name) {
         setMyDetails((prev) => {
           return { ...prev, cardRevealed: prev.cardRevealed + 1 };
         });
       }
-      // bonus word was guessed
+      // if bonus word was guessed
       if (wordsToGuess === 1) {
         finishTurn();
-        // regular word was guessed
+
+      // if regular word was guessed
       } else {
         setWordsToGuess((prev) => prev - 1);
         if (myDetails.name === recentlyPlayedPlayer.name) {
           setWordsToGuessCountInDb(wordsToGuess - 1);
         }
       }
+
+      win.play();
+      win.volume = 0.5;
     } else {
+      lose.play();
+      lose.volume = 0.5;
+
       finishTurn();
     }
   };
@@ -173,12 +197,17 @@ const Card = (props) => {
       const color = checkCard();
       setCardColor(color);
 
+      // if the card is black
       if (color === "black") {
+        boom.play();
+        boom.volume = 0.25;
         if (recentlyPlayedPlayer.team === "red") {
           await gameOverHandler("blue");
         } else {
           await gameOverHandler("red");
         }
+
+        // if the card is red or blue
       } else if (color === "red") {
         setRedGroupCounter((prev) => prev - 1);
         if (redGroupCounter > 1) {
@@ -193,7 +222,11 @@ const Card = (props) => {
         } else {
           await gameOverHandler("blue");
         }
+
+        // if the card is neutral
       } else if (color === "neutral") {
+        lose.play();
+        lose.volume = 0.5;
         finishTurn();
       }
 

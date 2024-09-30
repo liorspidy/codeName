@@ -34,7 +34,9 @@ const LowerBoardZone = (props) => {
     blueTeamPlayers,
     socket,
     setTimeRanOut,
-    siteUrl
+    siteUrl,
+    operatorTypes,
+    setOperatorTypes,
   } = props;
 
   const [opanOperatorsModal, setOpenOperatorsModal] = useState(false);
@@ -48,16 +50,13 @@ const LowerBoardZone = (props) => {
     finalBlueTeamPlayers
   ) => {
     try {
-      const res = await axios.post(
-        `${siteUrl}/room/${roomId}/updateTimer`,
-        {
-          roomId,
-          myDetails: myDetails,
-          tempPlayers: tempPlayers,
-          tempRedTeam: finalRedTeamPlayers,
-          tempBlueTeam: finalBlueTeamPlayers,
-        }
-      );
+      const res = await axios.post(`${siteUrl}/room/${roomId}/updateTimer`, {
+        roomId,
+        myDetails: myDetails,
+        tempPlayers: tempPlayers,
+        tempRedTeam: finalRedTeamPlayers,
+        tempBlueTeam: finalBlueTeamPlayers,
+      });
       socket.emit(
         "lockCard",
         roomId,
@@ -148,7 +147,7 @@ const LowerBoardZone = (props) => {
       } else {
         setTimeRanOut(true);
       }
-    } else if(currentCard === null && !timerStarts) {
+    } else if (currentCard === null && !timerStarts) {
       restartClock();
     }
   };
@@ -246,7 +245,7 @@ const LowerBoardZone = (props) => {
       </div>
       {role === "agent" && (
         <div className={classes.actionButtons}>
-          {wordsToGuess === 1 && (
+          {wordsToGuess === 1 && myDetails?.team === currentGroupColor && (
             <Button classname={classes.skipTurn} onclick={skipTurnHandler}>
               <span className={classes.content}>דלג</span>
             </Button>

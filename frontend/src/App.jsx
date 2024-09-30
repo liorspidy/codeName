@@ -46,34 +46,34 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    if (logedInPlayer) {
-      backgroundMusic.volume = musicVolume;
-      backgroundMusic.loop = true;
-      backgroundMusic.play()
-      setMusicPlays(true);
-      sessionStorage.setItem("musicPlaying", "true");
-      // Listen for any user interaction to ensure music can start
-      const playMusicOnInteraction = () => {
-        backgroundMusic.play().catch((error) => {
-          console.log("User interaction required to start music", error);
-        });
-      };
+  // useEffect(() => {
+  //   if (logedInPlayer) {
+  //     backgroundMusic.volume = musicVolume;
+  //     backgroundMusic.loop = true;
+  //     backgroundMusic.play()
+  //     setMusicPlays(true);
+  //     sessionStorage.setItem("musicPlaying", "true");
+  //     // Listen for any user interaction to ensure music can start
+  //     const playMusicOnInteraction = () => {
+  //       backgroundMusic.play().catch((error) => {
+  //         console.log("User interaction required to start music", error);
+  //       });
+  //     };
   
-      document.addEventListener("click", playMusicOnInteraction, { once: true });
-    }
+  //     document.addEventListener("click", playMusicOnInteraction, { once: true });
+  //   }
 
   
-    // Cleanup when the user logs out
-    return () => {
-      if (!logedInPlayer) {
-        backgroundMusic.pause();
-        backgroundMusic.currentTime = 0;
-        setMusicPlays(false);
-        sessionStorage.setItem("musicPlaying", "false");
-      }
-    };
-  }, [logedInPlayer]);
+  //   // Cleanup when the user logs out
+  //   return () => {
+  //     if (!logedInPlayer) {
+  //       backgroundMusic.pause();
+  //       backgroundMusic.currentTime = 0;
+  //       setMusicPlays(false);
+  //       sessionStorage.setItem("musicPlaying", "false");
+  //     }
+  //   };
+  // }, [logedInPlayer]);
   
 
   // Set players and teams in db

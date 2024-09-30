@@ -3,7 +3,7 @@
 import classes from "./Board.module.scss";
 import Card from "./card/Card";
 import Minimap from "./minimap/Minimap";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UpperBoardZone from "./UpperBoardZone";
 import LowerBoardZone from "./LowerBoardZone";
 import GameOverModal from "../../../../UI/modals/GameOverModal";
@@ -54,7 +54,7 @@ const Board = (props) => {
     playerDetails,
     setIsLoading,
     minimap,
-    siteUrl
+    siteUrl,
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -70,6 +70,7 @@ const Board = (props) => {
   const [role, setRole] = useState("agent"); // "operator" or "agent"
   const [lastPlayerSkipped, setLastPlayerSkipped] = useState(false);
   const [highlitedCards, setHighlitedCards] = useState([]);
+  const [operatorTypes, setOperatorTypes] = useState(false);
 
   const { roomId } = useParams();
 
@@ -109,11 +110,15 @@ const Board = (props) => {
         players={players}
         highlitedCards={highlitedCards}
         siteUrl={siteUrl}
+        setIsLoading={setIsLoading}
       />
     ));
 
     setCards(tempCards);
   }, [currentCard, randomWords, wordLocked, highlitedCards]);
+
+  // Reference to store the debounce timer
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     if (myDetails) {
@@ -135,6 +140,21 @@ const Board = (props) => {
     socket.on("skippingTurn", (playersDetails) => {
       setRecentlyPlayedPlayer(playersDetails);
       setLastPlayerSkipped(true);
+    });
+
+    socket.on("operatorIsTyping", () => {
+
+      // Clear the previous timer if it exists
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+
+      // Set a new timer to debounce the operatorTypes update
+      debounceTimer.current = setTimeout(() => {
+        setOperatorTypes(false);
+      }, 1000);
+
+      setOperatorTypes(true);
     });
 
     return () => {
@@ -197,6 +217,7 @@ const Board = (props) => {
     };
   }, [myDetails, timerStarts]);
 
+  // Highlight the cards that are picked by the players in the playing group (red or blue)
   useEffect(() => {
     if (players.length > 0) {
       players.forEach((player) => {
@@ -213,9 +234,9 @@ const Board = (props) => {
             highlitedCards.filter((index) => index !== cardIndex)
           );
         }
-      });      
+      });
     }
-  }, [players , highlitedCards]);
+  }, [players, highlitedCards]);
 
   useEffect(() => {
     if (recentlyPlayedPlayer !== null && lastPlayerSkipped) {
@@ -274,15 +295,12 @@ const Board = (props) => {
 
   const resetOperatorsWordInDb = async () => {
     try {
-      await axios.post(
-        `${siteUrl}/room/${roomId}/setOperatorsWord`,
-        {
-          roomId,
-          word: "",
-          count: 0,
-          wordsToGuess: 0,
-        }
-      );
+      await axios.post(`${siteUrl}/room/${roomId}/setOperatorsWord`, {
+        roomId,
+        word: "",
+        count: 0,
+        wordsToGuess: 0,
+      });
     } catch (err) {
       console.log("Error resetting operators word in DB");
       throw new Error("Error resetting operators word in DB");
@@ -391,6 +409,8 @@ const Board = (props) => {
         blueTeamPlayers={blueTeamPlayers}
         setNextRound={setNextRound}
         socket={socket}
+        operatorTypes={operatorTypes}
+        setOperatorTypes={setOperatorTypes}
       />
       <LowerBoardZone
         redGroupCounter={redGroupCounter}
@@ -418,6 +438,8 @@ const Board = (props) => {
         blueTeamPlayers={blueTeamPlayers}
         socket={socket}
         siteUrl={siteUrl}
+        operatorTypes={operatorTypes}
+        setOperatorTypes={setOperatorTypes}
       />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>

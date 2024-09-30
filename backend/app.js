@@ -374,6 +374,11 @@ io.on("connection", (socket) => {
     console.log("Message sent");
     io.to(roomId).emit("messageReceived", myDetails , message);
   });
+
+  socket.on("operatorTyping", (roomId) => {
+    console.log("Operator is typing");
+    io.to(roomId).emit("operatorIsTyping");
+  });
 });
 
 // Connect to MongoDB
