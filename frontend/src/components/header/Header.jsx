@@ -20,7 +20,9 @@ const Header = ({
   setPlayersInDb,
   setIsGoingBack,
   roomDetails,
-  siteUrl
+  siteUrl,
+  setIsLoading,
+  isLoading
 }) => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
@@ -44,6 +46,7 @@ const Header = ({
   // Set teams in db
   const setPlayerNotReadyInDb = async (name) => {
     try {
+      setIsLoading(true);
       setIsGoingBack(true);
       const response = await axios.post(
         `${siteUrl}/room/${roomId}/setPlayerNotReady`,
@@ -60,6 +63,8 @@ const Header = ({
     } catch (error) {
       console.error("An error occurred while setting player not ready:", error);
       throw new Error("Could not set player not ready in db");
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,6 +86,8 @@ const Header = ({
           setModalShown={setOpenInfo}
           modalShown={openInfo}
           roomDetails={roomDetails}
+          setIsLoading={setIsLoading}
+          isLoading={isLoading}
         />
       )}
       {modalOpen && (
@@ -90,6 +97,8 @@ const Header = ({
           modalShown={openChat}
           siteUrl={siteUrl}
           socket={socket}
+          setIsLoading={setIsLoading}
+          isLoading={isLoading}
         />
       )}
       <div className={classes.rightSection}>

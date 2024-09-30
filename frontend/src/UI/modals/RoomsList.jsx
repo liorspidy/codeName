@@ -4,10 +4,9 @@ import classes from "./RoomsList.module.scss";
 import Loader from "../loader/Loader";
 
 // eslint-disable-next-line react/prop-types
-const RoomsList = ({ setValue, siteUrl }) => {
+const RoomsList = ({ setValue, siteUrl , isLoading, setIsLoading}) => {
   const [openRooms, setOpenRooms] = useState([]);
   const [pickedRoom, setPickedRoom] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const getOpenRooms = () => {
     axios

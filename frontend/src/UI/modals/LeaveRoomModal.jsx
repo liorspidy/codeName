@@ -16,7 +16,9 @@ const LeaveRoomModal = ({
   setModalOpen,
   roomDetails,
   socket,
-  siteUrl
+  siteUrl,
+  isLoading,
+  setIsLoading,
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
@@ -55,6 +57,7 @@ const LeaveRoomModal = ({
 
   const leaveRoomHandler = async () => {
     try {
+      setIsLoading(true);
       setleavingRoom(true);
       await axios.post(
         `${siteUrl}/room/${roomDetails.id}/leaveRoom`,
@@ -68,6 +71,7 @@ const LeaveRoomModal = ({
       setleavingRoom(false);
       socket.emit("playerLeft", roomDetails, playerDetails.name);
       sessionStorage.removeItem("lastRoomId");
+      setIsLoading(false);
     } catch (error) {
       setError("אירעה שגיאה, אנא נסה שוב מאוחר יותר");
       console.log(error);

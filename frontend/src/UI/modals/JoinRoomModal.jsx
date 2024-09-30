@@ -16,6 +16,8 @@ const JoinRoomModal = ({
   modalShown,
   setModalOpen,
   siteUrl,
+  isLoading,
+  setIsLoading,
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
@@ -117,7 +119,7 @@ const JoinRoomModal = ({
             onKeyDown={handleEnterPress}
             placeholder="קוד החדר"
           />
-          <RoomsList setValue={setValue} siteUrl={siteUrl} />
+          <RoomsList setValue={setValue} siteUrl={siteUrl} isLoading={isLoading} setIsLoading={setIsLoading} />
           {!!error.length && <p className={classes.error}>{error}</p>}
           <Button classname={classes.actionButton} onclick={joinRoom}>
             <span>הצטרפות</span>

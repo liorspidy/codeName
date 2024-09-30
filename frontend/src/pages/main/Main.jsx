@@ -12,7 +12,15 @@ import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
+const Main = ({
+  logedInPlayer,
+  setLogedInPlayer,
+  siteUrl,
+  backgroundMusic,
+  setMusicPlays,
+  isLoading,
+  setIsLoading,
+}) => {
   const [createRoomModalShown, setCreateRoomModalShown] = useState(false);
   const [joinModalShown, setJoinModalShown] = useState(false);
   const [logInShown, setLogInShown] = useState(false);
@@ -72,6 +80,9 @@ const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
   const logOutHandler = () => {
     sessionStorage.removeItem("token");
     setLogedInPlayer(false);
+    setMusicPlays(false);
+    backgroundMusic.pause();
+    sessionStorage.setItem("musicPlaying", "false");
   };
 
   const closePlayerDetailsHandler = () => {
@@ -92,6 +103,8 @@ const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
           setModalShown={setCreateRoomModalShown}
           modalShown={createRoomModalShown}
           siteUrl={siteUrl}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       )}
       {modalOpen && (
@@ -100,6 +113,8 @@ const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
           setModalShown={setJoinModalShown}
           modalShown={joinModalShown}
           siteUrl={siteUrl}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       )}
       {modalOpen && (
@@ -109,6 +124,8 @@ const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
           modalShown={logInShown}
           setLogedInPlayer={setLogedInPlayer}
           siteUrl={siteUrl}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       )}
       {modalOpen && (
@@ -117,6 +134,8 @@ const Main = ({ logedInPlayer, setLogedInPlayer, siteUrl }) => {
           setModalShown={setCreateUserShown}
           modalShown={createUserShown}
           siteUrl={siteUrl}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       )}
 

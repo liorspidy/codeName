@@ -25,7 +25,6 @@ const Game = (props) => {
   const [winnerGroup, setWinnerGroup] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [timerStarts, setTimerStarts] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [redGroupCounter, setRedGroupCounter] = useState(
     leadGroupColor === "red" ? 9 : 8
@@ -59,7 +58,9 @@ const Game = (props) => {
     setBlueTeamPlayers,
     minimap,
     setMinimap,
-    siteUrl
+    siteUrl,
+    setIsLoading,
+    isLoading
   } = props;
 
   const { roomId } = useParams();
@@ -221,6 +222,7 @@ const Game = (props) => {
         setIsGoingBack={setIsGoingBack}
         roomDetails={roomDetails}
         siteUrl={siteUrl}
+        setIsLoading={setIsLoading}
       />
       <Board
         randomWords={pickedRandomWords}
@@ -262,6 +264,7 @@ const Game = (props) => {
         setBlueTeamPlayers={setBlueTeamPlayers}
         setPlayersInDb={setPlayersInDb}
         playerDetails={playerDetails}
+        isLoading={isLoading}
         setIsLoading={setIsLoading}
         minimap={minimap}
         siteUrl={siteUrl}

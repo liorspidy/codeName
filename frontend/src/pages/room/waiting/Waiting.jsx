@@ -27,6 +27,7 @@ const Waiting = ({
   players,
   setPlayers,
   setPlayersAmountError,
+  isLoading,
   setIsLoading,
   siteUrl
 }) => {
@@ -312,6 +313,8 @@ const Waiting = ({
           roomDetails={roomDetails}
           socket={socket}
           siteUrl={siteUrl}
+          setIsLoading={setIsLoading}
+          isLoading={isLoading}
         />
       )}
       <h1 className={classes.title}>

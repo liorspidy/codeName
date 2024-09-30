@@ -16,11 +16,13 @@ const ChatModal = ({
   setModalOpen,
   siteUrl,
   socket,
+  isLoading,
+  setIsLoading,
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [messageValue, setMessageValue] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [sendingMessage, setSendingMessage] = useState(false);
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
     : null;
@@ -56,12 +58,22 @@ const ChatModal = ({
     setModalShown(false);
   }, [setModalShown, setBackdropShown, setModalOpen]);
 
-  useEffect(() => {
-    axios.get(`${siteUrl}/room/${roomId}/getMessages`).then((res) => {
-      const messages = res.data;
-      setMessages(messages);
+  const getMessages = async () => {
+    try {
+      setIsLoading(true);
+      axios.get(`${siteUrl}/room/${roomId}/getMessages`).then((res) => {
+        const messages = res.data;
+        setMessages(messages);
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
       setIsLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    getMessages();
   }, [roomId, siteUrl]);
 
   useEffect(() => {
@@ -75,24 +87,33 @@ const ChatModal = ({
     };
   }, [socket]);
 
-  const sendMessageHandler = () => {
-    axios
-      .post(`${siteUrl}/room/${roomId}/sendMessage`, {
-        roomId,
-        content: messageValue,
-        sender: playerDetails,
-      })
-      .then((response) => {
-        const messageSent = response.data;
-        socket.emit("messageSent", roomId, messageSent, playerDetails);
-        setMessages((prevMessages) => [...prevMessages, messageSent]);
-        setMessageValue("");
-      });
+  const sendMessageHandler = async () => {
+    try {
+      setIsLoading(true);
+      setSendingMessage(true);
+      await axios
+        .post(`${siteUrl}/room/${roomId}/sendMessage`, {
+          roomId,
+          content: messageValue,
+          sender: playerDetails,
+        })
+        .then((response) => {
+          const messageSent = response.data;
+          socket.emit("messageSent", roomId, messageSent, playerDetails);
+          setMessages((prevMessages) => [...prevMessages, messageSent]);
+          setMessageValue("");
+        });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+      setSendingMessage(false);
+    }
   };
 
-  const handleEnterPress = (e) => {
+  const handleEnterPress = async (e) => {
     if (e.key === "Enter") {
-      sendMessageHandler();
+      await sendMessageHandler();
     }
   };
 
@@ -138,25 +159,35 @@ const ChatModal = ({
               <Loader />
             </div>
           )}
-          {!isLoading && (
+          {!isLoading && messages.length > 0 && (
             <ul className={classes.chatBoxBody}>{parsedMessages}</ul>
+          )}
+          {!isLoading && (!messages.length) && (
+            <span className={classes.noMessages}>אין הודעות</span>
           )}
         </div>
         <div className={classes.chatInput}>
-          <IconButton
-            onClick={sendMessageHandler}
-            aria-label="send message"
-            sx={{
-              backgroundColor: "#646cff",
-              color: "#fff",
-              ":hover": { backgroundColor: "#464cc2" },
-              width: "45px",
-              height: "45px",
-              alignSelf: "center",
-            }}
-          >
-            <SendIcon />
-          </IconButton>
+          {!sendingMessage && !isLoading && (
+            <IconButton
+              onClick={sendMessageHandler}
+              aria-label="send message"
+              sx={{
+                backgroundColor: "#646cff",
+                color: "#fff",
+                ":hover": { backgroundColor: "#464cc2" },
+                width: "45px",
+                height: "45px",
+                alignSelf: "center",
+              }}
+            >
+              <SendIcon />
+            </IconButton>
+          )}
+          {sendingMessage && (
+            <div className={classes.loadingMessageWrapper}>
+              <Loader />
+            </div>
+          )}
           <input
             type="text"
             placeholder="כתוב הודעה..."

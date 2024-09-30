@@ -11,7 +11,6 @@ import Loader from "../../UI/loader/Loader";
 
 const Room = (props) => {
   const [roomName, setRoomName] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
   const {
     socket,
@@ -30,7 +29,9 @@ const Room = (props) => {
     blueTeamPlayers,
     isConnected,
     setIsConnected,
-    siteUrl
+    siteUrl,
+    isLoading,
+    setIsLoading,
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -42,9 +43,7 @@ const Room = (props) => {
   const getRoomDetails = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `${siteUrl}/room/${roomId}/getRoom`
-      );
+      const response = await axios.get(`${siteUrl}/room/${roomId}/getRoom`);
       const room = response.data;
       setRoomDetails(room);
       setRoomName(room.name);
@@ -56,7 +55,6 @@ const Room = (props) => {
       // if(!room.players.some((player) => player.ready === false)){
       //   navigate(`/room/${roomId}/game`);
       // }
-      
     } catch (err) {
       console.log(err);
       navigate("/404");
@@ -136,7 +134,7 @@ const Room = (props) => {
 
   useEffect(() => {
     setIsConnected(socket.connected);
-  }, [roomName,socket]);
+  }, [roomName, socket]);
 
   return (
     <div className={classes.room}>
@@ -156,6 +154,7 @@ const Room = (props) => {
           setIsGoingBack={setIsGoingBack}
           roomDetails={roomDetails}
           siteUrl={siteUrl}
+          setIsLoading={setIsLoading}
         />
         <Waiting
           roomDetails={roomDetails}
