@@ -91,7 +91,8 @@
 
   .title {
     font-size: 6dvw;
-    margin-bottom: 0.5rem;
+    margin-block: 0.5rem;
+    word-break: break-word;
   }
 
   input {
@@ -133,7 +134,8 @@
   .createRoomModal,
   .joinRoomModal,
   .logInModal,
-  .createUserModal {
+  .createUserModal,
+  .settingsModal {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -145,7 +147,6 @@
   .createRoomModal,
   .joinRoomModal,
   .createUserModal {
-    overflow: auto;
     padding-inline: 0.25rem;
   }
 
@@ -266,6 +267,52 @@
         .passwordRule {
           color: grey;
         }
+      }
+    }
+  }
+
+  .settingsModal{
+    .actionWrapper{
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      color: black;
+      width: 100%;
+      justify-content: space-between;
+      margin-block: 0.5rem;
+
+      .subtitle{
+        font-size: 1.25rem;
+        white-space: nowrap;
+        font-weight: bold;
+      }
+    }
+
+    .settingsButton {
+      cursor: pointer;
+    }
+
+    .bgMusicVolume{
+      padding: 0;
+      box-shadow: none;
+      position: relative;
+
+      &::before {
+        content: "0%";
+        position: absolute;
+        right: 0;
+        top: 1rem;
+        font-size: 0.75rem;
+        z-index: -1;
+      }
+
+      &::after {
+        content: "100%";
+        position: absolute;
+        left: 0;
+        top: 1rem;
+        font-size: 0.75rem;
+        z-index: -1;
       }
     }
   }
@@ -692,8 +739,12 @@
   }
 }
 
-@media (min-width: 741px) {
+@media screen and (min-width: 769px) {
   .modal {
-    font-size: 2rem;
+    max-height: unset;
+
+    .title {
+      font-size: 2rem;
+    }
   }
 }

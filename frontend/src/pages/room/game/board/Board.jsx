@@ -55,6 +55,7 @@ const Board = (props) => {
     setIsLoading,
     minimap,
     siteUrl,
+    soundEffectsAllowed
   } = props;
 
   const [showMinimap, setShowMinimap] = useState(false);
@@ -71,6 +72,11 @@ const Board = (props) => {
   const [lastPlayerSkipped, setLastPlayerSkipped] = useState(false);
   const [highlitedCards, setHighlitedCards] = useState([]);
   const [operatorTypes, setOperatorTypes] = useState(false);
+  const [winSound, setWinSound] = useState(null);
+  const [loseSound, setLoseSound] = useState(null);
+  const [boomSound, setBoomSound] = useState(null);
+  const [gameWonSound, setGameWonSound] = useState(null);
+  const [gameLostSound, setGameLostSound] = useState(null);
 
   const { roomId } = useParams();
 
@@ -111,6 +117,10 @@ const Board = (props) => {
         highlitedCards={highlitedCards}
         siteUrl={siteUrl}
         setIsLoading={setIsLoading}
+        soundEffectsAllowed={soundEffectsAllowed}
+        winSound={winSound}
+        loseSound={loseSound}
+        boomSound={boomSound}
       />
     ));
 
@@ -123,6 +133,24 @@ const Board = (props) => {
   useEffect(() => {
     if (myDetails) {
       setRole(myDetails.role);
+
+      const boom = new Audio("/music/boom.mp3");
+      const lose = new Audio("/music/lose.mp3");
+      const win = new Audio("/music/win.mp3");
+      const gameWon = new Audio("/music/cheer.mp3");
+      const gameLost = new Audio("/music/aww.mp3");
+
+      setWinSound(win);
+      setLoseSound(lose);
+      setBoomSound(boom);
+      setGameWonSound(gameWon);
+      setGameLostSound(gameLost);
+
+      // winSound.volume = 0.5;
+      // loseSound.volume = 0.5;
+      // boomSound.volume = 0.5;
+      // gameWonSound.volume = 0.5;
+      // gameLostSound.volume = 0.5;
     }
   }, [myDetails]);
 
@@ -364,6 +392,8 @@ const Board = (props) => {
           setBlueTeamPlayers={setBlueTeamPlayers}
           setPlayers={setPlayers}
           siteUrl={siteUrl}
+          gameWonSound={gameWonSound}
+          gameLostSound={gameLostSound}
         />
       )}
       <Minimap

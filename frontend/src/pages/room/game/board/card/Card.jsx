@@ -5,10 +5,6 @@ import classes from "../Board.module.scss";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const boom = new Audio("/music/boom.mp3");
-const lose = new Audio("/music/lose.mp3");
-const win = new Audio("/music/win.mp3");
-
 const Card = (props) => {
   const {
     word,
@@ -42,7 +38,11 @@ const Card = (props) => {
     players,
     highlitedCards,
     siteUrl,
-    setIsLoading
+    setIsLoading,
+    soundEffectsAllowed,
+    winSound,
+    loseSound,
+    boomSound,
   } = props;
 
   const [isFlipped, setIsFlipped] = useState(true);
@@ -70,14 +70,11 @@ const Card = (props) => {
   const updateRevealedCardsInDb = async (color) => {
     try {
       setIsLoading(true);
-      await axios.post(
-        `${siteUrl}/room/${roomId}/updateRevealedCards`,
-        {
-          roomId,
-          color,
-          index,
-        }
-      );
+      await axios.post(`${siteUrl}/room/${roomId}/updateRevealedCards`, {
+        roomId,
+        color,
+        index,
+      });
     } catch (err) {
       console.log(err);
       throw new Error("Could not update the revealed cards");
@@ -160,7 +157,7 @@ const Card = (props) => {
       if (wordsToGuess === 1) {
         finishTurn();
 
-      // if regular word was guessed
+        // if regular word was guessed
       } else {
         setWordsToGuess((prev) => prev - 1);
         if (myDetails.name === recentlyPlayedPlayer.name) {
@@ -168,11 +165,13 @@ const Card = (props) => {
         }
       }
 
-      win.play();
-      win.volume = 0.5;
+      if (soundEffectsAllowed) {
+        winSound.play();
+      }
     } else {
-      lose.play();
-      lose.volume = 0.5;
+      if (soundEffectsAllowed) {
+        loseSound.play();
+      }
 
       finishTurn();
     }
@@ -199,8 +198,9 @@ const Card = (props) => {
 
       // if the card is black
       if (color === "black") {
-        boom.play();
-        boom.volume = 0.25;
+        if (soundEffectsAllowed) {
+          boomSound.play();
+        }
         if (recentlyPlayedPlayer.team === "red") {
           await gameOverHandler("blue");
         } else {
@@ -225,8 +225,9 @@ const Card = (props) => {
 
         // if the card is neutral
       } else if (color === "neutral") {
-        lose.play();
-        lose.volume = 0.5;
+        if (soundEffectsAllowed) {
+          loseSound.play();
+        }
         finishTurn();
       }
 
@@ -344,9 +345,11 @@ const Card = (props) => {
       <div
         className={`${classes.cardInfo} ${showCardInfo ? classes.show : ""}`}
       />
-      <div className={`${classes.cardContent} ${
-        highlightedCard ? `${classes.highlited}` : ""
-      } `}>
+      <div
+        className={`${classes.cardContent} ${
+          highlightedCard ? `${classes.highlited}` : ""
+        } `}
+      >
         <span className={classes.word}>{word}</span>
       </div>
     </button>

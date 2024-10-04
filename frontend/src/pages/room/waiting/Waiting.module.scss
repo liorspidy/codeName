@@ -9,13 +9,6 @@
   flex: 1;
 }
 
-// .waitingRoom {
-//   background-image: url("../../../images/bg.jpg");
-//   background-repeat: no-repeat;
-//   background-position: top;
-//   background-size: cover;
-// }
-
 .title {
   font-size: 1.8rem;
   margin: 0;
@@ -45,11 +38,10 @@
 
 .groups {
   display: flex;
-  flex-direction: row-reverse;
   width: 90%;
   gap: 5dvw;
   justify-content: space-between;
-  flex: 1;
+  flex: 1 0 0;
 
   .colorIndicator {
     width: 100%;
@@ -60,11 +52,7 @@
     display: flex;
 
     .activatorName {
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: 2;
+      text-align: center;
       width: 100%;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -73,10 +61,11 @@
       padding-block: 0.25em;
       font-weight: bold;
       border-radius: 5px;
-      font-size: 1rem;
+      border: 3px solid transparent;
+      font-size: 1.2rem;
 
       &.myPlayer {
-        border: 2px solid rgb(255 127 31);
+        border: 3px solid rgb(255, 166, 99);
       }
 
       &.ready {
@@ -102,13 +91,13 @@
   }
 
   .redGroup {
-    flex: 1;
+    flex: 1 0 0;
     display: flex;
     flex-direction: column;
     gap: 1.5dvh;
+    
     .colorIndicator {
       background-color: rgb(182, 15, 15);
-      flex-direction: row-reverse;
     }
   }
 
@@ -128,7 +117,7 @@
   .playersList {
     .playerItem {
       position: relative;
-      font-size: min(3.25dvw, 24px);
+      font-size: 1.2rem;
 
       &::after {
         right: 1dvw;
@@ -161,17 +150,15 @@
     border-radius: 5px;
 
     li {
-      text-align: center;
       color: black;
-      height: 4dvh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      text-align: center;
       border-bottom: 1px solid #cccc;
       position: relative;
       background-color: white;
       border-radius: 5px;
-      margin-bottom: 3px;
+      margin-bottom: 1.5dvh;
+      padding-inline: 0.5em;
+      padding-block: 0.25em;
 
       // &::after {
       //   content: "";
@@ -221,12 +208,3 @@
     opacity: 1;
   }
 }
-
-// @media (max-width: 768px) {
-//   .waitingRoom {
-//     background-image: url("../../../images/bg.jpg");
-//     background-repeat: no-repeat;
-//     background-position: top;
-//     background-size: cover;
-//   }
-// }

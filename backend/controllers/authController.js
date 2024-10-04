@@ -73,7 +73,7 @@ const login = async (req, res) => {
     const { username, password } = req.body;
 
     // Convert input username to lowercase
-    const lowerCaseUsername = username.toLowerCase();
+    const lowerCaseUsername = username.toLowerCase().trim();
 
     // Find user in the database using the lowercase username
     const user = await User.findOne({ username: lowerCaseUsername });
@@ -81,11 +81,15 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-
+    
+    
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
+          console.log(password , isPasswordValid);
       return res.status(401).json({ error: "Invalid credentials" });
     }
+    
 
     const token = jwt.sign(
       {

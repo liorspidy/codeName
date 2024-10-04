@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { useCallback } from "react";
 import classes from "./Modal.module.scss";
@@ -19,7 +19,9 @@ const GameOverModal = ({
   setRedTeamPlayers,
   setBlueTeamPlayers,
   setPlayers,
-  siteUrl
+  siteUrl,
+  gameWonSound,
+  gameLostSound
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const navigate = useNavigate();
@@ -101,11 +103,22 @@ const GameOverModal = ({
     setPlayers([]);
     sessionStorage.removeItem("lastRoomId");
     setIsLoading(false);
+    gameWonSound.stop();
+    gameLostSound.stop();
   };
 
-  const winnerGroupName =
-    winnerGroup === "red" ? "האדומים" : winnerGroup === "blue" ? "הכחולים" : "";
+  const winnerGroupName = winnerGroup === "red" ? "האדומים" : winnerGroup === "blue" ? "הכחולים" : "";
 
+  useEffect(() => {
+    if(winnerGroup === playerDetails.team){
+      gameWonSound.play();
+    }
+    else{
+      gameLostSound.play();
+    }
+  },[winnerGroup, playerDetails, gameWonSound, gameLostSound]);
+
+    
   return (
     <Modal
       closeBackdrop={closeBackdrop}

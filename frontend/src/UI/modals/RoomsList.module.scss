@@ -21,6 +21,7 @@
       color: #646464;
     }
   }
+
   .list {
     padding: 0.25rem;
     margin: 0;
@@ -117,6 +118,34 @@
       &.picked {
         .joinButton {
           background-color: #d0e0ff;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .roomListContainer {
+    .subtitleWrapper {
+      .joinRoomTitle {
+        font-size: 1.5rem;
+      }
+
+      .roomsNumber {
+        font-size: 1.15rem;
+      }
+    }
+
+    .list {
+      .item {
+        .joinButton {
+          .name{
+            font-size: 1.15rem;
+          }
+
+          .players {
+            font-size: 1.15rem;
+          }
         }
       }
     }

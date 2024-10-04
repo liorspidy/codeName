@@ -9,9 +9,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import classes from "./Menu.module.scss";
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export default function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
@@ -35,6 +35,12 @@ export default function SwipeableTemporaryDrawer() {
     setState({ ...state, [anchor]: open });
   };
 
+  const buttonHandler = (index) => {
+    if(index === 0) {
+      console.log("settings");
+    }
+  }
+
   const list = (anchor) => (
     <Box
       sx={{ width: 250 , flex: "1", display: "flex" ,flexDirection: "column"}}
@@ -44,10 +50,10 @@ export default function SwipeableTemporaryDrawer() {
     >
       <List className={classes.list} sx={{flex: "1"}}>
         {["הגדרות", "עוד משחקים"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+          <ListItem key={text} disablePadding onClick={buttonHandler.bind(this,index)}>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index % 2 === 0 ? <SettingsIcon /> : <MailIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>

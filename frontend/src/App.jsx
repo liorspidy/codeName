@@ -4,13 +4,11 @@ import Main from "./pages/main/Main";
 import Room from "./pages/room/Room";
 import NotFound from "./pages/notFound/NotFound";
 import Game from "./pages/room/game/Game";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:4000");
 // const socket = io("https://wordsplaylfbe.glitch.me");
 import axios from "axios";
-
-const backgroundMusic = new Audio("/music/loop.mp3");
 
 function App() {
   const [logedInPlayer, setLogedInPlayer] = useState(
@@ -26,11 +24,21 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
-  const [musicPlays, setMusicPlays] = useState(
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [bgMusicPlays, setBgMusicPlays] = useState(
     sessionStorage.getItem("musicPlaying") === "true" ? true : false
   );
-  const [musicVolume, setMusicVolume] = useState(0.5);
-  const [isLoading, setIsLoading] = useState(true);
+  const [bgMusicVolume, setBgMusicVolume] = useState(
+    sessionStorage.getItem("musicVolume")
+      ? sessionStorage.getItem("musicVolume")
+      : 1
+  );
+  const [backgroundMusic, setBackgroundMusic] = useState(null);
+  const [soundEffectsAllowed, setSoundEffectsAllowed] = useState(
+    sessionStorage.getItem("soundEffects") === "true" ? true : false
+  );
+
   const siteUrl = "http://localhost:4000";
   // const siteUrl = "https://wordsplaylfbe.glitch.me";
 
@@ -47,34 +55,50 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (logedInPlayer) {
-      backgroundMusic.volume = musicVolume;
-      backgroundMusic.loop = true;
-      backgroundMusic.play()
-      setMusicPlays(true);
-      sessionStorage.setItem("musicPlaying", "true");
-      // Listen for any user interaction to ensure music can start
-      const playMusicOnInteraction = () => {
-        backgroundMusic.play().catch((error) => {
-          console.log("User interaction required to start music", error);
-        });
-      };
-  
-      document.addEventListener("click", playMusicOnInteraction, { once: true });
+    const audio = new Audio("/music/loop.mp3");
+    audio.loop = true;
+    audio.volume = bgMusicVolume;
+    setBackgroundMusic(audio);
+
+    const playMusicOnInteraction = () => {
+      audio.play().catch((error) => {
+        console.log("User interaction required to start music", error);
+      });
+    };
+
+    // Attach the interaction listener only when the user is logged in
+    if (logedInPlayer && bgMusicPlays) {
+      document.addEventListener("click", playMusicOnInteraction, {
+        once: true,
+      });
     }
 
-  
-    // Cleanup when the user logs out
+    // Cleanup listener and stop music on logout
     return () => {
-      if (!logedInPlayer) {
+      if (backgroundMusic) {
         backgroundMusic.pause();
         backgroundMusic.currentTime = 0;
-        setMusicPlays(false);
+        setBgMusicPlays(false);
         sessionStorage.setItem("musicPlaying", "false");
       }
+      document.removeEventListener("click", playMusicOnInteraction);
     };
   }, [logedInPlayer]);
-  
+
+  useEffect(() => {
+    if (backgroundMusic && bgMusicPlays) {
+      backgroundMusic.play();
+    } else if (backgroundMusic && !bgMusicPlays) {
+      backgroundMusic.pause();
+    }
+  }, [bgMusicPlays, backgroundMusic]);
+
+  // Handle volume changes
+  useEffect(() => {
+    if (backgroundMusic) {
+      backgroundMusic.volume = bgMusicVolume;
+    }
+  }, [bgMusicVolume, backgroundMusic]);
 
   // Set players and teams in db
   const setPlayersInDb = (roomId, tempPlayers, tempRed, tempBlue) => {
@@ -106,10 +130,15 @@ function App() {
               setLogedInPlayer={setLogedInPlayer}
               logedInPlayer={logedInPlayer}
               siteUrl={siteUrl}
-              backgroundMusic={backgroundMusic}
-              setMusicPlays={setMusicPlays}
               setIsLoading={setIsLoading}
               isLoading={isLoading}
+              bgMusicPlays={bgMusicPlays}
+              setBgMusicPlays={setBgMusicPlays}
+              bgMusicVolume={bgMusicVolume}
+              setBgMusicVolume={setBgMusicVolume}
+              backgroundMusic={backgroundMusic}
+              soundEffectsAllowed={soundEffectsAllowed}
+              setSoundEffectsAllowed={setSoundEffectsAllowed}
             />
           }
         />
@@ -169,6 +198,7 @@ function App() {
                   siteUrl={siteUrl}
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}
+                  soundEffectsAllowed={soundEffectsAllowed}
                 />
               }
             />

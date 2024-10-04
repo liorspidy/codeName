@@ -281,7 +281,7 @@ const Waiting = ({
       playerDetails
     ) {
       const redIndex = redTeamPlayers.findIndex(
-        (player) => player.name === playerDetails.name
+        (player) => player?.name === playerDetails?.name
       );
       if (redIndex !== -1) {
         const ready = redTeamPlayers[redIndex].ready;
@@ -290,9 +290,9 @@ const Waiting = ({
         const ready =
           blueTeamPlayers[
             blueTeamPlayers.findIndex(
-              (player) => player.name === playerDetails.name
+              (player) => player?.name === playerDetails?.name
             )
-          ].ready;
+          ]?.ready;
         setReadyButton(ready);
       }
     }
@@ -334,15 +334,15 @@ const Waiting = ({
 
       <div className={classes.groups}>
         <TeamBuilder
-          teamPlayers={redTeamPlayers}
-          playerDetails={playerDetails}
-          mainClass={classes.redGroup}
-          setReadyButton={setReadyButton}
-        />
-        <TeamBuilder
           teamPlayers={blueTeamPlayers}
           playerDetails={playerDetails}
           mainClass={classes.blueGroup}
+          setReadyButton={setReadyButton}
+        />
+        <TeamBuilder
+          teamPlayers={redTeamPlayers}
+          playerDetails={playerDetails}
+          mainClass={classes.redGroup}
           setReadyButton={setReadyButton}
         />
       </div>

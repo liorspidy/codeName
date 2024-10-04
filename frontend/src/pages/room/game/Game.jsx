@@ -60,7 +60,8 @@ const Game = (props) => {
     setMinimap,
     siteUrl,
     setIsLoading,
-    isLoading
+    isLoading,
+    soundEffectsAllowed
   } = props;
 
   const { roomId } = useParams();
@@ -268,6 +269,7 @@ const Game = (props) => {
         setIsLoading={setIsLoading}
         minimap={minimap}
         siteUrl={siteUrl}
+        soundEffectsAllowed={soundEffectsAllowed}
       />
     </div>
   );

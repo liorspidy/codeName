@@ -11,20 +11,28 @@ import Button from "../../UI/button/Button";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsModal from "../../UI/modals/SettingsModal";
 
 const Main = ({
   logedInPlayer,
   setLogedInPlayer,
   siteUrl,
   backgroundMusic,
-  setMusicPlays,
   isLoading,
   setIsLoading,
+  bgMusicPlays,
+  setBgMusicPlays,
+  bgMusicVolume,
+  setBgMusicVolume,
+  soundEffectsAllowed,
+  setSoundEffectsAllowed,
 }) => {
   const [createRoomModalShown, setCreateRoomModalShown] = useState(false);
   const [joinModalShown, setJoinModalShown] = useState(false);
   const [logInShown, setLogInShown] = useState(false);
   const [createUserShown, setCreateUserShown] = useState(false);
+  const [settingsMenuShown , setSettingsMenuShown] = useState(false);
   const [playersDetails, setPlayersDetails] = useState({});
   const [shortName, setShortName] = useState("");
   const [isDetailsClicked, setIsDetailsClicked] = useState(false);
@@ -50,6 +58,11 @@ const Main = ({
 
   const createUserModal = () => {
     setCreateUserShown(true);
+    setModalOpen(true);
+  };
+
+  const settingsModalToggle = () => {
+    setSettingsMenuShown(true);
     setModalOpen(true);
   };
 
@@ -80,7 +93,7 @@ const Main = ({
   const logOutHandler = () => {
     sessionStorage.removeItem("token");
     setLogedInPlayer(false);
-    setMusicPlays(false);
+    setBgMusicPlays(false);
     backgroundMusic.pause();
     sessionStorage.setItem("musicPlaying", "false");
   };
@@ -139,43 +152,74 @@ const Main = ({
           setIsLoading={setIsLoading}
         />
       )}
+      {modalOpen && (
+        <SettingsModal 
+        setModalOpen={setModalOpen}
+        setModalShown={setSettingsMenuShown}
+        modalShown={settingsMenuShown}
+        siteUrl={siteUrl}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        backgroundMusic={backgroundMusic}
+        bgMusicPlays={bgMusicPlays}
+        setBgMusicPlays={setBgMusicPlays}
+        bgMusicVolume={bgMusicVolume} 
+        setBgMusicVolume={setBgMusicVolume} 
+        soundEffectsAllowed={soundEffectsAllowed}
+        setSoundEffectsAllowed={setSoundEffectsAllowed}
+        />
+      )}
 
       <Circles
         isDetailsClicked={isDetailsClicked}
         setIsDetailsClicked={setIsDetailsClicked}
       />
+
+      {/* player details container */}
       {logedInPlayer && (
-        <div
-          className={classes.loggedInDetails}
-          onClick={closePlayerDetailsHandler}
-        >
-          <motion.div
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.1 }}
-            className={classes.nameContainer}
-            onClick={onDetailsClick}
-          >
-            <span
-              className={classes.name}
-              style={{ color: playersDetails.color }}
-            >
-              {shortName}
-            </span>
-          </motion.div>
+        <div className={classes.playerActions}>
           <div
-            className={`${classes.dropdown} ${
-              isDetailsClicked ? classes.active : ""
-            }`}
+            className={classes.loggedInDetails}
+            onClick={closePlayerDetailsHandler}
           >
-            <ul
-              className={classes.detailsList}
-              onClick={closePlayerDetailsHandler}
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              className={classes.nameContainer}
+              onClick={onDetailsClick}
             >
-              <li>{playersDetails.nickname}</li>
-              <li>{playersDetails.fullName}</li>
-              <li>{playersDetails.email}</li>
-            </ul>
+              <span
+                className={classes.name}
+                style={{ color: playersDetails.color }}
+              >
+                {shortName}
+              </span>
+            </motion.div>
+            <div
+              className={`${classes.dropdown} ${
+                isDetailsClicked ? classes.active : ""
+              }`}
+            >
+              <ul
+                className={classes.detailsList}
+                onClick={closePlayerDetailsHandler}
+              >
+                <li>{playersDetails.nickname}</li>
+                <li>{playersDetails.fullName}</li>
+                <li>{playersDetails.email}</li>
+              </ul>
+            </div>
           </div>
+
+          {/* setting menu */}
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1 }}
+              className={classes.settings}
+              onClick={settingsModalToggle}
+            >
+              <SettingsIcon sx={{ scale: '1.2' }} />
+            </motion.div>
         </div>
       )}
 
