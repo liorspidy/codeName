@@ -63,7 +63,9 @@ const Game = (props) => {
     isLoading,
     soundEffectsAllowed,
     notificationsNumber, 
-    setNotificationsNumber
+    setNotificationsNumber,
+    openChat,
+    setOpenChat,
   } = props;
 
   const { roomId } = useParams();
@@ -229,6 +231,8 @@ const Game = (props) => {
         setIsLoading={setIsLoading}
         notificationsNumber={notificationsNumber}
         setNotificationsNumber={setNotificationsNumber}
+        openChat={openChat}
+        setOpenChat={setOpenChat}
       />
       <Board
         randomWords={pickedRandomWords}

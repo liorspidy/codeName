@@ -19,10 +19,11 @@ const ChatModal = ({
   isLoading,
   setIsLoading,
   setNotificationsNumber,
+  messages,
+  setMessages,
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [messageValue, setMessageValue] = useState("");
-  const [messages, setMessages] = useState([]);
   const [sendingMessage, setSendingMessage] = useState(false);
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -84,13 +85,16 @@ const ChatModal = ({
     debounceTimeout.current = setTimeout(() => {
       if (unreadMessageBuffer.current.length > 0) {
         // Send unread messages in bulk
-        axios.post(`${siteUrl}/room/${roomId}/readMessages`, {
-          roomId,
-          messageIds: unreadMessageBuffer.current,
-          playerName: playerDetails.name,
-        }).then(() => {
-          unreadMessageBuffer.current = []; // Clear the buffer
-        }).catch(err => console.error(err));
+        axios
+          .post(`${siteUrl}/room/${roomId}/readMessages`, {
+            roomId,
+            messageIds: unreadMessageBuffer.current,
+            playerName: playerDetails.name,
+          })
+          .then(() => {
+            unreadMessageBuffer.current = []; // Clear the buffer
+          })
+          .catch((err) => console.error(err));
       }
     }, 500); // 500ms debounce period
   };
@@ -106,18 +110,6 @@ const ChatModal = ({
       setNotificationsNumber(0);
     });
   }, [roomId, siteUrl]);
-
-  // Set up the socket listener for incoming messages from the server
-  useEffect(() => {
-    socket.on("messageReceived", (myDetails, message) => {
-      if (myDetails.name === playerDetails.name) return;
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    return () => {
-      socket.off("messageReceived");
-    };
-  }, [socket]);
 
   // Set up the observer to mark messages as read
   useEffect(() => {

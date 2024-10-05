@@ -26,6 +26,7 @@ function App() {
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [notificationsNumber, setNotificationsNumber] = useState(0);
+  const [openChat, setOpenChat] = useState(false);
 
   const [bgMusicPlays, setBgMusicPlays] = useState(
     sessionStorage.getItem("musicPlaying") === "true" ? true : false
@@ -173,6 +174,8 @@ function App() {
                   setIsLoading={setIsLoading}
                   notificationsNumber={notificationsNumber}
                   setNotificationsNumber={setNotificationsNumber}
+                  openChat={openChat}
+                  setOpenChat={setOpenChat}
                 />
               }
             />
@@ -206,6 +209,8 @@ function App() {
                   soundEffectsAllowed={soundEffectsAllowed}
                   notificationsNumber={notificationsNumber}
                   setNotificationsNumber={setNotificationsNumber}
+                  openChat={openChat}
+                  setOpenChat={setOpenChat}
                 />
               }
             />

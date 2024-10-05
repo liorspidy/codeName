@@ -34,6 +34,8 @@ const Room = (props) => {
     setIsLoading,
     notificationsNumber,
     setNotificationsNumber,
+    openChat,
+    setOpenChat,
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -147,18 +149,19 @@ const Room = (props) => {
   }, [roomName, socket]);
 
 
-  // Get messages on initial load and reset notifications number
-  useEffect(() => {
-    socket.on("messageReceived", (myDetails , message) => {
-      if (myDetails.name === playerDetails.name) return;
-      
-      setNotificationsNumber((prev) => prev + 1);
-    });
+  // // Get messages on initial load and reset notifications number
+  // useEffect(() => {
+  //   socket.on("messageReceived", (myDetails , message) => {
+  //     if (myDetails.name === playerDetails.name) return;
+  //     if(!openChat){
+  //       setNotificationsNumber((prev) => prev + 1);
+  //     }
+  //   });
 
-    return () => {
-      socket.off("messageReceived");
-    };
-  }, [socket]);
+  //   return () => {
+  //     socket.off("messageReceived");
+  //   };
+  // }, [socket]);
 
   return (
     <div className={classes.room}>
@@ -182,6 +185,8 @@ const Room = (props) => {
           setIsLoading={setIsLoading}
           notificationsNumber={notificationsNumber}
           setNotificationsNumber={setNotificationsNumber}
+          openChat={openChat}
+          setOpenChat={setOpenChat}
         />
         <Waiting
           roomDetails={roomDetails}

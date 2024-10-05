@@ -25,11 +25,13 @@ const Header = ({
   isLoading,
   notificationsNumber,
   setNotificationsNumber,
+  openChat,
+  setOpenChat,
 }) => {
-  const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isGame, setIsGame] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   let navigate = useNavigate();
 
@@ -41,9 +43,19 @@ const Header = ({
   }, [playerDetails]);
 
   useEffect(() => {
-    socket.on("messageReceived", () => {
-      setNotificationsNumber((prev) =>  prev++);
+    socket.on("messageReceived", (myDetails, message) => {
+      if (myDetails.name === playerDetails.name) return;
+
+      setMessages((prevMessages) => [...prevMessages, message]);
+      if (!openChat) {
+        console.log("New message received:", message);
+        setNotificationsNumber((prev) => prev + 1);
+      }
     });
+
+    return () => {
+      socket.off("messageReceived");
+    };
   }, [socket]);
 
   const goBackHandler = () => {
@@ -109,6 +121,8 @@ const Header = ({
           setIsLoading={setIsLoading}
           isLoading={isLoading}
           setNotificationsNumber={setNotificationsNumber}
+          messages={messages}
+          setMessages={setMessages}
         />
       )}
       <div className={classes.rightSection}>

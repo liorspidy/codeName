@@ -27,7 +27,6 @@ const Modal = ({
     ? `${classes.modal} ${classes.active}`
     : classes.modal;
 
-
   return (
     <div className={backdropClassName} onClick={closeBackdrop}>
       <div className={modalClassName} onClick={stopPropagation}>
