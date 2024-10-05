@@ -19,6 +19,7 @@ const LeaveRoomModal = ({
   siteUrl,
   isLoading,
   setIsLoading,
+  setNotificationsNumber
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [error, setError] = useState("");
@@ -68,6 +69,7 @@ const LeaveRoomModal = ({
       );
 
       navigate("/");
+      setNotificationsNumber(0);
       setleavingRoom(false);
       socket.emit("playerLeft", roomDetails, playerDetails.name);
       sessionStorage.removeItem("lastRoomId");

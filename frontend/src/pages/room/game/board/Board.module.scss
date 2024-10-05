@@ -110,11 +110,19 @@
           align-items: center;
           justify-content: center;
           gap: 1.5dvw;
+
+          @media screen and (min-width: 768px) {
+            font-size: 2rem;
+          }
         }
 
         .currentOperatorsWord {
           max-width: 15dvh;
           overflow: auto;
+
+          @media screen and (min-width: 768px) {
+            max-width: 30dvh;
+          }
         }
 
         .currentOperatorsNumber {
@@ -124,12 +132,12 @@
         }
       }
 
-      .operatorType{
+      .operatorType {
         flex: 1 0 0;
         text-align: center;
         visibility: visible;
 
-        p{
+        p {
           font-size: 2dvh;
           font-weight: 900;
           font-family: "Heebo", sans-serif;
@@ -229,7 +237,7 @@
           display: grid;
           grid-template-rows: repeat(2, 1fr);
           transition: all 0.3s ease-out;
-          
+
           &.highlited {
             transition: all 0.3s ease-out;
             box-shadow: 0 0 10px #646cff;
@@ -432,6 +440,12 @@
             .cardsLeft {
               font-size: 7dvw;
             }
+
+            @media screen and (min-width: 768px) {
+              .cardsLeft {
+                font-size: 2.75rem;
+              }
+            }
           }
         }
 
@@ -446,14 +460,20 @@
             .cardsLeft {
               font-size: 7dvw;
             }
+
+            @media screen and (min-width: 768px) {
+              .cardsLeft {
+                font-size: 2.75rem;
+              }
+            }
           }
         }
 
         &.blue.glow.bonus,
         &.red.glow.bonus {
           animation: 0.6s ease-out glowScoreGreen infinite alternate;
+          position: relative;
           .bonus1 {
-            position: absolute;
             top: 0;
             &::after {
               content: "+";
@@ -467,6 +487,10 @@
               opacity: 0;
               right: 10dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+
+              @media screen and (min-width: 768px) {
+                right: 16dvw;
+              }
             }
 
             &::before {
@@ -481,11 +505,13 @@
               opacity: 0;
               left: 10dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+              @media screen and (min-width: 768px) {
+                right: 20dvw;
+              }
             }
           }
 
           .bonus2 {
-            position: absolute;
             top: 0;
             &::after {
               content: "+";
@@ -499,6 +525,9 @@
               opacity: 0;
               right: 20dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+              @media screen and (min-width: 768px) {
+                right: 10dvw;
+              }
             }
 
             &::before {
@@ -513,11 +542,13 @@
               opacity: 0;
               left: 20dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+              @media screen and (min-width: 768px) {
+                right: 15dvw;
+              }
             }
           }
 
           .bonus3 {
-            position: absolute;
             top: 0;
             &::after {
               content: "+";
@@ -531,6 +562,9 @@
               opacity: 0;
               right: 15dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+              @media screen and (min-width: 768px) {
+                right: 2dvw;
+              }
             }
 
             &::before {
@@ -545,6 +579,9 @@
               opacity: 0;
               left: 15dvw;
               filter: drop-shadow(0px 0px 8px rgb(100, 231, 102));
+              @media screen and (min-width: 768px) {
+                right: 0dvw;
+              }
             }
           }
         }
@@ -558,6 +595,12 @@
           gap: 1.5dvw;
           color: white;
           transition: font-size 1s ease-out;
+        }
+
+        @media screen and (min-width: 768px) {
+          .cardsLeft {
+            font-size: 2rem;
+          }
         }
       }
     }
@@ -745,5 +788,90 @@
   100% {
     opacity: 0;
     top: -5dvh;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .gameBoard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+    grid-template-rows: repeat(4, auto);
+
+    .upperBoardZone {
+      display: contents;
+
+      .upperHUD {
+        grid-column-start: span 2;
+      }
+
+      .board {
+        padding: 1rem;
+        grid-row-start: 2;
+        grid-row-end: 4;
+        grid-column-start: 1;
+
+        .flippedCard {
+          height: 70px;
+          width: auto;
+          aspect-ratio: 1.5 / 1;
+          border-radius: 8px;
+        }
+
+        .card {
+          height: 70px;
+          width: fit-content;
+
+          &.picked {
+            border-radius: 8px;
+          }
+
+          .cardContent {
+            height: 100%;
+            border-radius: 8px;
+
+            .word {
+              font-size: 1rem;
+
+              &::before {
+                top: -1.25rem;
+              }
+            }
+          }
+        }
+      }
+
+      .currentCardContainer {
+        grid-row-start: 2;
+        grid-column-start: 2;
+        min-height: 4.5rem;
+
+        .currentCard {
+          font-size: 2rem;
+        }
+      }
+    }
+
+    .lowerBoardZone {
+      display: contents;
+
+      .scoreTable {
+        grid-row-start: 3;
+        grid-column-start: 2;
+        height: 4rem;
+        position: relative;
+        top: -4rem;
+      }
+
+      .actionButtons {
+        grid-row-start: 4;
+        grid-column-start: 2;
+        position: relative;
+        top: -5rem;
+        scale: 1.25;
+        z-index: 10;
+      }
+
+    }
   }
 }

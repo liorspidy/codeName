@@ -52,6 +52,7 @@ const Card = (props) => {
   const [highlightedCard, setHighlightedCard] = useState(false);
   const { roomId } = useParams();
 
+  // check the color of the card and return the color group
   const checkCard = () => {
     const checkInMap = (colorMap) => {
       let tempColor = "";
@@ -67,6 +68,7 @@ const Card = (props) => {
     return cardsColor;
   };
 
+  // update the revealed cards in the database after the card is flipped
   const updateRevealedCardsInDb = async (color) => {
     try {
       setIsLoading(true);
@@ -83,6 +85,7 @@ const Card = (props) => {
     }
   };
 
+  // set the score in the database after the card is flipped and the word is guessed
   const setScoreInDb = async (team, score) => {
     try {
       setIsLoading(true);
@@ -99,6 +102,7 @@ const Card = (props) => {
     }
   };
 
+  // set the winner in the database after the game is over and the winner is selected
   const setWinnerInDb = async (winner) => {
     try {
       setIsLoading(true);
@@ -115,6 +119,7 @@ const Card = (props) => {
     }
   };
 
+  // set the words to guess count in the database after the word is guessed
   const setWordsToGuessCountInDb = async (updatedWordsToGuessCount) => {
     try {
       setIsLoading(true);
@@ -130,12 +135,14 @@ const Card = (props) => {
     }
   };
 
+  // handle the card selection event and set the current card
   const selectCardHandler = () => {
     if (!isFlipped && !wordLocked) {
       setCurrentCard({ index, word });
     }
   };
 
+  // reset the operators word and finish the turn
   const finishTurn = () => {
     setWordsToGuess(0);
     if (myDetails.name === recentlyPlayedPlayer.name) {
@@ -145,6 +152,7 @@ const Card = (props) => {
     resetOperatorsWord();
   };
 
+  // check if the card is from my team and if the word was guessed correctly
   const checkIfItsMyCard = (myteam) => {
     // if the card is from my team and I guessed it correctly
     if (recentlyPlayedPlayer.team === myteam) {
@@ -177,6 +185,7 @@ const Card = (props) => {
     }
   };
 
+  // handle the game over event and set the winner
   const gameOverHandler = async (winnerTeam) => {
     setWinnerGroup(winnerTeam);
     setWordsToGuess(0);
@@ -189,6 +198,7 @@ const Card = (props) => {
     }
   };
 
+  // flip the card and check if the game is over or if the card is from my team
   const flipCard = async () => {
     if (currentCard.index === index && !isFlipped) {
       setFlippingCard(false);
@@ -246,6 +256,7 @@ const Card = (props) => {
     setCurrentCard(null);
   };
 
+  // check if the card is the current card and if the flippingCard state is set to true
   useEffect(() => {
     if (
       index !== null &&
@@ -272,7 +283,8 @@ const Card = (props) => {
     flippingCard,
   ]);
 
-  // flip the cards after the timer
+  // flip the cards after the timer or after the flippingCard 
+  // state is set to true for the other players
   useEffect(() => {
     const revealCardAfterTimer = () => {
       setIsFlipped(false);
@@ -305,6 +317,7 @@ const Card = (props) => {
     };
   }, [index, isFlipped, revealedCards]);
 
+  // highlight the cards that were picked by the other players
   useEffect(() => {
     if (highlitedCards.find((cardIndex) => cardIndex === index) !== undefined) {
       setHighlightedCard(true);

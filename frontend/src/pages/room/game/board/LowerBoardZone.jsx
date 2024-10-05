@@ -187,28 +187,14 @@ const LowerBoardZone = (props) => {
               : ""
           }`}
         >
-          <div className={classes.cardsLeft}>{blueGroupCounter}</div>
-          <span
-            className={`${
-              wordsToGuess === 1 && currentGroupColor === "blue"
-                ? classes.bonus1
-                : ""
-            }`}
-          ></span>
-          <span
-            className={`${
-              wordsToGuess === 1 && currentGroupColor === "blue"
-                ? classes.bonus2
-                : ""
-            }`}
-          ></span>
-          <span
-            className={`${
-              wordsToGuess === 1 && currentGroupColor === "blue"
-                ? classes.bonus3
-                : ""
-            }`}
-          ></span>
+          <span className={classes.cardsLeft}>{blueGroupCounter}</span>
+          {wordsToGuess === 1 && currentGroupColor === "blue" && (
+            <>
+              <span className={classes.bonus1}></span>
+              <span className={classes.bonus2}></span>
+              <span className={classes.bonus3}></span>
+            </>
+          )}
         </div>
         <div
           className={`${classes.group} ${classes.red} ${
@@ -219,28 +205,14 @@ const LowerBoardZone = (props) => {
               : ""
           }`}
         >
-          <div className={classes.cardsLeft}>{redGroupCounter}</div>
-          <span
-            className={`${
-              wordsToGuess === 1 && currentGroupColor === "red"
-                ? classes.bonus1
-                : ""
-            }`}
-          ></span>
-          <span
-            className={`${
-              wordsToGuess === 1 && currentGroupColor === "red"
-                ? classes.bonus2
-                : ""
-            }`}
-          ></span>
-          <span
-            className={`${
-              wordsToGuess === 1 && currentGroupColor === "red"
-                ? classes.bonus3
-                : ""
-            }`}
-          ></span>
+          <span className={classes.cardsLeft}>{redGroupCounter}</span>
+          {wordsToGuess === 1 && currentGroupColor === "red" && (
+            <>
+              <span className={classes.bonus1}></span>
+              <span className={classes.bonus2}></span>
+              <span className={classes.bonus3}></span>
+            </>
+          )}
         </div>
       </div>
       {role === "agent" && (

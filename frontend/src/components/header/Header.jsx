@@ -22,13 +22,16 @@ const Header = ({
   roomDetails,
   siteUrl,
   setIsLoading,
-  isLoading
+  isLoading,
+  notificationsNumber,
+  setNotificationsNumber,
 }) => {
   const [openChat, setOpenChat] = useState(false);
   const [openInfo, setOpenInfo] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isGame, setIsGame] = useState(false);
-  const [notificationsNumber, setNotificationsNumber] = useState(1);
+
+  let navigate = useNavigate();
 
   useEffect(() => {
     if (playerDetails) {
@@ -37,7 +40,11 @@ const Header = ({
     }
   }, [playerDetails]);
 
-  let navigate = useNavigate();
+  useEffect(() => {
+    socket.on("messageReceived", () => {
+      setNotificationsNumber((prev) =>  prev++);
+    });
+  }, [socket]);
 
   const goBackHandler = () => {
     setPlayerNotReadyInDb(playerDetails.name);
@@ -56,14 +63,16 @@ const Header = ({
         }
       );
       const room = response.data;
-      setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam).then(() => {
-        setIsGoingBack(false);
-        navigate(-1);
-      });
+      setPlayersInDb(roomId, room.players, room.redTeam, room.blueTeam).then(
+        () => {
+          setIsGoingBack(false);
+          navigate(-1);
+        }
+      );
     } catch (error) {
       console.error("An error occurred while setting player not ready:", error);
       throw new Error("Could not set player not ready in db");
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -99,6 +108,7 @@ const Header = ({
           socket={socket}
           setIsLoading={setIsLoading}
           isLoading={isLoading}
+          setNotificationsNumber={setNotificationsNumber}
         />
       )}
       <div className={classes.rightSection}>
@@ -144,7 +154,7 @@ const Header = ({
           className={`${classes.chatButton} ${
             notificationsNumber > 0 ? classes.hasNotif : ""
           }`}
-          style={{ "--notifCount": toString(notificationsNumber) }}
+          data-count={notificationsNumber > 0 ? notificationsNumber : ""}
         >
           <IconButton
             onClick={chatHandler}

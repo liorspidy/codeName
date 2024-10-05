@@ -146,11 +146,11 @@ const Board = (props) => {
       setGameWonSound(gameWon);
       setGameLostSound(gameLost);
 
-      // winSound.volume = 0.5;
-      // loseSound.volume = 0.5;
-      // boomSound.volume = 0.5;
-      // gameWonSound.volume = 0.5;
-      // gameLostSound.volume = 0.5;
+      win.volume = 0.5;
+      lose.volume = 0.5;
+      boom.volume = 0.5;
+      gameWon.volume = 0.5;
+      gameLost.volume = 0.5;
     }
   }, [myDetails]);
 
@@ -410,67 +410,67 @@ const Board = (props) => {
           modalShown={openGameOver}
         />
       )}
-      <UpperBoardZone
-        setShowMinimap={setShowMinimap}
-        timer={timer}
-        timerStarts={timerStarts}
-        setTimer={setTimer}
-        setTimeIsRunningOut={setTimeIsRunningOut}
-        timeIsRunningOut={timeIsRunningOut}
-        setTimeRanOut={setTimeRanOut}
-        restartClock={restartClock}
-        leadGroupColor={leadGroupColor}
-        cards={cards}
-        currentCard={currentCard}
-        role={role}
-        currentOperatorsWord={currentOperatorsWord}
-        currentOperatorsWordCount={currentOperatorsWordCount}
-        setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
-        setCurrentOperatorsWord={setCurrentOperatorsWord}
-        newWordSetted={newWordSetted}
-        setNewWordSetted={setNewWordSetted}
-        wordsToGuess={wordsToGuess}
-        setWordsToGuess={setWordsToGuess}
-        myDetails={myDetails}
-        switchColorGroup={switchColorGroup}
-        roomDetails={roomDetails}
-        players={players}
-        redTeamPlayers={redTeamPlayers}
-        blueTeamPlayers={blueTeamPlayers}
-        setNextRound={setNextRound}
-        socket={socket}
-        operatorTypes={operatorTypes}
-        setOperatorTypes={setOperatorTypes}
-      />
-      <LowerBoardZone
-        redGroupCounter={redGroupCounter}
-        blueGroupCounter={blueGroupCounter}
-        currentCard={currentCard}
-        wordLocked={wordLocked}
-        setWordLocked={setWordLocked}
-        timerStarts={timerStarts}
-        restartClock={restartClock}
-        role={role}
-        setTimeRanOut={setTimeRanOut}
-        currentOperatorsWord={currentOperatorsWord}
-        currentOperatorsWordCount={currentOperatorsWordCount}
-        setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
-        setCurrentOperatorsWord={setCurrentOperatorsWord}
-        setNewWordSetted={setNewWordSetted}
-        currentGroupColor={currentGroupColor}
-        myDetails={myDetails}
-        wordsToGuess={wordsToGuess}
-        setWordsToGuess={setWordsToGuess}
-        gameOver={gameOver}
-        roomDetails={roomDetails}
-        players={players}
-        redTeamPlayers={redTeamPlayers}
-        blueTeamPlayers={blueTeamPlayers}
-        socket={socket}
-        siteUrl={siteUrl}
-        operatorTypes={operatorTypes}
-        setOperatorTypes={setOperatorTypes}
-      />
+        <UpperBoardZone
+          setShowMinimap={setShowMinimap}
+          timer={timer}
+          timerStarts={timerStarts}
+          setTimer={setTimer}
+          setTimeIsRunningOut={setTimeIsRunningOut}
+          timeIsRunningOut={timeIsRunningOut}
+          setTimeRanOut={setTimeRanOut}
+          restartClock={restartClock}
+          leadGroupColor={leadGroupColor}
+          cards={cards}
+          currentCard={currentCard}
+          role={role}
+          currentOperatorsWord={currentOperatorsWord}
+          currentOperatorsWordCount={currentOperatorsWordCount}
+          setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
+          setCurrentOperatorsWord={setCurrentOperatorsWord}
+          newWordSetted={newWordSetted}
+          setNewWordSetted={setNewWordSetted}
+          wordsToGuess={wordsToGuess}
+          setWordsToGuess={setWordsToGuess}
+          myDetails={myDetails}
+          switchColorGroup={switchColorGroup}
+          roomDetails={roomDetails}
+          players={players}
+          redTeamPlayers={redTeamPlayers}
+          blueTeamPlayers={blueTeamPlayers}
+          setNextRound={setNextRound}
+          socket={socket}
+          operatorTypes={operatorTypes}
+          setOperatorTypes={setOperatorTypes}
+        />
+        <LowerBoardZone
+          redGroupCounter={redGroupCounter}
+          blueGroupCounter={blueGroupCounter}
+          currentCard={currentCard}
+          wordLocked={wordLocked}
+          setWordLocked={setWordLocked}
+          timerStarts={timerStarts}
+          restartClock={restartClock}
+          role={role}
+          setTimeRanOut={setTimeRanOut}
+          currentOperatorsWord={currentOperatorsWord}
+          currentOperatorsWordCount={currentOperatorsWordCount}
+          setCurrentOperatorsWordCount={setCurrentOperatorsWordCount}
+          setCurrentOperatorsWord={setCurrentOperatorsWord}
+          setNewWordSetted={setNewWordSetted}
+          currentGroupColor={currentGroupColor}
+          myDetails={myDetails}
+          wordsToGuess={wordsToGuess}
+          setWordsToGuess={setWordsToGuess}
+          gameOver={gameOver}
+          roomDetails={roomDetails}
+          players={players}
+          redTeamPlayers={redTeamPlayers}
+          blueTeamPlayers={blueTeamPlayers}
+          socket={socket}
+          siteUrl={siteUrl}
+          operatorTypes={operatorTypes}
+          setOperatorTypes={setOperatorTypes}
+        />
       <div className={classes.backdropBoard} onClick={backdropBoardHandler} />
     </div>
   );

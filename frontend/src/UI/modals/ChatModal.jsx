@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Modal from "./Modal";
 import { useCallback } from "react";
 import SendIcon from "@mui/icons-material/Send";
@@ -18,6 +18,7 @@ const ChatModal = ({
   socket,
   isLoading,
   setIsLoading,
+  setNotificationsNumber,
 }) => {
   const [backdropShown, setBackdropShown] = useState(false);
   const [messageValue, setMessageValue] = useState("");
@@ -28,6 +29,9 @@ const ChatModal = ({
     : null;
 
   const { roomId } = useParams();
+  const messageRefs = useRef({}); // Store refs for each message
+  const unreadMessageBuffer = useRef([]); // Buffer to store unread messages
+  const debounceTimeout = useRef(null); // Ref to hold the debounce timer
 
   const closeBackdrop = useCallback(() => {
     const modal = document.querySelector(`.${classes.modal}.${classes.active}`);
@@ -72,10 +76,38 @@ const ChatModal = ({
     }
   };
 
+  const debounceMarkMessagesAsRead = () => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      if (unreadMessageBuffer.current.length > 0) {
+        // Send unread messages in bulk
+        axios.post(`${siteUrl}/room/${roomId}/readMessages`, {
+          roomId,
+          messageIds: unreadMessageBuffer.current,
+          playerName: playerDetails.name,
+        }).then(() => {
+          unreadMessageBuffer.current = []; // Clear the buffer
+        }).catch(err => console.error(err));
+      }
+    }, 500); // 500ms debounce period
+  };
+
+  const handleMarkMessageAsRead = (messageId) => {
+    unreadMessageBuffer.current.push(messageId);
+    debounceMarkMessagesAsRead();
+  };
+
+  // Get messages on initial load and reset notifications number
   useEffect(() => {
-    getMessages();
+    getMessages().then(() => {
+      setNotificationsNumber(0);
+    });
   }, [roomId, siteUrl]);
 
+  // Set up the socket listener for incoming messages from the server
   useEffect(() => {
     socket.on("messageReceived", (myDetails, message) => {
       if (myDetails.name === playerDetails.name) return;
@@ -87,6 +119,40 @@ const ChatModal = ({
     };
   }, [socket]);
 
+  // Set up the observer to mark messages as read
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const messageId = entry.target.dataset.messageId;
+            const message = messages.find((msg) => msg._id === messageId);
+
+            if (message && !message.readBy.includes(playerDetails.name)) {
+              handleMarkMessageAsRead(messageId); // Debounced message read
+            }
+          }
+        });
+      },
+      {
+        root: document.querySelector(`.${classes.chatBoxBody}`), // Observe within chat box
+        threshold: 0.5, // Trigger when 10% of the message is visible
+      }
+    );
+
+    // Observe each message
+    Object.values(messageRefs.current).forEach((messageRef) => {
+      if (messageRef) {
+        observer.observe(messageRef);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [messages]);
+
+  // Handle sending message to the server
   const sendMessageHandler = async () => {
     try {
       setIsLoading(true);
@@ -111,16 +177,19 @@ const ChatModal = ({
     }
   };
 
+  // Handle sending message on Enter key press
   const handleEnterPress = async (e) => {
     if (e.key === "Enter") {
       await sendMessageHandler();
     }
   };
 
+  //  Handle typing message in input
   const typeMessage = (e) => {
     setMessageValue(e.target.value);
   };
 
+  // Parse messages to display in chat box body
   const parsedMessages = messages.map((message) => {
     const isSenderMe = playerDetails.name === message.senderNick;
     return (
@@ -129,6 +198,8 @@ const ChatModal = ({
         className={`${classes.chatMessage} ${
           isSenderMe ? classes.right : classes.left
         }`}
+        data-message-id={message._id} // Add data attribute for message ID
+        ref={(el) => (messageRefs.current[message._id] = el)} // Set ref for each message
       >
         {!isSenderMe && (
           <span
@@ -154,7 +225,7 @@ const ChatModal = ({
     >
       <div className={classes.chatModal}>
         <div className={classes.chatBox}>
-          {isLoading && (
+          {isLoading && messages.length === 0 && (
             <div className={classes.loaderContainer}>
               <Loader />
             </div>
@@ -162,7 +233,7 @@ const ChatModal = ({
           {!isLoading && messages.length > 0 && (
             <ul className={classes.chatBoxBody}>{parsedMessages}</ul>
           )}
-          {!isLoading && (!messages.length) && (
+          {!isLoading && !messages.length && (
             <span className={classes.noMessages}>אין הודעות</span>
           )}
         </div>

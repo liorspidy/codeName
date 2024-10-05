@@ -61,7 +61,9 @@ const Game = (props) => {
     siteUrl,
     setIsLoading,
     isLoading,
-    soundEffectsAllowed
+    soundEffectsAllowed,
+    notificationsNumber, 
+    setNotificationsNumber
   } = props;
 
   const { roomId } = useParams();
@@ -223,7 +225,10 @@ const Game = (props) => {
         setIsGoingBack={setIsGoingBack}
         roomDetails={roomDetails}
         siteUrl={siteUrl}
+        isLoading={isLoading}
         setIsLoading={setIsLoading}
+        notificationsNumber={notificationsNumber}
+        setNotificationsNumber={setNotificationsNumber}
       />
       <Board
         randomWords={pickedRandomWords}

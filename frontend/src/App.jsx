@@ -25,6 +25,7 @@ function App() {
   const [redTeamPlayers, setRedTeamPlayers] = useState([]);
   const [blueTeamPlayers, setBlueTeamPlayers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [notificationsNumber, setNotificationsNumber] = useState(0);
 
   const [bgMusicPlays, setBgMusicPlays] = useState(
     sessionStorage.getItem("musicPlaying") === "true" ? true : false
@@ -42,6 +43,7 @@ function App() {
   const siteUrl = "http://localhost:4000";
   // const siteUrl = "https://wordsplaylfbe.glitch.me";
 
+  // Check if the user is connected to the socket
   useEffect(() => {
     const handleConnectionChange = () => {};
 
@@ -54,6 +56,7 @@ function App() {
     };
   }, []);
 
+  // Set background music and play it on user interaction only when logged in and music is enabled 
   useEffect(() => {
     const audio = new Audio("/music/loop.mp3");
     audio.loop = true;
@@ -168,6 +171,8 @@ function App() {
                   siteUrl={siteUrl}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
+                  notificationsNumber={notificationsNumber}
+                  setNotificationsNumber={setNotificationsNumber}
                 />
               }
             />
@@ -199,6 +204,8 @@ function App() {
                   setIsLoading={setIsLoading}
                   isLoading={isLoading}
                   soundEffectsAllowed={soundEffectsAllowed}
+                  notificationsNumber={notificationsNumber}
+                  setNotificationsNumber={setNotificationsNumber}
                 />
               }
             />

@@ -59,9 +59,14 @@ const OperatorsModal = (props) => {
   }, [setModalShown, setBackdropShown, setModalOpen]);
 
   const wordsCountHandler = (e) => {
-    // Ensure the input value is within the range of 1 to 25
-    const value = Math.min(25, Math.max(1, parseInt(e.target.value, 10)));
-    setWordsCountValue(value);
+    const input = e.target.value;
+
+    // Ensure the input is a number and within the range of 1 to 25
+    if (/^\d*$/.test(input)) {
+      // Allow only numeric characters
+      const value = Math.min(25, Math.max(1, parseInt(input, 10) || 0)); // Handle empty input
+      setWordsCountValue(value);
+    }
   };
 
   const moreWordsHandler = () => {
@@ -104,10 +109,10 @@ const OperatorsModal = (props) => {
   };
 
   const wordValueChange = (e) => {
-    const newValue = e.target.value.replace(/[^\p{L}\s']/gu, "");
+    const newValue = e.target.value.replace(/[^\p{L}\s"']/gu, "");
     setWordValue(newValue);
     socket.emit("operatorTyping", roomId);
-  };
+  };  
 
   // if the modal is shown and i press on enter the submitWordHandler will be called
   useEffect(() => {
@@ -152,7 +157,7 @@ const OperatorsModal = (props) => {
       backdropShown={backdropShown}
     >
       <div className={classes.operatorsModal}>
-        <h2>הצע מילה לסוכנים</h2>
+        <h2 className={classes.title}>הצע מילה לסוכנים</h2>
         <div className={classes.inputs}>
           <div className={classes.wordInput}>
             <input
@@ -179,7 +184,7 @@ const OperatorsModal = (props) => {
             </div>
             <div className={classes.inputWordsCount}>
               <input
-                type="number"
+                type="text"
                 value={wordsCountValue}
                 onChange={wordsCountHandler}
               ></input>

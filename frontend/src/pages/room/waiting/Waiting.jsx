@@ -29,7 +29,8 @@ const Waiting = ({
   setPlayersAmountError,
   isLoading,
   setIsLoading,
-  siteUrl
+  siteUrl,
+  setNotificationsNumber
 }) => {
   const [playerTitle, setPlayerTitle] = useState("מפעיל");
   const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -315,6 +316,7 @@ const Waiting = ({
           siteUrl={siteUrl}
           setIsLoading={setIsLoading}
           isLoading={isLoading}
+          setNotificationsNumber={setNotificationsNumber}
         />
       )}
       <h1 className={classes.title}>

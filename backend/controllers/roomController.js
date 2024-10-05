@@ -181,6 +181,7 @@ const createRoom = async (req, res) => {
       currentWord: "",
       currentWordCount: 0,
       wordsToGuess: 0,
+      messages: [],
     });
 
     await newRoom.save();
@@ -324,7 +325,7 @@ const leaveRoom = async (req, res) => {
       );
     }
 
-    if (room.status === "finished" && room.players.length === 0) {
+    if (room.players.length === 0) {
       const resetedRoom = resetRoomProcess(room);
       await resetedRoom.save();
     } else {
@@ -733,28 +734,33 @@ const sendMessage = async (req, res) => {
   }
 };
 
-
-const readMessage = async (req, res) => {
+const readMessages = async (req, res) => {
   try {
-    const { roomId, playerDetails, messageId } = req.body;
+    const { roomId, messageIds, playerName } = req.body;
 
     const room = await Room.findOne({ id: roomId });
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
 
-    const message = room.messages.find((msg) => msg.id === messageId);
-    if (!message) {
-      return res.status(404).json({ message: "Message not found" });
-    }
+    messageIds.forEach((messageId) => {
+      const readingTime = new Date();
 
-    const readingTime = new Date().getTime();
+      // Find the message by comparing ObjectId to string
+      const message = room.messages.find((msg) => {
+        return msg._id.toString() === messageId;
+      });
 
-    message.readBy.push({ name: playerDetails.name, readingTime });
+      // Mark the message as read if it's not already read by the player
+      if (message && !message.readBy.some(reader => reader.name === playerName)) {
+        message.readBy.push({ name: playerName, date: readingTime });
+      }
+    });
+
     await room.save();
-    return res.status(200).json({ message: "Message read successfully" });
+    return res.status(200).json({ message: "Messages read successfully" });
   } catch (error) {
-    console.error("Error setting message as read:", error.message);
+    console.error("Error setting messages as read:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -782,6 +788,7 @@ const resetRoomProcess = (room) => {
   room.currentWord = "";
   room.currentWordCount = 0;
   room.wordsToGuess = 0;
+  room.messages = [];
 
   return room;
 };
@@ -813,5 +820,5 @@ module.exports = {
   setUsersScore,
   getMessages,
   sendMessage,
-  readMessage,
+  readMessages,
 };

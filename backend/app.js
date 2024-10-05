@@ -88,53 +88,6 @@ io.on("connection", (socket) => {
             room.redScore === 0 &&
             room.blueScore === 0
           ) {
-            // const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
-            // const minimapMappingArray =
-            //   randomLeadGroupColor === "red" ? [9, 8, 7, 1] : [8, 9, 7, 1];
-
-            // const tempMinimap = Array(25)
-            //   .fill()
-            //   .map((_, index) => {
-            //     let randFactor = Math.floor(Math.random() * 4);
-
-            //     // Make sure there are no more than 9 red, 8 blue, 7 neutral, and 1 black
-            //     while (minimapMappingArray[randFactor] === 0) {
-            //       randFactor = Math.floor(Math.random() * 4);
-            //     }
-
-            //     // Decrement the count of the current factor
-            //     if (minimapMappingArray[randFactor] > 0) {
-            //       minimapMappingArray[randFactor]--;
-            //       const color =
-            //         randFactor === 0
-            //           ? "#ec4542"
-            //           : randFactor === 1
-            //           ? "#008ed5"
-            //           : randFactor === 2
-            //           ? "#d1c499"
-            //           : randFactor === 3
-            //           ? "#3d3b3a"
-            //           : "";
-            //       const subclass =
-            //         randFactor === 0
-            //           ? `red`
-            //           : randFactor === 1
-            //           ? `blue`
-            //           : randFactor === 2
-            //           ? `neutral`
-            //           : randFactor === 3
-            //           ? `black`
-            //           : "";
-            //       return {
-            //         type: "div",
-            //         key: index,
-            //         props: {
-            //           subclass: subclass,
-            //           style: { backgroundColor: color },
-            //         },
-            //       };
-            //     }
-            //   });
 
             const randomLeadGroupColor = Math.random() < 0.5 ? "red" : "blue";
             const minimapMappingArray =
@@ -151,22 +104,20 @@ io.on("connection", (socket) => {
 
             const cellIndexes = Array.from({ length: 25 }, (_, index) => index);
 
-            const blackCellIndex = cellIndexes.splice(
-              Math.floor(Math.random() * cellIndexes.length),
-              1
-            )[0];
+            // Generate random indexes for the black, red, white and blue cells
+            const blackCellIndex = cellIndexes.splice(Math.floor(Math.random() * cellIndexes.length),1)[0];
             minimapMappingArray[3]--;
 
             const shuffledIndexes = shuffleArray(cellIndexes);
 
-            const redCellsIndexes = shuffledIndexes.splice(0, 8);
+            const redCellsIndexes = shuffledIndexes.splice(0, randomLeadGroupColor === "red" ? 9 : 8);
             minimapMappingArray[0] -= redCellsIndexes.length;
 
-            const whiteCellsIndexes = shuffledIndexes.splice(0, 9);
-            minimapMappingArray[2] -= whiteCellsIndexes.length;
-
-            const blueCellsIndexes = shuffledIndexes;
+            const blueCellsIndexes = shuffledIndexes.splice(0, randomLeadGroupColor === "blue" ? 9 : 8);
             minimapMappingArray[1] -= blueCellsIndexes.length;
+
+            const whiteCellsIndexes = shuffledIndexes;
+            minimapMappingArray[2] -= whiteCellsIndexes.length;
 
             const tempMinimap = Array(25)
               .fill()

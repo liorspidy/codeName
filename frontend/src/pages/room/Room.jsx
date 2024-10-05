@@ -32,6 +32,8 @@ const Room = (props) => {
     siteUrl,
     isLoading,
     setIsLoading,
+    notificationsNumber,
+    setNotificationsNumber,
   } = props;
   const playerDetails = sessionStorage.getItem("token")
     ? jwtDecode(sessionStorage.getItem("token"))
@@ -45,6 +47,14 @@ const Room = (props) => {
       setIsLoading(true);
       const response = await axios.get(`${siteUrl}/room/${roomId}/getRoom`);
       const room = response.data;
+      const unreadMessages = room.messages.filter(
+        (message) =>
+          !message.readBy.some(
+            (reader) => reader.name === playerDetails.name
+          ) && message.senderNick !== playerDetails.name
+      ).length;
+
+      setNotificationsNumber(unreadMessages);
       setRoomDetails(room);
       setRoomName(room.name);
       if (socket !== null && socket.connected && room) {
@@ -136,6 +146,20 @@ const Room = (props) => {
     setIsConnected(socket.connected);
   }, [roomName, socket]);
 
+
+  // Get messages on initial load and reset notifications number
+  useEffect(() => {
+    socket.on("messageReceived", (myDetails , message) => {
+      if (myDetails.name === playerDetails.name) return;
+      
+      setNotificationsNumber((prev) => prev + 1);
+    });
+
+    return () => {
+      socket.off("messageReceived");
+    };
+  }, [socket]);
+
   return (
     <div className={classes.room}>
       {isLoading && (
@@ -154,7 +178,10 @@ const Room = (props) => {
           setIsGoingBack={setIsGoingBack}
           roomDetails={roomDetails}
           siteUrl={siteUrl}
+          isLoading={isLoading}
           setIsLoading={setIsLoading}
+          notificationsNumber={notificationsNumber}
+          setNotificationsNumber={setNotificationsNumber}
         />
         <Waiting
           roomDetails={roomDetails}
@@ -174,6 +201,7 @@ const Room = (props) => {
           setPlayersAmountError={setPlayersAmountError}
           setIsLoading={setIsLoading}
           siteUrl={siteUrl}
+          setNotificationsNumber={setNotificationsNumber}
         />
       </>
     </div>

@@ -28,6 +28,6 @@ router.post('/:id/leaveRoom', roomController.leaveRoom);
 router.post('/:id/reset', roomController.resetRoom);
 router.post('/:id/updateTimer', roomController.updateTimer);
 router.post('/:id/sendMessage', roomController.sendMessage);
-router.post('/:id/readMessage', roomController.readMessage);
+router.post('/:id/readMessages', roomController.readMessages);
 
 module.exports = router;

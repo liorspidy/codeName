@@ -28,7 +28,12 @@ const roomSchema = new mongoose.Schema({
       senderColor: { type: String, required: true },
       creationDate: { type: Date, default: null },
       content: { type: String, required: true },
-      readBy: { type: [String], default: [] },
+      readBy: [
+        {
+          name: { type: String, required: true },
+          date: { type: Date, default: null },
+        },
+      ],
     },
   ],
 });
